@@ -2093,7 +2093,7 @@ export default function DebugTab() {
                             </div>
                           )}
                           {error.stack && (
-                            <div className="text-[10px] sm:text-xs mt-0.5 sm:mt-1 text-red-400 font-mono whitespace-pre-wrap">{error.stack}</div> {/* Responsive text & margin */}
+                            <div className="text-[10px] sm:text-xs mt-0.5 sm:mt-1 text-red-400 font-mono whitespace-pre-wrap">{error.stack}</div> /* Responsive text & margin */
                           )}
                         </div>
                       ))}
