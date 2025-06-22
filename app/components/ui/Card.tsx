@@ -22,14 +22,30 @@ const CardHeader = forwardRef<HTMLDivElement, CardProps>(({ className, ...props 
 });
 CardHeader.displayName = 'CardHeader';
 
-const CardTitle = forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
-  ({ className, ...props }, ref) => {
+interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
+  icon?: React.ReactNode | string;
+  iconClassName?: string;
+}
+
+const CardTitle = forwardRef<HTMLParagraphElement, CardTitleProps>(
+  ({ className, icon, iconClassName, children, ...props }, ref) => {
     return (
-      <h3
-        ref={ref}
-        className={classNames('text-lg sm:text-xl md:text-2xl font-semibold leading-none tracking-tight', className)} // Responsive text
-        {...props}
-      />
+      <div className={classNames('flex items-center gap-1.5 sm:gap-2', className)}>
+        {icon && (
+          typeof icon === 'string' ? (
+            <div className={classNames(icon, 'w-4 h-4 sm:w-5 sm:h-5', iconClassName)} />
+          ) : (
+            icon
+          )
+        )}
+        <h3
+          ref={ref}
+          className={classNames('text-lg sm:text-xl md:text-2xl font-semibold leading-none tracking-tight')}
+          {...props}
+        >
+          {children}
+        </h3>
+      </div>
     );
   },
 );

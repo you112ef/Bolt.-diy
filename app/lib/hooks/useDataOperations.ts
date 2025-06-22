@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { ImportExportService } from '~/lib/services/importExportService';
 import { useIndexedDB } from '~/lib/hooks/useIndexedDB';
 import { generateId } from 'ai';
+import { exportAsJson } from '~/utils/export';
 
 interface UseDataOperationsProps {
   /**
@@ -92,26 +93,11 @@ export function useDataOperations({
 
       const settingsData = await ImportExportService.exportSettings();
 
-      // Step 2: Create blob
-      showProgress('Creating file', 50);
+      // Step 2: Use exportAsJson utility
+      showProgress('Creating and downloading file', 75);
+      exportAsJson(settingsData, 'bolt-settings');
 
-      const blob = new Blob([JSON.stringify(settingsData, null, 2)], {
-        type: 'application/json',
-      });
-
-      // Step 3: Download file
-      showProgress('Downloading file', 75);
-
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'bolt-settings.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      // Step 4: Complete
+      // Step 3: Complete (adjusted progress)
       showProgress('Completing export', 100);
 
       // Dismiss progress toast before showing success toast
@@ -187,26 +173,11 @@ export function useDataOperations({
           }
         });
 
-        // Step 3: Create blob
-        showProgress('Creating file', 60);
+        // Step 3: Use exportAsJson utility
+        showProgress('Creating and downloading file', 80);
+        exportAsJson(filteredSettings, `bolt-settings-${categoryIds.join('-')}`);
 
-        const blob = new Blob([JSON.stringify(filteredSettings, null, 2)], {
-          type: 'application/json',
-        });
-
-        // Step 4: Download file
-        showProgress('Downloading file', 80);
-
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `bolt-settings-${categoryIds.join('-')}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        // Step 5: Complete
+        // Step 4: Complete (adjusted progress)
         showProgress('Completing export', 100);
 
         // Dismiss progress toast before showing success toast
@@ -313,26 +284,11 @@ export function useDataOperations({
 
       console.log(`Preparing to export ${exportData.chats.length} chats`);
 
-      // Step 2: Create blob
-      showProgress('Creating file', 50);
+      // Step 2: Use exportAsJson utility
+      showProgress('Creating and downloading file', 75);
+      exportAsJson(exportData, 'bolt-chats');
 
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-        type: 'application/json',
-      });
-
-      // Step 3: Download file
-      showProgress('Downloading file', 75);
-
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'bolt-chats.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      // Step 4: Complete
+      // Step 3: Complete (adjusted progress)
       showProgress('Completing export', 100);
 
       // Dismiss progress toast before showing success toast
@@ -424,26 +380,11 @@ export function useDataOperations({
           exportDate: new Date().toISOString(),
         };
 
-        // Step 2: Create blob
-        showProgress('Creating file', 50);
+        // Step 2: Use exportAsJson utility
+        showProgress('Creating and downloading file', 75);
+        exportAsJson(exportData, 'bolt-selected-chats');
 
-        const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-          type: 'application/json',
-        });
-
-        // Step 3: Download file
-        showProgress('Downloading file', 75);
-
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'bolt-selected-chats.json';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        // Step 4: Complete
+        // Step 3: Complete (adjusted progress)
         showProgress('Completing export', 100);
 
         // Dismiss progress toast before showing success toast
@@ -927,22 +868,11 @@ export function useDataOperations({
 
       const templateData = ImportExportService.createAPIKeysTemplate();
 
-      // Step 2: Download file
-      showProgress('Downloading template', 75);
+      // Step 2: Use exportAsJson utility
+      showProgress('Creating and Downloading template', 75);
+      exportAsJson(templateData, 'bolt-api-keys-template');
 
-      const blob = new Blob([JSON.stringify(templateData, null, 2)], {
-        type: 'application/json',
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'bolt-api-keys-template.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      // Step 3: Complete
+      // Step 3: Complete (adjusted progress)
       showProgress('Completing download', 100);
 
       // Dismiss progress toast before showing success toast
@@ -998,26 +928,11 @@ export function useDataOperations({
 
       const apiKeys = await response.json();
 
-      // Step 2: Create blob
-      showProgress('Creating file', 50);
+      // Step 2: Use exportAsJson utility
+      showProgress('Creating and downloading file', 75);
+      exportAsJson(apiKeys, 'bolt-api-keys');
 
-      const blob = new Blob([JSON.stringify(apiKeys, null, 2)], {
-        type: 'application/json',
-      });
-
-      // Step 3: Download file
-      showProgress('Downloading file', 75);
-
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'bolt-api-keys.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      // Step 4: Complete
+      // Step 3: Complete (adjusted progress)
       showProgress('Completing export', 100);
 
       // Dismiss progress toast before showing success toast

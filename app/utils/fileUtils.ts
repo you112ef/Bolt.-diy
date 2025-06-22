@@ -119,3 +119,27 @@ ${files[filePath].content}
 </boltArtifact>
   `;
 };
+
+/**
+ * Triggers a browser download for the given content.
+ * @param content The string content to download.
+ * @param filename The desired filename for the downloaded file.
+ * @param contentType The MIME type of the content.
+ */
+export function downloadFile(content: string, filename: string, contentType: string): void {
+  try {
+    const blob = new Blob([content], { type: contentType });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  } catch (error) {
+    console.error(`Error downloading file ${filename}:`, error);
+    // Consider using toast notification for user feedback here if appropriate
+    // For example: toast.error(`Failed to download ${filename}`);
+  }
+}

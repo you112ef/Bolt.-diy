@@ -23,21 +23,28 @@ import { TAB_LABELS, DEFAULT_TAB_CONFIG } from './constants';
 import { DialogTitle } from '~/components/ui/Dialog';
 import { AvatarDropdown } from './AvatarDropdown';
 import BackgroundRays from '~/components/ui/BackgroundRays';
+import { useBreakpoint } from '~/lib/hooks/useBreakpoint'; // Import the new hook
 
 // Import all tab components
 import ProfileTab from '~/components/@settings/tabs/profile/ProfileTab';
 import SettingsTab from '~/components/@settings/tabs/settings/SettingsTab';
 import NotificationsTab from '~/components/@settings/tabs/notifications/NotificationsTab';
 import FeaturesTab from '~/components/@settings/tabs/features/FeaturesTab';
-import { DataTab } from '~/components/@settings/tabs/data/DataTab';
-import DebugTab from '~/components/@settings/tabs/debug/DebugTab';
-import { EventLogsTab } from '~/components/@settings/tabs/event-logs/EventLogsTab';
+// Lazy load complex tabs
+import React, { Suspense } from 'react'; // Import Suspense and React
+import { TabLoadingFallback } from './TabLoadingFallback'; // Import the fallback
+const DebugTab = React.lazy(() => import('~/components/@settings/tabs/debug/DebugTab'));
+const DataTab = React.lazy(() => import('~/components/@settings/tabs/data/DataTab').then(module => ({ default: module.DataTab })));
+const EventLogsTab = React.lazy(() => import('~/components/@settings/tabs/event-logs/EventLogsTab').then(module => ({ default: module.EventLogsTab })));
+const TaskManagerTab = React.lazy(() => import('~/components/@settings/tabs/task-manager/TaskManagerTab'));
+
+// import { EventLogsTab } from '~/components/@settings/tabs/event-logs/EventLogsTab'; // Now lazy loaded
 import UpdateTab from '~/components/@settings/tabs/update/UpdateTab';
 import ConnectionsTab from '~/components/@settings/tabs/connections/ConnectionsTab';
 import CloudProvidersTab from '~/components/@settings/tabs/providers/cloud/CloudProvidersTab';
 import ServiceStatusTab from '~/components/@settings/tabs/providers/status/ServiceStatusTab';
 import LocalProvidersTab from '~/components/@settings/tabs/providers/local/LocalProvidersTab';
-import TaskManagerTab from '~/components/@settings/tabs/task-manager/TaskManagerTab';
+// import TaskManagerTab from '~/components/@settings/tabs/task-manager/TaskManagerTab'; // Now lazy loaded
 
 interface ControlPanelProps {
   open: boolean;
@@ -93,6 +100,15 @@ const BetaLabel = () => (
 );
 
 const AnimatedSwitch = ({ checked, onCheckedChange, id, label }: AnimatedSwitchProps) => {
+  const isSm = useBreakpoint('sm'); // Check if viewport is sm or larger
+
+  const xTranslate = useMemo(() => {
+    if (checked) {
+      return isSm ? '1.25rem' : '1.0625rem'; // 20px for sm, 17px for base
+    }
+    return '0rem';
+  }, [checked, isSm]);
+
   return (
     <div className="flex items-center gap-1 sm:gap-2">
       <Switch
@@ -125,14 +141,7 @@ const AnimatedSwitch = ({ checked, onCheckedChange, id, label }: AnimatedSwitchP
             damping: 30,
             duration: 0.2,
           }}
-          style={{ '--base-x': '1.0625rem', '--sm-x': '1.25rem' } as React.CSSProperties}
-          // Apply transform based on screen size via style or a more complex animate prop
-          // Simplest for now: use the larger travel, it will look acceptable on smaller.
-          // Or, use the animate prop with a function that checks window width, but that's for useEffect.
-          // Framer motion variants are better for this.
-          // Let's use the specific values directly in animate for now.
-          // Correct x values: base: 36px - 16px - 2*1.5px = 17px (1.0625rem). sm: 44px - 20px - 2*2px = 20px (1.25rem)
-          animate={{ x: checked ? (typeof window !== 'undefined' && window.innerWidth < 640 ? '1.0625rem' : '1.25rem') : '0rem' }} // Added typeof window check
+          animate={{ x: xTranslate }} // Use state-derived translate value
         >
           <motion.div
             className="absolute inset-0 rounded-full bg-white"
@@ -323,7 +332,7 @@ export const ControlPanel = ({ open, onClose }: ControlPanelProps) => {
       case 'features':
         return <FeaturesTab />;
       case 'data':
-        return <DataTab />;
+        return <Suspense fallback={<TabLoadingFallback />}><DataTab /></Suspense>;
       case 'cloud-providers':
         return <CloudProvidersTab />;
       case 'local-providers':
@@ -331,13 +340,13 @@ export const ControlPanel = ({ open, onClose }: ControlPanelProps) => {
       case 'connection':
         return <ConnectionsTab />;
       case 'debug':
-        return <DebugTab />;
+        return <Suspense fallback={<TabLoadingFallback />}><DebugTab /></Suspense>;
       case 'event-logs':
-        return <EventLogsTab />;
+        return <Suspense fallback={<TabLoadingFallback />}><EventLogsTab /></Suspense>;
       case 'update':
         return <UpdateTab />;
       case 'task-manager':
-        return <TaskManagerTab />;
+        return <Suspense fallback={<TabLoadingFallback />}><TaskManagerTab /></Suspense>;
       case 'service-status':
         return <ServiceStatusTab />;
       default:

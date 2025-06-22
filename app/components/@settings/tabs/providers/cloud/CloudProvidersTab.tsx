@@ -4,7 +4,7 @@ import { useSettings } from '~/lib/hooks/useSettings';
 import { URL_CONFIGURABLE_PROVIDERS } from '~/lib/stores/settings';
 import type { IProviderConfig } from '~/types/model';
 import { logStore } from '~/lib/stores/logs';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { classNames } from '~/utils/classNames';
 import { toast } from 'react-toastify';
 import { providerBaseUrlEnvKeys } from '~/utils/constants';
@@ -14,6 +14,7 @@ import { TbBrain, TbCloudComputing } from 'react-icons/tb';
 import { BiCodeBlock, BiChip } from 'react-icons/bi';
 import { FaCloud, FaBrain } from 'react-icons/fa';
 import type { IconType } from 'react-icons';
+import { SectionHeader } from '~/components/ui/SectionHeader'; // Import SectionHeader
 
 // Add type for provider names to ensure type safety
 type ProviderName =
@@ -138,29 +139,19 @@ const CloudProvidersTab = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        {/* Responsive header: stack on small, row on sm+ */}
-        <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between mt-4 mb-3 sm:mt-6 sm:mb-4">
-          <div className="flex items-center gap-1.5 sm:gap-2"> {/* Responsive gap */}
-            <div
-              className={classNames(
-                'w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-md sm:rounded-lg', // Responsive size & rounding
-                'bg-bolt-elements-background-depth-3',
-                'text-purple-500',
-              )}
-            >
-              <TbCloudComputing className="w-4 h-4 sm:w-5 sm:h-5" /> {/* Responsive icon */}
+        <SectionHeader
+          title="Cloud Providers"
+          description="Connect to cloud-based AI models and services"
+          icon={<TbCloudComputing className="w-4 h-4 sm:w-5 sm:h-5" />} // Pass icon as ReactNode
+          iconContainerClassName="bg-bolt-elements-background-depth-3 text-purple-500"
+          actions={
+            <div className="flex items-center justify-between sm:justify-start gap-1.5 sm:gap-2"> {/* Responsive gap, justification for mobile */}
+              <span className="text-xs sm:text-sm text-bolt-elements-textSecondary">Enable All Cloud</span> {/* Responsive text */}
+              <Switch checked={categoryEnabled} onCheckedChange={handleToggleCategory} /> {/* Switch is responsive */}
             </div>
-            <div>
-              <h4 className="text-sm sm:text-md font-medium text-bolt-elements-textPrimary">Cloud Providers</h4> {/* Responsive text */}
-              <p className="text-xs sm:text-sm text-bolt-elements-textSecondary">Connect to cloud-based AI models and services</p> {/* Responsive text */}
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between sm:justify-start gap-1.5 sm:gap-2"> {/* Responsive gap, ensure space for switch on mobile */}
-            <span className="text-xs sm:text-sm text-bolt-elements-textSecondary">Enable All Cloud</span> {/* Responsive text */}
-            <Switch checked={categoryEnabled} onCheckedChange={handleToggleCategory} /> {/* Switch is responsive */}
-          </div>
-        </div>
+          }
+          className="mt-4 mb-0 sm:mt-6" // Adjusted margins
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3 md:gap-4"> {/* Responsive gap */}
           {filteredProviders.map((provider, index) => (
