@@ -125,14 +125,6 @@ const AnimatedSwitch = ({ checked, onCheckedChange, id, label }: AnimatedSwitchP
             damping: 30,
             duration: 0.2,
           }}
-          animate={{
-            x: checked ? ['1.0625rem', '1.25rem'] : ['0rem', '0rem'], // Placeholder, will use sm: variant in class for x if possible, or conditional logic
-            // x: checked ? 'calc(100% - 100% + 4px)' : '0rem', // This is tricky with framer motion direct animate prop
-            // For now, let's use a simple average or make it conditional if Framer allows responsive variants here easily.
-            // The translate distance needs to be w-track - w-thumb - 2*offset_thumb_track
-            // sm: '1.25rem' (20px) from 44px track, 20px thumb, 2px offset
-            // base: '1.0625rem' (17px) from 36px track, 16px thumb, 1.5px offset
-          }}
           style={{ '--base-x': '1.0625rem', '--sm-x': '1.25rem' } as React.CSSProperties}
           // Apply transform based on screen size via style or a more complex animate prop
           // Simplest for now: use the larger travel, it will look acceptable on smaller.
@@ -140,7 +132,7 @@ const AnimatedSwitch = ({ checked, onCheckedChange, id, label }: AnimatedSwitchP
           // Framer motion variants are better for this.
           // Let's use the specific values directly in animate for now.
           // Correct x values: base: 36px - 16px - 2*1.5px = 17px (1.0625rem). sm: 44px - 20px - 2*2px = 20px (1.25rem)
-          animate={{ x: checked ? (window.innerWidth < 640 ? '1.0625rem' : '1.25rem') : '0rem' }}
+          animate={{ x: checked ? (typeof window !== 'undefined' && window.innerWidth < 640 ? '1.0625rem' : '1.25rem') : '0rem' }} // Added typeof window check
         >
           <motion.div
             className="absolute inset-0 rounded-full bg-white"

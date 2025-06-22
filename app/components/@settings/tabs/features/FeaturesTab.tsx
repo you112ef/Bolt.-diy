@@ -50,10 +50,10 @@ const FeatureCard = memo(
               {/* Responsive text for title - inherits from ControlPanel (text-xs sm:text-sm) then gets font-medium */}
               <h4 className="font-medium text-bolt-elements-textPrimary text-sm">{feature.title}</h4>
               {feature.beta && (
-                <span className="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs rounded-full bg-blue-500/10 text-blue-500 font-medium">Beta</span> {/* Responsive tag */}
+                <span className="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs rounded-full bg-blue-500/10 text-blue-500 font-medium">Beta</span>
               )}
               {feature.experimental && (
-                <span className="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs rounded-full bg-orange-500/10 text-orange-500 font-medium"> {/* Responsive tag */}
+                <span className="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs rounded-full bg-orange-500/10 text-orange-500 font-medium">
                   Experimental
                 </span>
               )}
