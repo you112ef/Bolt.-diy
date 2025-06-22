@@ -35,7 +35,7 @@ const ALL_USER_TABS = [...DEFAULT_USER_TABS, ...OPTIONAL_USER_TABS];
 const BETA_TABS = new Set<TabType>(['task-manager', 'service-status', 'update', 'local-providers']);
 
 const BetaLabel = () => (
-  <span className="px-1.5 py-0.5 text-[9px] sm:text-[10px] rounded-full bg-purple-500/10 text-purple-500 font-medium">BETA</span> {/*Responsive text*/}
+  <span className="px-1.5 py-0.5 text-[9px] sm:text-[10px] rounded-full bg-purple-500/10 text-purple-500 font-medium">BETA</span> {/* Responsive text */}
 );
 
 export const TabManagement = () => {
