@@ -44,7 +44,7 @@ import { expoUrlAtom } from '~/lib/stores/qrCodeStore';
 import { useStore } from '@nanostores/react';
 import { StickToBottom, useStickToBottomContext } from '~/lib/hooks';
 
-const TEXTAREA_MIN_HEIGHT = 76;
+const TEXTAREA_MIN_HEIGHT = 60; // Reduced from 76
 
 interface BaseChatProps {
   textareaRef?: React.RefObject<HTMLTextAreaElement> | undefined;
@@ -338,17 +338,18 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
         <div className="flex flex-col lg:flex-row overflow-y-auto w-full h-full">
           <div className={classNames(styles.Chat, 'flex flex-col flex-grow lg:min-w-[var(--chat-min-width)] h-full')}>
             {!chatStarted && (
-              <div id="intro" className="mt-[16vh] max-w-chat mx-auto text-center px-4 lg:px-0">
-                <h1 className="text-3xl lg:text-6xl font-bold text-bolt-elements-textPrimary mb-4 animate-fade-in">
+              // Adjusted max-width to w-full for small screens, responsive text sizes
+              <div id="intro" className="mt-[16vh] w-full max-w-chat mx-auto text-center px-4">
+                <h1 className="text-2xl sm:text-3xl lg:text-6xl font-bold text-bolt-elements-textPrimary mb-3 sm:mb-4 animate-fade-in">
                   Where ideas begin
                 </h1>
-                <p className="text-md lg:text-xl mb-8 text-bolt-elements-textSecondary animate-fade-in animation-delay-200">
+                <p className="text-sm sm:text-base lg:text-xl mb-6 sm:mb-8 text-bolt-elements-textSecondary animate-fade-in animation-delay-200">
                   Bring ideas to life in seconds or get help on existing projects.
                 </p>
               </div>
             )}
             <StickToBottom
-              className={classNames('pt-6 px-2 sm:px-6 relative', {
+              className={classNames('pt-4 sm:pt-6 px-2 sm:px-4 md:px-6 relative', { // Adjusted padding
                 'h-full flex flex-col modern-scrollbar': chatStarted,
               })}
               resize="smooth"
@@ -359,7 +360,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                   {() => {
                     return chatStarted ? (
                       <Messages
-                        className="flex flex-col w-full flex-1 max-w-chat pb-6 mx-auto z-1"
+                        className="flex flex-col w-full flex-1 pb-4 sm:pb-6 mx-auto z-1" /* Removed max-w-chat, adjusted pb */
                         messages={messages}
                         isStreaming={isStreaming}
                       />
@@ -368,7 +369,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                 </ClientOnly>
               </StickToBottom.Content>
               <div
-                className={classNames('my-auto flex flex-col gap-2 w-full max-w-chat mx-auto z-prompt mb-6', {
+                className={classNames('my-auto flex flex-col gap-1.5 sm:gap-2 w-full mx-auto z-prompt mb-3 sm:mb-4 md:mb-6', { /* Removed max-w-chat, adjusted gap and mb */
                   'sticky bottom-2': chatStarted,
                 })}
               >
@@ -499,7 +500,8 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                     <textarea
                       ref={textareaRef}
                       className={classNames(
-                        'w-full pl-4 pt-4 pr-16 outline-none resize-none text-bolt-elements-textPrimary placeholder-bolt-elements-textTertiary bg-transparent text-sm',
+                        // Adjusted padding and text size for textarea
+                        'w-full pl-3 pt-3 pr-12 sm:pr-16 outline-none resize-none text-bolt-elements-textPrimary placeholder-bolt-elements-textTertiary bg-transparent text-xs sm:text-sm',
                         'transition-all duration-200',
                         'hover:border-bolt-elements-focus',
                       )}
@@ -585,10 +587,12 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                         />
                       )}
                     </ClientOnly>
-                    <div className="flex justify-between items-center text-sm p-4 pt-2">
-                      <div className="flex gap-1 items-center">
-                        <IconButton title="Upload file" className="transition-all" onClick={() => handleFileUpload()}>
-                          <div className="i-ph:paperclip text-xl"></div>
+                    {/* Adjusted padding and base text size for this container */}
+                    <div className="flex justify-between items-center text-xs sm:text-sm p-2 sm:p-3 md:p-4 pt-1 sm:pt-2">
+                      <div className="flex gap-0.5 sm:gap-1 items-center"> {/* Adjusted gap */}
+                        {/* Using IconButton 'lg' size which maps to text-base (w-5 h-5) */}
+                        <IconButton title="Upload file" className="transition-all" onClick={() => handleFileUpload()} size="lg">
+                          <div className="i-ph:paperclip"></div> {/* Removed text-xl, size comes from IconButton */}
                         </IconButton>
                         <IconButton
                           title="Enhance prompt"
@@ -598,24 +602,25 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                             enhancePrompt?.();
                             toast.success('Prompt enhanced!');
                           }}
+                          size="lg" // Using IconButton 'lg' size
                         >
                           {enhancingPrompt ? (
-                            <div className="i-svg-spinners:90-ring-with-bg text-bolt-elements-loader-progress text-xl animate-spin"></div>
+                            <div className="i-svg-spinners:90-ring-with-bg text-bolt-elements-loader-progress animate-spin"></div> // Size from parent IconButton
                           ) : (
-                            <div className="i-bolt:stars text-xl"></div>
+                            <div className="i-bolt:stars"></div> // Size from parent IconButton
                           )}
                         </IconButton>
 
-                        <SpeechRecognitionButton
+                        <SpeechRecognitionButton // This component might need internal scaling
                           isListening={isListening}
                           onStart={startListening}
                           onStop={stopListening}
                           disabled={isStreaming}
                         />
-                        {chatStarted && <ClientOnly>{() => <ExportChatButton exportChat={exportChat} />}</ClientOnly>}
+                        {chatStarted && <ClientOnly>{() => <ExportChatButton exportChat={exportChat} />}</ClientOnly>} {/* This component might need internal scaling */}
                         <IconButton
                           title="Model Settings"
-                          className={classNames('transition-all flex items-center gap-1', {
+                          className={classNames('transition-all flex items-center gap-0.5 sm:gap-1', { // Adjusted gap
                             'bg-bolt-elements-item-backgroundAccent text-bolt-elements-item-contentAccent':
                               isModelSettingsCollapsed,
                             'bg-bolt-elements-item-backgroundDefault text-bolt-elements-item-contentDefault':
@@ -623,20 +628,22 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                           })}
                           onClick={() => setIsModelSettingsCollapsed(!isModelSettingsCollapsed)}
                           disabled={!providerList || providerList.length === 0}
+                          size="lg" // Using IconButton 'lg' size
                         >
-                          <div className={`i-ph:caret-${isModelSettingsCollapsed ? 'right' : 'down'} text-lg`} />
+                          <div className={`i-ph:caret-${isModelSettingsCollapsed ? 'right' : 'down'}`} /> {/* Size from parent IconButton */}
                           {isModelSettingsCollapsed ? <span className="text-xs">{model}</span> : <span />}
                         </IconButton>
                       </div>
                       {input.length > 3 ? (
                         <div className="text-xs text-bolt-elements-textTertiary">
-                          Use <kbd className="kdb px-1.5 py-0.5 rounded bg-bolt-elements-background-depth-2">Shift</kbd>{' '}
-                          + <kbd className="kdb px-1.5 py-0.5 rounded bg-bolt-elements-background-depth-2">Return</kbd>{' '}
+                          {/* Adjusted kdb padding */}
+                          Use <kbd className="kdb px-1 py-0.5 rounded bg-bolt-elements-background-depth-2">Shift</kbd>{' '}
+                          + <kbd className="kdb px-1 py-0.5 rounded bg-bolt-elements-background-depth-2">Return</kbd>{' '}
                           a new line
                         </div>
                       ) : null}
-                      <SupabaseConnection />
-                      <ExpoQrModal open={qrModalOpen} onClose={() => setQrModalOpen(false)} />
+                      <SupabaseConnection /> {/* This component might need internal scaling */}
+                      <ExpoQrModal open={qrModalOpen} onClose={() => setQrModalOpen(false)} /> {/* This component might need internal scaling */}
                     </div>
                   </div>
                 </div>
@@ -686,11 +693,11 @@ function ScrollToBottom() {
   return (
     !isAtBottom && (
       <button
-        className="absolute z-50 top-[0%] translate-y-[-100%] text-4xl rounded-lg left-[50%] translate-x-[-50%] px-1.5 py-0.5 flex items-center gap-2 bg-bolt-elements-background-depth-3 border border-bolt-elements-borderColor text-bolt-elements-textPrimary text-sm"
+        className="absolute z-50 top-[0%] translate-y-[-100%] rounded-lg left-[50%] translate-x-[-50%] px-1.5 py-0.5 flex items-center gap-1 sm:gap-2 bg-bolt-elements-background-depth-3 border border-bolt-elements-borderColor text-bolt-elements-textPrimary text-xs sm:text-sm" // Adjusted text size, gap
         onClick={() => scrollToBottom()}
       >
         Go to last message
-        <span className="i-ph:arrow-down animate-bounce" />
+        <span className="i-ph:arrow-down animate-bounce w-4 h-4 sm:w-5 sm:h-5" /> {/* Added icon size */}
       </button>
     )
   );

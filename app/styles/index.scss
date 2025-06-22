@@ -11,6 +11,16 @@ html,
 body {
   height: 100%;
   width: 100%;
+  max-width: 360px; /* Constrain width for mobile */
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  margin: 0 auto; /* Center the content */
+}
+
+@media (min-width: 361px) {
+  html, body {
+    max-width: 100%;
+    margin: 0;
+  }
 }
 
 :root {

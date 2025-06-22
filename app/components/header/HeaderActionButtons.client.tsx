@@ -68,24 +68,25 @@ export function HeaderActionButtons({}: HeaderActionButtonsProps) {
   };
 
   return (
-    <div className="flex">
+    <div className="flex w-full justify-end"> {/* Added w-full and justify-end */}
       <div className="relative" ref={dropdownRef}>
-        <div className="flex border border-bolt-elements-borderColor rounded-md overflow-hidden mr-2 text-sm">
+        <div className="flex border border-bolt-elements-borderColor rounded-md overflow-hidden mr-1 sm:mr-2 text-xs sm:text-sm"> {/* Reduced margin and text size */}
           <Button
             active
             disabled={isDeploying || !activePreview || isStreaming}
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="px-4 hover:bg-bolt-elements-item-backgroundActive flex items-center gap-2"
+            className="px-2 py-1 sm:px-4 sm:py-auto hover:bg-bolt-elements-item-backgroundActive flex items-center gap-1 sm:gap-2" /* Reduced padding and gap */
           >
             {isDeploying ? `Deploying to ${deployingTo}...` : 'Deploy'}
             <div
-              className={classNames('i-ph:caret-down w-4 h-4 transition-transform', isDropdownOpen ? 'rotate-180' : '')}
+              className={classNames('i-ph:caret-down w-3 h-3 sm:w-4 sm:h-4 transition-transform', isDropdownOpen ? 'rotate-180' : '')} /* Reduced icon size */
             />
           </Button>
         </div>
 
         {isDropdownOpen && (
-          <div className="absolute right-2 flex flex-col gap-1 z-50 p-1 mt-1 min-w-[13.5rem] bg-bolt-elements-background-depth-2 rounded-md shadow-lg bg-bolt-elements-backgroundDefault border border-bolt-elements-borderColor">
+          /* Ensure dropdown does not overflow viewport */
+          <div className="absolute right-0 sm:right-2 flex flex-col gap-1 z-50 p-1 mt-1 min-w-[12rem] max-w-[90vw] bg-bolt-elements-background-depth-2 rounded-md shadow-lg bg-bolt-elements-backgroundDefault border border-bolt-elements-borderColor">
             <Button
               active
               onClick={() => {
@@ -93,10 +94,10 @@ export function HeaderActionButtons({}: HeaderActionButtonsProps) {
                 setIsDropdownOpen(false);
               }}
               disabled={isDeploying || !activePreview || !netlifyConn.user}
-              className="flex items-center w-full px-4 py-2 text-sm text-bolt-elements-textPrimary hover:bg-bolt-elements-item-backgroundActive gap-2 rounded-md group relative"
+              className="flex items-center w-full px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm text-bolt-elements-textPrimary hover:bg-bolt-elements-item-backgroundActive gap-2 rounded-md group relative" /* Reduced padding and text size */
             >
               <img
-                className="w-5 h-5"
+                className="w-4 h-4 sm:w-5 sm:h-5" /* Reduced icon size */
                 height="24"
                 width="24"
                 crossOrigin="anonymous"
@@ -114,10 +115,10 @@ export function HeaderActionButtons({}: HeaderActionButtonsProps) {
                 setIsDropdownOpen(false);
               }}
               disabled={isDeploying || !activePreview || !vercelConn.user}
-              className="flex items-center w-full px-4 py-2 text-sm text-bolt-elements-textPrimary hover:bg-bolt-elements-item-backgroundActive gap-2 rounded-md group relative"
+              className="flex items-center w-full px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm text-bolt-elements-textPrimary hover:bg-bolt-elements-item-backgroundActive gap-2 rounded-md group relative" /* Reduced padding and text size */
             >
               <img
-                className="w-5 h-5 bg-black p-1 rounded"
+                className="w-4 h-4 sm:w-5 sm:h-5 bg-black p-0.5 sm:p-1 rounded" /* Reduced icon size and padding */
                 height="24"
                 width="24"
                 crossOrigin="anonymous"
@@ -130,11 +131,11 @@ export function HeaderActionButtons({}: HeaderActionButtonsProps) {
             <Button
               active={false}
               disabled
-              className="flex items-center w-full rounded-md px-4 py-2 text-sm text-bolt-elements-textTertiary gap-2"
+              className="flex items-center w-full rounded-md px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm text-bolt-elements-textTertiary gap-2" /* Reduced padding and text size */
             >
               <span className="sr-only">Coming Soon</span>
               <img
-                className="w-5 h-5"
+                className="w-4 h-4 sm:w-5 sm:h-5" /* Reduced icon size */
                 height="24"
                 width="24"
                 crossOrigin="anonymous"
@@ -156,7 +157,8 @@ export function HeaderActionButtons({}: HeaderActionButtonsProps) {
             }
           }}
         >
-          <div className="i-bolt:chat text-sm" />
+          {/* Adjusted icon size and applied responsive sizing */}
+          <div className="i-bolt:chat text-xs w-4 h-4 sm:text-sm sm:w-5 sm:h-5" />
         </Button>
         <div className="w-[1px] bg-bolt-elements-borderColor" />
         <Button
@@ -169,7 +171,8 @@ export function HeaderActionButtons({}: HeaderActionButtonsProps) {
             workbenchStore.showWorkbench.set(!showWorkbench);
           }}
         >
-          <div className="i-ph:code-bold" />
+          {/* Added explicit icon size and applied responsive sizing */}
+          <div className="i-ph:code-bold w-4 h-4 sm:w-5 sm:h-5" />
         </Button>
       </div>
     </div>
@@ -188,7 +191,7 @@ function Button({ active = false, disabled = false, children, onClick, className
   return (
     <button
       className={classNames(
-        'flex items-center p-1.5',
+        'flex items-center p-1 sm:p-1.5', /* Reduced padding */
         {
           'bg-bolt-elements-item-backgroundDefault hover:bg-bolt-elements-item-backgroundActive text-bolt-elements-textTertiary hover:text-bolt-elements-textPrimary':
             !active,

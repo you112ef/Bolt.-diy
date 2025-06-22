@@ -68,7 +68,7 @@ export function HistoryItem({
   return (
     <div
       className={classNames(
-        'group rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50/80 dark:hover:bg-gray-800/30 overflow-hidden flex justify-between items-center px-3 py-2 transition-colors',
+        'group rounded-lg text-xs sm:text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50/80 dark:hover:bg-gray-800/30 overflow-hidden flex justify-between items-center px-2 py-1.5 sm:px-3 sm:py-2 transition-colors', // Adjusted padding and text size
         { 'text-gray-900 dark:text-white bg-gray-50/80 dark:bg-gray-800/30': isActiveChat },
         { 'cursor-pointer': selectionMode },
       )}
@@ -86,10 +86,10 @@ export function HistoryItem({
       )}
 
       {editing ? (
-        <form onSubmit={handleSubmit} className="flex-1 flex items-center gap-2">
+        <form onSubmit={handleSubmit} className="flex-1 flex items-center gap-1.5 sm:gap-2"> {/* Adjusted gap */}
           <input
             type="text"
-            className="flex-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-md px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-800 focus:outline-none focus:ring-1 focus:ring-purple-500/50"
+            className="flex-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-md px-2 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm border border-gray-200 dark:border-gray-800 focus:outline-none focus:ring-1 focus:ring-purple-500/50" // Adjusted padding and text size
             autoFocus
             value={currentDescription}
             onChange={handleChange}
@@ -109,14 +109,16 @@ export function HistoryItem({
           onClick={selectionMode ? handleItemClick : undefined}
         >
           <WithTooltip tooltip={currentDescription}>
-            <span className="truncate pr-24">{currentDescription}</span>
+            {/* Adjusted right padding for description to accommodate icons better on small screens */}
+            <span className="truncate pr-20 sm:pr-24">{currentDescription}</span>
           </WithTooltip>
           <div
             className={classNames(
-              'absolute right-0 top-0 bottom-0 flex items-center bg-transparent px-2 transition-colors',
+              'absolute right-0 top-0 bottom-0 flex items-center bg-transparent px-1 sm:px-2 transition-colors', // Adjusted horizontal padding for actions container
             )}
           >
-            <div className="flex items-center gap-2.5 text-gray-400 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
+            {/* Adjusted gap for action buttons */}
+            <div className="flex items-center gap-1.5 sm:gap-2 text-gray-400 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
               <ChatActionButton
                 toolTipContent="Export"
                 icon="i-ph:download-simple h-4 w-4"

@@ -46,7 +46,8 @@ export const IconButton = memo(
         <button
           ref={ref}
           className={classNames(
-            'flex items-center text-bolt-elements-item-contentDefault bg-transparent enabled:hover:text-bolt-elements-item-contentActive rounded-md p-1 enabled:hover:bg-bolt-elements-item-backgroundActive disabled:cursor-not-allowed focus:outline-none',
+            // Adjusted padding
+            'flex items-center text-bolt-elements-item-contentDefault bg-transparent enabled:hover:text-bolt-elements-item-contentActive rounded-md p-0.5 sm:p-1 enabled:hover:bg-bolt-elements-item-backgroundActive disabled:cursor-not-allowed focus:outline-none',
             {
               [classNames('opacity-30', disabledClassName)]: disabled,
             },
@@ -70,15 +71,16 @@ export const IconButton = memo(
 );
 
 function getIconSize(size: IconSize) {
+  // Adjusted mappings for smaller default icon sizes, respecting ~w-5 h-5 max
   if (size === 'sm') {
-    return 'text-sm';
+    return 'text-xs'; // approx w-3 h-3
   } else if (size === 'md') {
-    return 'text-md';
+    return 'text-sm'; // approx w-4 h-4
   } else if (size === 'lg') {
-    return 'text-lg';
+    return 'text-base'; // approx w-5 h-5
   } else if (size === 'xl') {
-    return 'text-xl';
-  } else {
-    return 'text-2xl';
+    return 'text-base sm:text-lg'; // default w-5 h-5, larger on sm+
+  } else { // xxl
+    return 'text-base sm:text-xl'; // default w-5 h-5, larger on sm+
   }
 }

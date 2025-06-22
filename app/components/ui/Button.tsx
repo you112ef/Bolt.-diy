@@ -3,7 +3,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { classNames } from '~/utils/classNames';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-bolt-elements-borderColor disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs sm:text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-bolt-elements-borderColor disabled:pointer-events-none disabled:opacity-50', // Adjusted base text size
   {
     variants: {
       variant: {
@@ -17,10 +17,11 @@ const buttonVariants = cva(
         link: 'text-bolt-elements-textPrimary underline-offset-4 hover:underline',
       },
       size: {
-        default: 'h-9 px-4 py-2',
-        sm: 'h-8 rounded-md px-3 text-xs',
-        lg: 'h-10 rounded-md px-8',
-        icon: 'h-9 w-9',
+        // Adjusted sizes for mobile first, then sm: for larger screens
+        default: 'h-8 px-3 py-1.5 sm:h-9 sm:px-4 sm:py-2',
+        sm: 'h-7 px-2.5 text-xs sm:h-8 sm:px-3', // text-xs is kept as it's already small
+        lg: 'h-9 px-6 sm:h-10 sm:px-8',
+        icon: 'h-8 w-8 sm:h-9 sm:w-9',
       },
     },
     defaultVariants: {
