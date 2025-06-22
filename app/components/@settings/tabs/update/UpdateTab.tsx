@@ -33,7 +33,7 @@ interface UpdateSettings {
 }
 
 const ProgressBar = ({ progress }: { progress: number }) => (
-  <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+  <div className="w-full h-1.5 sm:h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"> {/* Responsive height */}
     <motion.div
       className="h-full bg-blue-500"
       initial={{ width: 0 }}
@@ -44,18 +44,18 @@ const ProgressBar = ({ progress }: { progress: number }) => (
 );
 
 const UpdateProgressDisplay = ({ progress }: { progress: UpdateProgress }) => (
-  <div className="mt-4 space-y-2">
+  <div className="mt-3 sm:mt-4 space-y-1.5 sm:space-y-2"> {/* Responsive margin and space */}
     <div className="flex justify-between items-center">
-      <span className="text-sm font-medium">{progress.message}</span>
-      <span className="text-sm text-gray-500">{progress.progress}%</span>
+      <span className="text-xs sm:text-sm font-medium">{progress.message}</span> {/* Responsive text */}
+      <span className="text-xs sm:text-sm text-gray-500">{progress.progress}%</span> {/* Responsive text */}
     </div>
     <ProgressBar progress={progress.progress || 0} />
     {progress.details && (
-      <div className="mt-2 text-sm text-gray-600">
+      <div className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400"> {/* Responsive margin and text */}
         {progress.details.changedFiles && progress.details.changedFiles.length > 0 && (
-          <div className="mt-4">
-            <div className="font-medium mb-2">Changed Files:</div>
-            <div className="space-y-2">
+          <div className="mt-2 sm:mt-4"> {/* Responsive margin */}
+            <div className="font-medium mb-1.5 sm:mb-2">Changed Files:</div> {/* Responsive margin */}
+            <div className="space-y-1.5 sm:space-y-2"> {/* Responsive space */}
               {/* Group files by type */}
               {['Modified', 'Added', 'Deleted'].map((type) => {
                 const filesOfType = progress.details?.changedFiles?.filter((file) => file.startsWith(type)) || [];
@@ -65,9 +65,9 @@ const UpdateProgressDisplay = ({ progress }: { progress: UpdateProgress }) => (
                 }
 
                 return (
-                  <div key={type} className="space-y-1">
+                  <div key={type} className="space-y-0.5 sm:space-y-1"> {/* Responsive space */}
                     <div
-                      className={classNames('text-sm font-medium', {
+                      className={classNames('text-xs sm:text-sm font-medium', { // Responsive text
                         'text-blue-500': type === 'Modified',
                         'text-green-500': type === 'Added',
                         'text-red-500': type === 'Deleted',
@@ -75,13 +75,13 @@ const UpdateProgressDisplay = ({ progress }: { progress: UpdateProgress }) => (
                     >
                       {type} ({filesOfType.length})
                     </div>
-                    <div className="pl-4 space-y-1">
+                    <div className="pl-2 sm:pl-4 space-y-0.5 sm:space-y-1"> {/* Responsive padding and space */}
                       {filesOfType.map((file, index) => {
                         const fileName = file.split(': ')[1];
                         return (
-                          <div key={index} className="text-sm text-bolt-elements-textSecondary flex items-center gap-2">
+                          <div key={index} className="text-xs text-bolt-elements-textSecondary flex items-center gap-1.5 sm:gap-2"> {/* Responsive gap */}
                             <div
-                              className={classNames('w-4 h-4', {
+                              className={classNames('w-3 h-3 sm:w-4 sm:h-4', { // Responsive icon size
                                 'i-ph:pencil-simple': type === 'Modified',
                                 'i-ph:plus': type === 'Added',
                                 'i-ph:trash': type === 'Deleted',
@@ -90,7 +90,7 @@ const UpdateProgressDisplay = ({ progress }: { progress: UpdateProgress }) => (
                                 'text-red-500': type === 'Deleted',
                               })}
                             />
-                            <span className="font-mono text-xs">{fileName}</span>
+                            <span className="font-mono text-[10px] sm:text-xs">{fileName}</span> {/* Responsive text */}
                           </div>
                         );
                       })}
@@ -101,15 +101,15 @@ const UpdateProgressDisplay = ({ progress }: { progress: UpdateProgress }) => (
             </div>
           </div>
         )}
-        {progress.details.totalSize && <div className="mt-1">Total size: {progress.details.totalSize}</div>}
+        {progress.details.totalSize && <div className="mt-1 text-[10px] sm:text-xs">Total size: {progress.details.totalSize}</div>} {/* Responsive text & margin */}
         {progress.details.additions !== undefined && progress.details.deletions !== undefined && (
-          <div className="mt-1">
+          <div className="mt-1 text-[10px] sm:text-xs"> {/* Responsive text & margin */}
             Changes: <span className="text-green-600">+{progress.details.additions}</span>{' '}
             <span className="text-red-600">-{progress.details.deletions}</span>
           </div>
         )}
         {progress.details.currentCommit && progress.details.remoteCommit && (
-          <div className="mt-1">
+          <div className="mt-1 text-[10px] sm:text-xs"> {/* Responsive text & margin */}
             Updating from {progress.details.currentCommit} to {progress.details.remoteCommit}
           </div>
         )}
@@ -285,87 +285,62 @@ const UpdateTab = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 sm:gap-6"> {/* Responsive gap */}
       <motion.div
-        className="flex items-center gap-3"
+        className="flex items-center gap-2 sm:gap-3" // Responsive gap
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="i-ph:arrow-circle-up text-xl text-purple-500" />
+        <div className="i-ph:arrow-circle-up text-lg sm:text-xl text-purple-500" /> {/* Responsive icon size */}
         <div>
-          <h3 className="text-lg font-medium text-bolt-elements-textPrimary">Updates</h3>
-          <p className="text-sm text-bolt-elements-textSecondary">Check for and manage application updates</p>
+          <h3 className="text-base sm:text-lg font-medium text-bolt-elements-textPrimary">Updates</h3> {/* Responsive text */}
+          <p className="text-xs sm:text-sm text-bolt-elements-textSecondary">Check for and manage application updates</p> {/* Responsive text */}
         </div>
       </motion.div>
 
       {/* Update Settings Card */}
       <motion.div
-        className="p-6 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]"
+        className="p-3 sm:p-4 md:p-6 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]" // Responsive padding and rounding
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
       >
-        <div className="flex items-center gap-3 mb-6">
-          <div className="i-ph:gear text-purple-500 w-5 h-5" />
-          <h3 className="text-lg font-medium text-bolt-elements-textPrimary">Update Settings</h3>
+        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6"> {/* Responsive gap and margin */}
+          <div className="i-ph:gear text-purple-500 w-4 h-4 sm:w-5 sm:h-5" /> {/* Responsive icon size */}
+          <h3 className="text-sm sm:text-lg font-medium text-bolt-elements-textPrimary">Update Settings</h3> {/* Responsive text */}
         </div>
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="space-y-3 sm:space-y-4"> {/* Responsive space */}
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"> {/* Stack on small, row on sm+ */}
             <div>
-              <span className="text-sm text-bolt-elements-textPrimary">Automatic Updates</span>
-              <p className="text-xs text-bolt-elements-textSecondary">
+              <span className="text-xs sm:text-sm text-bolt-elements-textPrimary">Automatic Updates</span> {/* Responsive text */}
+              <p className="text-[10px] sm:text-xs text-bolt-elements-textSecondary"> {/* Responsive text */}
                 Automatically check and apply updates when available
               </p>
             </div>
-            <button
-              onClick={() => setUpdateSettings((prev) => ({ ...prev, autoUpdate: !prev.autoUpdate }))}
-              className={classNames(
-                'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
-                updateSettings.autoUpdate ? 'bg-purple-500' : 'bg-gray-200 dark:bg-gray-700',
-              )}
-            >
-              <span
-                className={classNames(
-                  'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
-                  updateSettings.autoUpdate ? 'translate-x-6' : 'translate-x-1',
-                )}
-              />
-            </button>
+            {/* Using ui/Switch which is already responsive */}
+            <Switch checked={updateSettings.autoUpdate} onCheckedChange={(checked) => setUpdateSettings(prev => ({ ...prev, autoUpdate: checked }))} />
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <span className="text-sm text-bolt-elements-textPrimary">In-App Notifications</span>
-              <p className="text-xs text-bolt-elements-textSecondary">Show notifications when updates are available</p>
+              <span className="text-xs sm:text-sm text-bolt-elements-textPrimary">In-App Notifications</span>
+              <p className="text-[10px] sm:text-xs text-bolt-elements-textSecondary">Show notifications when updates are available</p>
             </div>
-            <button
-              onClick={() => setUpdateSettings((prev) => ({ ...prev, notifyInApp: !prev.notifyInApp }))}
-              className={classNames(
-                'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
-                updateSettings.notifyInApp ? 'bg-purple-500' : 'bg-gray-200 dark:bg-gray-700',
-              )}
-            >
-              <span
-                className={classNames(
-                  'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
-                  updateSettings.notifyInApp ? 'translate-x-6' : 'translate-x-1',
-                )}
-              />
-            </button>
+            <Switch checked={updateSettings.notifyInApp} onCheckedChange={(checked) => setUpdateSettings(prev => ({ ...prev, notifyInApp: checked }))} />
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <span className="text-sm text-bolt-elements-textPrimary">Check Interval</span>
-              <p className="text-xs text-bolt-elements-textSecondary">How often to check for updates</p>
+              <span className="text-xs sm:text-sm text-bolt-elements-textPrimary">Check Interval</span>
+              <p className="text-[10px] sm:text-xs text-bolt-elements-textSecondary">How often to check for updates</p>
             </div>
             <select
               value={updateSettings.checkInterval}
               onChange={(e) => setUpdateSettings((prev) => ({ ...prev, checkInterval: Number(e.target.value) }))}
               className={classNames(
-                'px-3 py-2 rounded-lg text-sm',
+                'px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm w-full sm:w-auto', // Responsive padding, rounding, text, width
                 'bg-[#F5F5F5] dark:bg-[#1A1A1A]',
                 'border border-[#E5E5E5] dark:border-[#1A1A1A]',
                 'text-bolt-elements-textPrimary',
@@ -384,28 +359,28 @@ const UpdateTab = () => {
 
       {/* Update Status Card */}
       <motion.div
-        className="p-6 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]"
+        className="p-3 sm:p-4 md:p-6 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]" // Responsive padding and rounding
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.2 }}
       >
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="i-ph:arrows-clockwise text-purple-500 w-5 h-5" />
-            <h3 className="text-lg font-medium text-bolt-elements-textPrimary">Update Status</h3>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6"> {/* Stack on small, row on sm+; Responsive margin & gap */}
+          <div className="flex items-center gap-2 sm:gap-3"> {/* Responsive gap */}
+            <div className="i-ph:arrows-clockwise text-purple-500 w-4 h-4 sm:w-5 sm:h-5" /> {/* Responsive icon size */}
+            <h3 className="text-sm sm:text-lg font-medium text-bolt-elements-textPrimary">Update Status</h3> {/* Responsive text */}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-1.5 md:gap-2 self-stretch sm:self-auto"> {/* Stack buttons on small, row on sm+ */}
             {updateProgress?.details?.updateReady && !updateSettings.autoUpdate && (
               <button
                 onClick={handleUpdate}
                 className={classNames(
-                  'flex items-center gap-2 px-4 py-2 rounded-lg text-sm',
+                  'flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm rounded-md sm:rounded-lg', // Responsive styles
                   'bg-purple-500 text-white',
                   'hover:bg-purple-600',
                   'transition-colors duration-200',
                 )}
               >
-                <div className="i-ph:arrow-circle-up w-4 h-4" />
+                <div className="i-ph:arrow-circle-up w-3.5 h-3.5 sm:w-4 sm:h-4" /> {/* Responsive icon */}
                 Update Now
               </button>
             )}
@@ -415,7 +390,7 @@ const UpdateTab = () => {
                 checkForUpdates();
               }}
               className={classNames(
-                'flex items-center gap-2 px-4 py-2 rounded-lg text-sm',
+                'flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm rounded-md sm:rounded-lg', // Responsive styles
                 'bg-[#F5F5F5] dark:bg-[#1A1A1A]',
                 'hover:bg-purple-500/10 hover:text-purple-500',
                 'dark:hover:bg-purple-500/20 dark:hover:text-purple-500',
@@ -426,17 +401,16 @@ const UpdateTab = () => {
               disabled={isChecking}
             >
               {isChecking ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2">
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                    className="i-ph:arrows-clockwise w-4 h-4"
-                  />
+                    className="i-ph:arrows-clockwise w-3.5 h-3.5 sm:w-4 sm:h-4" /> {/* Responsive icon */}
                   Checking...
                 </div>
               ) : (
                 <>
-                  <div className="i-ph:arrows-clockwise w-4 h-4" />
+                  <div className="i-ph:arrows-clockwise w-3.5 h-3.5 sm:w-4 sm:h-4" /> {/* Responsive icon */}
                   Check for Updates
                 </>
               )}
@@ -447,46 +421,45 @@ const UpdateTab = () => {
         {/* Show progress information */}
         {updateProgress && <UpdateProgressDisplay progress={updateProgress} />}
 
-        {error && <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">{error}</div>}
+        {error && <div className="mt-2 sm:mt-4 p-3 sm:p-4 bg-red-100 text-red-700 rounded-md sm:rounded-lg text-xs sm:text-sm">{error}</div>} {/* Responsive margin, padding, text, rounding */}
 
         {/* Show update source information */}
         {updateProgress?.details?.currentCommit && updateProgress?.details?.remoteCommit && (
-          <div className="mt-4 text-sm text-bolt-elements-textSecondary">
-            <div className="flex items-center justify-between">
-              <div>
+          <div className="mt-2 sm:mt-4 text-xs sm:text-sm text-bolt-elements-textSecondary"> {/* Responsive margin and text */}
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"> {/* Stack on small, row on sm+ */}
+              <div className="flex-1"> {/* Allow text to wrap */}
                 <p>
-                  Updates are fetched from: <span className="font-mono">stackblitz-labs/bolt.diy</span> (
+                  Updates are fetched from: <span className="font-mono text-[10px] sm:text-xs">stackblitz-labs/bolt.diy</span> (
                   {isLatestBranch ? 'main' : 'stable'} branch)
                 </p>
-                <p className="mt-1">
-                  Current version: <span className="font-mono">{updateProgress.details.currentCommit}</span>
-                  <span className="mx-2">→</span>
-                  Latest version: <span className="font-mono">{updateProgress.details.remoteCommit}</span>
+                <p className="mt-0.5 sm:mt-1">
+                  Current version: <span className="font-mono text-[10px] sm:text-xs">{updateProgress.details.currentCommit}</span>
+                  <span className="mx-1 sm:mx-2">→</span>
+                  Latest version: <span className="font-mono text-[10px] sm:text-xs">{updateProgress.details.remoteCommit}</span>
                 </p>
               </div>
-              {updateProgress?.details?.compareUrl && (
+              {updateProgress?.details?.compareUrl && ( // Button moved below for better stacking
                 <a
                   href={updateProgress.details.compareUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={classNames(
-                    'flex items-center gap-2 px-4 py-2 rounded-lg text-sm',
+                    'flex items-center self-start sm:self-auto gap-1.5 sm:gap-2 mt-1 sm:mt-0 px-3 py-1.5 text-[10px] sm:text-xs rounded-md sm:rounded-lg', // Responsive styles
                     'bg-[#F5F5F5] dark:bg-[#1A1A1A]',
                     'hover:bg-purple-500/10 hover:text-purple-500',
                     'dark:hover:bg-purple-500/20 dark:hover:text-purple-500',
                     'text-bolt-elements-textPrimary',
                     'transition-colors duration-200',
-                    'w-fit',
                   )}
                 >
-                  <div className="i-ph:github-logo w-4 h-4" />
+                  <div className="i-ph:github-logo w-3.5 h-3.5 sm:w-4 sm:h-4" /> {/* Responsive icon */}
                   View Changes on GitHub
                 </a>
               )}
             </div>
             {updateProgress?.details?.additions !== undefined && updateProgress?.details?.deletions !== undefined && (
-              <div className="mt-2 flex items-center gap-2">
-                <div className="i-ph:git-diff text-purple-500 w-4 h-4" />
+              <div className="mt-1.5 sm:mt-2 flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs"> {/* Responsive margin, gap, text */}
+                <div className="i-ph:git-diff text-purple-500 w-3.5 h-3.5 sm:w-4 sm:h-4" /> {/* Responsive icon */}
                 Changes: <span className="text-green-600">+{updateProgress.details.additions}</span>{' '}
                 <span className="text-red-600">-{updateProgress.details.deletions}</span>
               </div>
@@ -494,49 +467,26 @@ const UpdateTab = () => {
           </div>
         )}
 
-        {/* Add this before the changed files section */}
+        {/* Changelog and Commit Messages - These were duplicated in original, consolidating */}
         {updateProgress?.details?.changelog && (
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="i-ph:scroll text-purple-500 w-5 h-5" />
-              <p className="font-medium">Changelog</p>
+          <div className="mt-4 sm:mt-6 mb-4 sm:mb-6"> {/* Responsive margin */}
+            <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2"> {/* Responsive gap & margin */}
+              <div className="i-ph:scroll text-purple-500 w-4 h-4 sm:w-5 sm:h-5" /> {/* Responsive icon */}
+              <p className="font-medium text-xs sm:text-sm">Changelog</p> {/* Responsive text */}
             </div>
-            <div className="bg-[#F5F5F5] dark:bg-[#1A1A1A] rounded-lg p-4 overflow-auto max-h-[300px]">
-              <div className="prose dark:prose-invert prose-sm max-w-none">
+            <div className="bg-[#F5F5F5] dark:bg-[#1A1A1A] rounded-md sm:rounded-lg p-3 sm:p-4 overflow-auto max-h-[200px] sm:max-h-[300px]"> {/* Responsive padding, rounding, max-height */}
+              <div className="prose dark:prose-invert prose-xs sm:prose-sm max-w-none"> {/* Responsive prose size */}
                 <Markdown>{updateProgress.details.changelog}</Markdown>
               </div>
             </div>
           </div>
         )}
 
-        {/* Add this in the update status card, after the commit info */}
-        {updateProgress?.details?.compareUrl && (
-          <div className="mt-4">
-            <a
-              href={updateProgress.details.compareUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={classNames(
-                'flex items-center gap-2 px-4 py-2 rounded-lg text-sm',
-                'bg-[#F5F5F5] dark:bg-[#1A1A1A]',
-                'hover:bg-purple-500/10 hover:text-purple-500',
-                'dark:hover:bg-purple-500/20 dark:hover:text-purple-500',
-                'text-bolt-elements-textPrimary',
-                'transition-colors duration-200',
-                'w-fit',
-              )}
-            >
-              <div className="i-ph:github-logo w-4 h-4" />
-              View Changes on GitHub
-            </a>
-          </div>
-        )}
-
-        {updateProgress?.details?.commitMessages && updateProgress.details.commitMessages.length > 0 && (
-          <div className="mb-6">
-            <p className="font-medium mb-2">Changes in this Update:</p>
-            <div className="bg-[#F5F5F5] dark:bg-[#1A1A1A] rounded-lg p-4 overflow-auto max-h-[400px]">
-              <div className="prose dark:prose-invert prose-sm max-w-none">
+        {updateProgress?.details?.commitMessages && updateProgress.details.commitMessages.length > 0 && !updateProgress?.details?.changelog && ( /* Show only if changelog isn't present to avoid duplicate info */
+          <div className="mt-4 sm:mt-6 mb-4 sm:mb-6">
+            <p className="font-medium text-xs sm:text-sm mb-1.5 sm:mb-2">Changes in this Update:</p>
+            <div className="bg-[#F5F5F5] dark:bg-[#1A1A1A] rounded-md sm:rounded-lg p-3 sm:p-4 overflow-auto max-h-[200px] sm:max-h-[400px]">
+              <div className="prose dark:prose-invert prose-xs sm:prose-sm max-w-none">
                 {updateProgress.details.commitMessages.map((section, index) => (
                   <Markdown key={index}>{section}</Markdown>
                 ))}
@@ -546,25 +496,25 @@ const UpdateTab = () => {
         )}
       </motion.div>
 
-      {/* Update dialog */}
+      {/* Update dialog - Dialog component itself is responsive */}
       <DialogRoot open={showUpdateDialog} onOpenChange={setShowUpdateDialog}>
-        <Dialog>
+        <Dialog> {/* Uses responsive Dialog from ui/Dialog.tsx */}
           <DialogTitle>Update Available</DialogTitle>
           <DialogDescription>
-            <div className="mt-4">
-              <p className="text-sm text-bolt-elements-textSecondary mb-4">
-                A new version is available from <span className="font-mono">stackblitz-labs/bolt.diy</span> (
+            <div className="mt-2 sm:mt-4"> {/* Responsive margin */}
+              <p className="text-xs sm:text-sm text-bolt-elements-textSecondary mb-3 sm:mb-4"> {/* Responsive text & margin */}
+                A new version is available from <span className="font-mono text-[10px] sm:text-xs">stackblitz-labs/bolt.diy</span> (
                 {isLatestBranch ? 'main' : 'stable'} branch)
               </p>
 
               {updateProgress?.details?.compareUrl && (
-                <div className="mb-6">
+                <div className="mb-4 sm:mb-6"> {/* Responsive margin */}
                   <a
                     href={updateProgress.details.compareUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={classNames(
-                      'flex items-center gap-2 px-4 py-2 rounded-lg text-sm',
+                      'flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 text-[10px] sm:text-xs rounded-md sm:rounded-lg', // Responsive styles
                       'bg-[#F5F5F5] dark:bg-[#1A1A1A]',
                       'hover:bg-purple-500/10 hover:text-purple-500',
                       'dark:hover:bg-purple-500/20 dark:hover:text-purple-500',
@@ -573,19 +523,19 @@ const UpdateTab = () => {
                       'w-fit',
                     )}
                   >
-                    <div className="i-ph:github-logo w-4 h-4" />
+                    <div className="i-ph:github-logo w-3.5 h-3.5 sm:w-4 sm:h-4" /> {/* Responsive icon */}
                     View Changes on GitHub
                   </a>
                 </div>
               )}
 
               {updateProgress?.details?.commitMessages && updateProgress.details.commitMessages.length > 0 && (
-                <div className="mb-6">
-                  <p className="font-medium mb-2">Commit Messages:</p>
-                  <div className="bg-[#F5F5F5] dark:bg-[#1A1A1A] rounded-lg p-3 space-y-2">
+                <div className="mb-4 sm:mb-6"> {/* Responsive margin */}
+                  <p className="font-medium text-xs sm:text-sm mb-1.5 sm:mb-2">Commit Messages:</p> {/* Responsive text & margin */}
+                  <div className="bg-[#F5F5F5] dark:bg-[#1A1A1A] rounded-md sm:rounded-lg p-2 sm:p-3 space-y-1 sm:space-y-2 max-h-[150px] sm:max-h-[200px] overflow-y-auto"> {/* Responsive padding, space, max-height */}
                     {updateProgress.details.commitMessages.map((msg, index) => (
-                      <div key={index} className="text-sm text-bolt-elements-textSecondary flex items-start gap-2">
-                        <div className="i-ph:git-commit text-purple-500 w-4 h-4 mt-0.5 flex-shrink-0" />
+                      <div key={index} className="text-[10px] sm:text-xs text-bolt-elements-textSecondary flex items-start gap-1.5 sm:gap-2"> {/* Responsive text & gap */}
+                        <div className="i-ph:git-commit text-purple-500 w-3.5 h-3.5 sm:w-4 sm:h-4 mt-0.5 flex-shrink-0" /> {/* Responsive icon */}
                         <span>{msg}</span>
                       </div>
                     ))}
@@ -594,15 +544,15 @@ const UpdateTab = () => {
               )}
 
               {updateProgress?.details?.totalSize && (
-                <div className="flex items-center gap-4 text-sm text-bolt-elements-textSecondary">
-                  <div className="flex items-center gap-2">
-                    <div className="i-ph:file text-purple-500 w-4 h-4" />
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-bolt-elements-textSecondary"> {/* Stack on small, row on sm+; Responsive text & gap */}
+                  <div className="flex items-center gap-1.5 sm:gap-2"> {/* Responsive gap */}
+                    <div className="i-ph:file text-purple-500 w-3.5 h-3.5 sm:w-4 sm:h-4" /> {/* Responsive icon */}
                     Total size: {updateProgress.details.totalSize}
                   </div>
                   {updateProgress?.details?.additions !== undefined &&
                     updateProgress?.details?.deletions !== undefined && (
-                      <div className="flex items-center gap-2">
-                        <div className="i-ph:git-diff text-purple-500 w-4 h-4" />
+                      <div className="flex items-center gap-1.5 sm:gap-2"> {/* Responsive gap */}
+                        <div className="i-ph:git-diff text-purple-500 w-3.5 h-3.5 sm:w-4 sm:h-4" /> {/* Responsive icon */}
                         Changes: <span className="text-green-600">+{updateProgress.details.additions}</span>{' '}
                         <span className="text-red-600">-{updateProgress.details.deletions}</span>
                       </div>
@@ -611,7 +561,8 @@ const UpdateTab = () => {
               )}
             </div>
           </DialogDescription>
-          <div className="flex justify-end gap-2 mt-6">
+          {/* DialogButtons are already responsive */}
+          <div className="flex flex-col gap-2 sm:flex-row sm:justify-end mt-4 sm:mt-6"> {/* Stack buttons on small, row on sm+ */}
             <DialogButton type="secondary" onClick={() => setShowUpdateDialog(false)}>
               Cancel
             </DialogButton>

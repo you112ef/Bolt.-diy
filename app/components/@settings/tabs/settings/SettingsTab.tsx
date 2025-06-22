@@ -60,29 +60,32 @@ export default function SettingsTab() {
   }, [settings]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4"> {/* Responsive space-y */}
       {/* Language & Notifications */}
       <motion.div
-        className="bg-white dark:bg-[#0A0A0A] rounded-lg shadow-sm dark:shadow-none p-4 space-y-4"
+        className="bg-white dark:bg-[#0A0A0A] rounded-lg shadow-sm dark:shadow-none p-3 sm:p-4 space-y-3 sm:space-y-4" // Responsive padding and space-y
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <div className="flex items-center gap-2 mb-4">
-          <div className="i-ph:palette-fill w-4 h-4 text-purple-500" />
-          <span className="text-sm font-medium text-bolt-elements-textPrimary">Preferences</span>
+        {/* Responsive section header */}
+        <div className="flex items-center gap-1 sm:gap-2 mb-2 sm:mb-3 md:mb-4">
+          <div className="i-ph:palette-fill w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-500" />
+          <span className="text-xs sm:text-sm font-medium text-bolt-elements-textPrimary">Preferences</span>
         </div>
 
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="i-ph:translate-fill w-4 h-4 text-bolt-elements-textSecondary" />
-            <label className="block text-sm text-bolt-elements-textSecondary">Language</label>
+          {/* Responsive label group */}
+          <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
+            <div className="i-ph:translate-fill w-3.5 h-3.5 sm:w-4 sm:h-4 text-bolt-elements-textSecondary" />
+            <label className="block text-xs sm:text-sm text-bolt-elements-textSecondary">Language</label>
           </div>
+          {/* Responsive select */}
           <select
             value={settings.language}
             onChange={(e) => setSettings((prev) => ({ ...prev, language: e.target.value }))}
             className={classNames(
-              'w-full px-3 py-2 rounded-lg text-sm',
+              'w-full px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm',
               'bg-[#FAFAFA] dark:bg-[#0A0A0A]',
               'border border-[#E5E5E5] dark:border-[#1A1A1A]',
               'text-bolt-elements-textPrimary',
@@ -104,12 +107,14 @@ export default function SettingsTab() {
         </div>
 
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="i-ph:bell-fill w-4 h-4 text-bolt-elements-textSecondary" />
-            <label className="block text-sm text-bolt-elements-textSecondary">Notifications</label>
+          {/* Responsive label group */}
+          <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
+            <div className="i-ph:bell-fill w-3.5 h-3.5 sm:w-4 sm:h-4 text-bolt-elements-textSecondary" />
+            <label className="block text-xs sm:text-sm text-bolt-elements-textSecondary">Notifications</label>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-bolt-elements-textSecondary">
+            {/* Responsive text */}
+            <span className="text-xs sm:text-sm text-bolt-elements-textSecondary">
               {settings.notifications ? 'Notifications are enabled' : 'Notifications are disabled'}
             </span>
             <Switch
@@ -187,23 +192,27 @@ export default function SettingsTab() {
           <span className="text-sm font-medium text-bolt-elements-textPrimary">Keyboard Shortcuts</span>
         </div>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between p-2 rounded-lg bg-[#FAFAFA] dark:bg-[#1A1A1A]">
-            <div className="flex flex-col">
-              <span className="text-sm text-bolt-elements-textPrimary">Toggle Theme</span>
-              <span className="text-xs text-bolt-elements-textSecondary">Switch between light and dark mode</span>
+        <div className="space-y-1.5 sm:space-y-2"> {/* Responsive space */}
+          {/* Responsive padding, flex direction, and item alignment for shortcut item */}
+          <div className="flex flex-col items-start sm:flex-row sm:items-center sm:justify-between p-1.5 sm:p-2 rounded-md sm:rounded-lg bg-[#FAFAFA] dark:bg-[#1A1A1A]">
+            <div className="flex flex-col mb-1 sm:mb-0">
+              {/* Responsive text sizes */}
+              <span className="text-xs sm:text-sm text-bolt-elements-textPrimary">Toggle Theme</span>
+              <span className="text-[10px] sm:text-xs text-bolt-elements-textSecondary">Switch between light and dark mode</span>
             </div>
-            <div className="flex items-center gap-1">
-              <kbd className="px-2 py-1 text-xs font-semibold text-bolt-elements-textSecondary bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] rounded shadow-sm">
+            {/* Responsive gap for kbd elements */}
+            <div className="flex items-center gap-0.5 sm:gap-1">
+              {/* Responsive kbd styling */}
+              <kbd className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-[10px] sm:text-xs font-semibold text-bolt-elements-textSecondary bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] rounded sm:rounded-md shadow-sm">
                 {getModifierSymbol('meta')}
               </kbd>
-              <kbd className="px-2 py-1 text-xs font-semibold text-bolt-elements-textSecondary bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] rounded shadow-sm">
+              <kbd className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-[10px] sm:text-xs font-semibold text-bolt-elements-textSecondary bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] rounded sm:rounded-md shadow-sm">
                 {getModifierSymbol('alt')}
               </kbd>
-              <kbd className="px-2 py-1 text-xs font-semibold text-bolt-elements-textSecondary bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] rounded shadow-sm">
+              <kbd className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-[10px] sm:text-xs font-semibold text-bolt-elements-textSecondary bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] rounded sm:rounded-md shadow-sm">
                 {getModifierSymbol('shift')}
               </kbd>
-              <kbd className="px-2 py-1 text-xs font-semibold text-bolt-elements-textSecondary bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] rounded shadow-sm">
+              <kbd className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-[10px] sm:text-xs font-semibold text-bolt-elements-textSecondary bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] rounded sm:rounded-md shadow-sm">
                 D
               </kbd>
             </div>

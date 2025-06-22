@@ -170,23 +170,23 @@ const DependencySection = ({
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger
         className={classNames(
-          'flex w-full items-center justify-between p-4',
+          'flex w-full items-center justify-between p-3 sm:p-4', // Responsive padding
           'bg-white dark:bg-[#0A0A0A]',
           'hover:bg-purple-50/50 dark:hover:bg-[#1a1a1a]',
           'border-b border-[#E5E5E5] dark:border-[#1A1A1A]',
           'transition-colors duration-200',
-          'first:rounded-t-lg last:rounded-b-lg',
-          { 'hover:rounded-lg': !isOpen },
+          'first:rounded-t-lg last:rounded-b-lg', // Keep these as is
+          { 'hover:rounded-lg': !isOpen }, // Keep as is
         )}
       >
-        <div className="flex items-center gap-3">
-          <div className="i-ph:package text-bolt-elements-textSecondary w-4 h-4" />
-          <span className="text-base text-bolt-elements-textPrimary">
+        <div className="flex items-center gap-2 sm:gap-3"> {/* Responsive gap */}
+          <div className="i-ph:package text-bolt-elements-textSecondary w-4 h-4" /> {/* Icon size fine */}
+          <span className="text-sm sm:text-base text-bolt-elements-textPrimary"> {/* Responsive text */}
             {title} Dependencies ({deps.length})
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-bolt-elements-textSecondary">{isOpen ? 'Hide' : 'Show'}</span>
+        <div className="flex items-center gap-1 sm:gap-2"> {/* Responsive gap */}
+          <span className="text-xs sm:text-sm text-bolt-elements-textSecondary">{isOpen ? 'Hide' : 'Show'}</span> {/* Responsive text */}
           <div
             className={classNames(
               'i-ph:caret-down w-4 h-4 transform transition-transform duration-200 text-bolt-elements-textSecondary',
@@ -198,15 +198,15 @@ const DependencySection = ({
       <CollapsibleContent>
         <ScrollArea
           className={classNames(
-            'h-[200px] w-full',
+            'h-[150px] sm:h-[200px] w-full', // Responsive height
             'bg-white dark:bg-[#0A0A0A]',
             'border-b border-[#E5E5E5] dark:border-[#1A1A1A]',
-            'last:rounded-b-lg last:border-b-0',
+            'last:rounded-b-lg last:border-b-0', // Keep
           )}
         >
-          <div className="space-y-2 p-4">
+          <div className="space-y-1.5 sm:space-y-2 p-3 sm:p-4"> {/* Responsive padding and space */}
             {deps.map((dep) => (
-              <div key={dep.name} className="flex items-center justify-between text-sm">
+              <div key={dep.name} className="flex items-center justify-between text-xs sm:text-sm"> {/* Responsive text */}
                 <span className="text-bolt-elements-textPrimary">{dep.name}</span>
                 <span className="text-bolt-elements-textSecondary">{dep.version}</span>
               </div>
@@ -1235,33 +1235,33 @@ export default function DebugTab() {
         <button
           onClick={() => setIsOpen(true)}
           className={classNames(
-            'group flex items-center gap-2',
-            'rounded-lg px-3 py-1.5',
-            'text-sm text-gray-900 dark:text-white',
+            'group flex items-center gap-1 sm:gap-2', // Responsive gap
+            'rounded-md sm:rounded-lg px-2.5 py-1 sm:px-3 sm:py-1.5', // Responsive padding & rounding
+            'text-xs sm:text-sm text-gray-900 dark:text-white', // Responsive text
             'bg-[#FAFAFA] dark:bg-[#0A0A0A]',
             'border border-[#E5E5E5] dark:border-[#1A1A1A]',
             'hover:bg-purple-500/10 dark:hover:bg-purple-500/20',
             'transition-all duration-200',
           )}
         >
-          <span className="i-ph:download text-lg text-gray-500 dark:text-gray-400 group-hover:text-purple-500 transition-colors" />
+          <span className="i-ph:download text-base sm:text-lg text-gray-500 dark:text-gray-400 group-hover:text-purple-500 transition-colors" /> {/* Responsive icon */}
           Export
         </button>
 
         <Dialog showCloseButton>
-          <div className="p-6">
-            <DialogTitle className="flex items-center gap-2">
-              <div className="i-ph:download w-5 h-5" />
+          <div className="p-3 sm:p-4 md:p-6"> {/* Responsive padding */}
+            <DialogTitle className="flex items-center gap-1.5 sm:gap-2"> {/* Responsive gap */}
+              <div className="i-ph:download w-4 h-4 sm:w-5 sm:h-5" /> {/* Responsive icon */}
               Export Debug Information
             </DialogTitle>
 
-            <div className="mt-4 flex flex-col gap-2">
+            <div className="mt-3 sm:mt-4 flex flex-col gap-1.5 sm:gap-2"> {/* Responsive margin & gap */}
               {exportFormats.map((format) => (
                 <button
                   key={format.id}
                   onClick={() => handleFormatClick(format.handler)}
                   className={classNames(
-                    'flex items-center gap-3 px-4 py-3 text-sm rounded-lg transition-colors w-full text-left',
+                    'flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm rounded-md sm:rounded-lg transition-colors w-full text-left', // Responsive padding, text, rounding, gap
                     'bg-white dark:bg-[#0A0A0A]',
                     'border border-[#E5E5E5] dark:border-[#1A1A1A]',
                     'hover:bg-purple-50 dark:hover:bg-[#1a1a1a]',
@@ -1269,10 +1269,10 @@ export default function DebugTab() {
                     'text-bolt-elements-textPrimary',
                   )}
                 >
-                  <div className={classNames(format.icon, 'w-5 h-5')} />
+                  <div className={classNames(format.icon, 'w-4 h-4 sm:w-5 sm:h-5')} /> {/* Responsive icon */}
                   <div>
                     <div className="font-medium">{format.label}</div>
-                    <div className="text-xs text-bolt-elements-textSecondary mt-0.5">
+                    <div className="text-[10px] sm:text-xs text-bolt-elements-textSecondary mt-0.5"> {/* Responsive text */}
                       {format.id === 'json' && 'Export as a structured JSON file'}
                       {format.id === 'csv' && 'Export as a CSV spreadsheet'}
                       {format.id === 'pdf' && 'Export as a formatted PDF document'}
@@ -1332,26 +1332,26 @@ export default function DebugTab() {
   const status = getOllamaStatus() as StatusResult;
 
   return (
-    <div className="flex flex-col gap-6 max-w-7xl mx-auto p-4">
+    <div className="flex flex-col gap-3 sm:gap-4 md:gap-6 max-w-7xl mx-auto p-2 sm:p-3 md:p-4"> {/* Responsive gap & padding */}
       {/* Quick Stats Banner */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4"> {/* Responsive gap & md:grid-cols-2 */}
         {/* Errors Card */}
-        <div className="p-4 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] hover:border-purple-500/30 transition-all duration-200 h-[180px] flex flex-col">
-          <div className="flex items-center gap-2">
-            <div className="i-ph:warning-octagon text-purple-500 w-4 h-4" />
-            <div className="text-sm text-bolt-elements-textSecondary">Errors</div>
+        <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] hover:border-purple-500/30 transition-all duration-200 min-h-[120px] sm:min-h-[150px] md:min-h-[170px] flex flex-col"> {/* Responsive padding, rounding, min-height */}
+          <div className="flex items-center gap-1.5 sm:gap-2"> {/* Responsive gap */}
+            <div className="i-ph:warning-octagon text-purple-500 w-4 h-4" /> {/* Icon size fine */}
+            <div className="text-xs sm:text-sm text-bolt-elements-textSecondary">Errors</div> {/* Responsive text */}
           </div>
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-1 sm:gap-2 mt-1 sm:mt-2"> {/* Responsive gap & margin */}
             <span
-              className={classNames('text-2xl font-semibold', errorLogs.length > 0 ? 'text-red-500' : 'text-green-500')}
+              className={classNames('text-xl sm:text-2xl font-semibold', errorLogs.length > 0 ? 'text-red-500' : 'text-green-500')} // Responsive text
             >
               {errorLogs.length}
             </span>
           </div>
-          <div className="text-xs text-bolt-elements-textSecondary mt-2 flex items-center gap-1.5">
+          <div className="text-[10px] sm:text-xs text-bolt-elements-textSecondary mt-1 sm:mt-2 flex items-center gap-1 sm:gap-1.5"> {/* Responsive text, margin, gap */}
             <div
               className={classNames(
-                'w-3.5 h-3.5',
+                'w-3.5 h-3.5', // Icon size fine
                 errorLogs.length > 0 ? 'i-ph:warning text-red-500' : 'i-ph:check-circle text-green-500',
               )}
             />
@@ -1360,15 +1360,15 @@ export default function DebugTab() {
         </div>
 
         {/* Memory Usage Card */}
-        <div className="p-4 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] hover:border-purple-500/30 transition-all duration-200 h-[180px] flex flex-col">
-          <div className="flex items-center gap-2">
+        <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] hover:border-purple-500/30 transition-all duration-200 min-h-[120px] sm:min-h-[150px] md:min-h-[170px] flex flex-col">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <div className="i-ph:cpu text-purple-500 w-4 h-4" />
-            <div className="text-sm text-bolt-elements-textSecondary">Memory Usage</div>
+            <div className="text-xs sm:text-sm text-bolt-elements-textSecondary">Memory Usage</div>
           </div>
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-1 sm:gap-2 mt-1 sm:mt-2">
             <span
               className={classNames(
-                'text-2xl font-semibold',
+                'text-xl sm:text-2xl font-semibold',
                 (systemInfo?.memory?.percentage ?? 0) > 80
                   ? 'text-red-500'
                   : (systemInfo?.memory?.percentage ?? 0) > 60
@@ -1382,7 +1382,7 @@ export default function DebugTab() {
           <Progress
             value={systemInfo?.memory?.percentage ?? 0}
             className={classNames(
-              'mt-2',
+              'mt-1 sm:mt-2', // Responsive margin
               (systemInfo?.memory?.percentage ?? 0) > 80
                 ? '[&>div]:bg-red-500'
                 : (systemInfo?.memory?.percentage ?? 0) > 60
@@ -1390,22 +1390,22 @@ export default function DebugTab() {
                   : '[&>div]:bg-green-500',
             )}
           />
-          <div className="text-xs text-bolt-elements-textSecondary mt-2 flex items-center gap-1.5">
+          <div className="text-[10px] sm:text-xs text-bolt-elements-textSecondary mt-1 sm:mt-2 flex items-center gap-1 sm:gap-1.5">
             <div className="i-ph:info w-3.5 h-3.5 text-purple-500" />
             Used: {systemInfo?.memory.used ?? '0 GB'} / {systemInfo?.memory.total ?? '0 GB'}
           </div>
         </div>
 
         {/* Page Load Time Card */}
-        <div className="p-4 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] hover:border-purple-500/30 transition-all duration-200 h-[180px] flex flex-col">
-          <div className="flex items-center gap-2">
+        <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] hover:border-purple-500/30 transition-all duration-200 min-h-[120px] sm:min-h-[150px] md:min-h-[170px] flex flex-col">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <div className="i-ph:timer text-purple-500 w-4 h-4" />
-            <div className="text-sm text-bolt-elements-textSecondary">Page Load Time</div>
+            <div className="text-xs sm:text-sm text-bolt-elements-textSecondary">Page Load Time</div>
           </div>
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-1 sm:gap-2 mt-1 sm:mt-2">
             <span
               className={classNames(
-                'text-2xl font-semibold',
+                'text-xl sm:text-2xl font-semibold',
                 (systemInfo?.performance.timing.loadTime ?? 0) > 2000
                   ? 'text-red-500'
                   : (systemInfo?.performance.timing.loadTime ?? 0) > 1000
@@ -1416,22 +1416,22 @@ export default function DebugTab() {
               {systemInfo ? (systemInfo.performance.timing.loadTime / 1000).toFixed(2) : '-'}s
             </span>
           </div>
-          <div className="text-xs text-bolt-elements-textSecondary mt-2 flex items-center gap-1.5">
+          <div className="text-[10px] sm:text-xs text-bolt-elements-textSecondary mt-1 sm:mt-2 flex items-center gap-1 sm:gap-1.5">
             <div className="i-ph:code w-3.5 h-3.5 text-purple-500" />
             DOM Ready: {systemInfo ? (systemInfo.performance.timing.domReadyTime / 1000).toFixed(2) : '-'}s
           </div>
         </div>
 
         {/* Network Speed Card */}
-        <div className="p-4 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] hover:border-purple-500/30 transition-all duration-200 h-[180px] flex flex-col">
-          <div className="flex items-center gap-2">
+        <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] hover:border-purple-500/30 transition-all duration-200 min-h-[120px] sm:min-h-[150px] md:min-h-[170px] flex flex-col">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <div className="i-ph:wifi-high text-purple-500 w-4 h-4" />
-            <div className="text-sm text-bolt-elements-textSecondary">Network Speed</div>
+            <div className="text-xs sm:text-sm text-bolt-elements-textSecondary">Network Speed</div>
           </div>
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-1 sm:gap-2 mt-1 sm:mt-2">
             <span
               className={classNames(
-                'text-2xl font-semibold',
+                'text-xl sm:text-2xl font-semibold',
                 (systemInfo?.network.downlink ?? 0) < 5
                   ? 'text-red-500'
                   : (systemInfo?.network.downlink ?? 0) < 10
@@ -1442,65 +1442,65 @@ export default function DebugTab() {
               {systemInfo?.network.downlink ?? '-'} Mbps
             </span>
           </div>
-          <div className="text-xs text-bolt-elements-textSecondary mt-2 flex items-center gap-1.5">
+          <div className="text-[10px] sm:text-xs text-bolt-elements-textSecondary mt-1 sm:mt-2 flex items-center gap-1 sm:gap-1.5">
             <div className="i-ph:activity w-3.5 h-3.5 text-purple-500" />
             RTT: {systemInfo?.network.rtt ?? '-'} ms
           </div>
         </div>
 
         {/* Ollama Service Card - Now spans all 4 columns */}
-        <div className="md:col-span-4 p-6 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] hover:border-purple-500/30 transition-all duration-200 h-[260px] flex flex-col">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="i-ph:robot text-purple-500 w-5 h-5" />
+        <div className="md:col-span-4 p-3 sm:p-4 md:p-6 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] hover:border-purple-500/30 transition-all duration-200 min-h-[200px] sm:min-h-[230px] md:h-[260px] flex flex-col"> {/* Responsive padding, rounding, min-height */}
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"> {/* Stack on small screens */}
+            <div className="flex items-center gap-2 sm:gap-3"> {/* Responsive gap */}
+              <div className="i-ph:robot text-purple-500 w-5 h-5" /> {/* Icon size fine */}
               <div>
-                <div className="text-base font-medium text-bolt-elements-textPrimary">Ollama Service</div>
-                <div className="text-xs text-bolt-elements-textSecondary mt-0.5">{status.message}</div>
+                <div className="text-sm sm:text-base font-medium text-bolt-elements-textPrimary">Ollama Service</div> {/* Responsive text */}
+                <div className="text-xs text-bolt-elements-textSecondary mt-0.5">{status.message}</div> {/* Text size fine */}
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-bolt-elements-background-depth-3">
+            <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-0"> {/* Responsive gap & margin */}
+              <div className="flex items-center gap-1.5 sm:gap-2 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-bolt-elements-background-depth-3"> {/* Responsive padding & gap */}
                 <div
-                  className={classNames('w-2 h-2 rounded-full animate-pulse', status.bgColor, {
+                  className={classNames('w-2 h-2 rounded-full animate-pulse', status.bgColor, { // Dot size fine
                     'shadow-lg shadow-green-500/20': status.status === 'Running',
                     'shadow-lg shadow-red-500/20': status.status === 'Not Running',
                   })}
                 />
-                <span className={classNames('text-xs font-medium flex items-center gap-1', status.color)}>
+                <span className={classNames('text-[10px] sm:text-xs font-medium flex items-center gap-1', status.color)}> {/* Responsive text & gap */}
                   {status.status}
                 </span>
               </div>
-              <div className="text-[10px] text-bolt-elements-textTertiary flex items-center gap-1.5">
-                <div className="i-ph:clock w-3 h-3" />
+              <div className="text-[10px] text-bolt-elements-textTertiary flex items-center gap-1 sm:gap-1.5"> {/* Responsive text & gap */}
+                <div className="i-ph:clock w-3 h-3" /> {/* Icon size fine */}
                 {ollamaStatus.lastChecked.toLocaleTimeString()}
               </div>
             </div>
           </div>
 
-          <div className="mt-6 flex-1 min-h-0 flex flex-col">
+          <div className="mt-3 sm:mt-4 md:mt-6 flex-1 min-h-0 flex flex-col"> {/* Responsive margin */}
             {status.status === 'Running' && ollamaStatus.models && ollamaStatus.models.length > 0 ? (
               <>
-                <div className="text-xs font-medium text-bolt-elements-textSecondary flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="i-ph:cube-duotone w-4 h-4 text-purple-500" />
+                <div className="text-[10px] sm:text-xs font-medium text-bolt-elements-textSecondary flex items-center justify-between mb-2 sm:mb-3"> {/* Responsive text & margin */}
+                  <div className="flex items-center gap-1.5 sm:gap-2"> {/* Responsive gap */}
+                    <div className="i-ph:cube-duotone w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-500" /> {/* Responsive icon */}
                     <span>Installed Models</span>
-                    <Badge variant="secondary" className="ml-1">
+                    <Badge variant="secondary" className="ml-1 text-[9px] sm:text-[10px] px-1 sm:px-1.5"> {/* Responsive badge text & padding */}
                       {ollamaStatus.models.length}
                     </Badge>
                   </div>
                 </div>
                 <div className="overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-600">
-                  <div className="grid grid-cols-2 gap-3 pr-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 pr-1 sm:pr-2"> {/* Responsive grid & gap & padding */}
                     {ollamaStatus.models.map((model) => (
                       <div
                         key={model.name}
-                        className="text-sm bg-bolt-elements-background-depth-3 hover:bg-bolt-elements-background-depth-4 rounded-lg px-4 py-3 flex items-center justify-between transition-colors group"
+                        className="text-xs sm:text-sm bg-bolt-elements-background-depth-3 hover:bg-bolt-elements-background-depth-4 rounded-md sm:rounded-lg px-2.5 py-2 sm:px-3 sm:py-2.5 flex items-center justify-between transition-colors group" // Responsive text, padding, rounding
                       >
-                        <div className="flex items-center gap-2 text-bolt-elements-textSecondary">
-                          <div className="i-ph:cube w-4 h-4 text-purple-500/70 group-hover:text-purple-500 transition-colors" />
+                        <div className="flex items-center gap-1.5 sm:gap-2 text-bolt-elements-textSecondary"> {/* Responsive gap */}
+                          <div className="i-ph:cube w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-500/70 group-hover:text-purple-500 transition-colors" /> {/* Responsive icon */}
                           <span className="font-mono truncate">{model.name}</span>
                         </div>
-                        <Badge variant="outline" className="ml-2 text-xs font-mono">
+                        <Badge variant="outline" className="ml-2 text-[9px] sm:text-xs font-mono px-1 sm:px-1.5"> {/* Responsive badge text & padding */}
                           {Math.round(parseInt(model.size) / 1024 / 1024)}MB
                         </Badge>
                       </div>
@@ -1510,15 +1510,15 @@ export default function DebugTab() {
               </>
             ) : (
               <div className="flex-1 flex items-center justify-center">
-                <div className="flex flex-col items-center gap-3 max-w-[280px] text-center">
+                <div className="flex flex-col items-center gap-2 sm:gap-3 max-w-[240px] sm:max-w-[280px] text-center"> {/* Responsive gap & max-width */}
                   <div
-                    className={classNames('w-12 h-12', {
+                    className={classNames('w-10 h-10 sm:w-12 sm:h-12', { // Responsive icon size
                       'i-ph:warning-circle text-red-500/80':
                         status.status === 'Not Running' || status.status === 'Disabled',
                       'i-ph:cube-duotone text-purple-500/80': status.status === 'Running',
                     })}
                   />
-                  <span className="text-sm text-bolt-elements-textSecondary">{status.message}</span>
+                  <span className="text-xs sm:text-sm text-bolt-elements-textSecondary">{status.message}</span> {/* Responsive text */}
                 </div>
               </div>
             )}
@@ -1527,12 +1527,12 @@ export default function DebugTab() {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4"> {/* Responsive gap */}
         <button
           onClick={getSystemInfo}
           disabled={loading.systemInfo}
           className={classNames(
-            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+            'flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-medium rounded-md sm:rounded-lg transition-colors', // Responsive padding, text, rounding, gap
             'bg-white dark:bg-[#0A0A0A]',
             'border border-[#E5E5E5] dark:border-[#1A1A1A]',
             'hover:bg-purple-50 dark:hover:bg-[#1a1a1a]',
@@ -1553,7 +1553,7 @@ export default function DebugTab() {
           onClick={handleLogPerformance}
           disabled={loading.performance}
           className={classNames(
-            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+            'flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-medium rounded-md sm:rounded-lg transition-colors',
             'bg-white dark:bg-[#0A0A0A]',
             'border border-[#E5E5E5] dark:border-[#1A1A1A]',
             'hover:bg-purple-50 dark:hover:bg-[#1a1a1a]',
@@ -1574,7 +1574,7 @@ export default function DebugTab() {
           onClick={checkErrors}
           disabled={loading.errors}
           className={classNames(
-            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+            'flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-medium rounded-md sm:rounded-lg transition-colors',
             'bg-white dark:bg-[#0A0A0A]',
             'border border-[#E5E5E5] dark:border-[#1A1A1A]',
             'hover:bg-purple-50 dark:hover:bg-[#1a1a1a]',
@@ -1595,7 +1595,7 @@ export default function DebugTab() {
           onClick={getWebAppInfo}
           disabled={loading.webAppInfo}
           className={classNames(
-            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+            'flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-medium rounded-md sm:rounded-lg transition-colors',
             'bg-white dark:bg-[#0A0A0A]',
             'border border-[#E5E5E5] dark:border-[#1A1A1A]',
             'hover:bg-purple-50 dark:hover:bg-[#1a1a1a]',
@@ -1622,14 +1622,14 @@ export default function DebugTab() {
         className="w-full"
       >
         <CollapsibleTrigger className="w-full">
-          <div className="flex items-center justify-between p-6 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]">
-            <div className="flex items-center gap-3">
-              <div className="i-ph:cpu text-purple-500 w-5 h-5" />
-              <h3 className="text-base font-medium text-bolt-elements-textPrimary">System Information</h3>
+          <div className="flex items-center justify-between p-3 sm:p-4 md:p-6 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]"> {/* Responsive padding & rounding */}
+            <div className="flex items-center gap-2 sm:gap-3"> {/* Responsive gap */}
+              <div className="i-ph:cpu text-purple-500 w-4 h-4 sm:w-5 sm:h-5" /> {/* Responsive icon */}
+              <h3 className="text-sm sm:text-base font-medium text-bolt-elements-textPrimary">System Information</h3> {/* Responsive text */}
             </div>
             <div
               className={classNames(
-                'i-ph:caret-down w-4 h-4 transform transition-transform duration-200',
+                'i-ph:caret-down w-4 h-4 transform transition-transform duration-200', // Caret size fine
                 openSections.system ? 'rotate-180' : '',
               )}
             />
@@ -1637,43 +1637,43 @@ export default function DebugTab() {
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <div className="p-6 mt-2 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]">
+          <div className="p-3 sm:p-4 md:p-6 mt-1 sm:mt-2 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]"> {/* Responsive padding, margin, rounding */}
             {systemInfo ? (
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <div className="text-sm flex items-center gap-2">
-                    <div className="i-ph:desktop text-bolt-elements-textSecondary w-4 h-4" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6"> {/* Responsive grid & gap */}
+                <div className="space-y-1.5 sm:space-y-2"> {/* Responsive space */}
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2"> {/* Responsive text & gap */}
+                    <div className="i-ph:desktop text-bolt-elements-textSecondary w-4 h-4" /> {/* Icon size fine */}
                     <span className="text-bolt-elements-textSecondary">OS: </span>
                     <span className="text-bolt-elements-textPrimary">{systemInfo.os}</span>
                   </div>
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:device-mobile text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">Platform: </span>
                     <span className="text-bolt-elements-textPrimary">{systemInfo.platform}</span>
                   </div>
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:circuitry text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">Architecture: </span>
                     <span className="text-bolt-elements-textPrimary">{systemInfo.arch}</span>
                   </div>
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:cpu text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">CPU Cores: </span>
                     <span className="text-bolt-elements-textPrimary">{systemInfo.cpus}</span>
                   </div>
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:graph text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">Node Version: </span>
                     <span className="text-bolt-elements-textPrimary">{systemInfo.node}</span>
                   </div>
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:wifi-high text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">Network Type: </span>
                     <span className="text-bolt-elements-textPrimary">
                       {systemInfo.network.type} ({systemInfo.network.effectiveType})
                     </span>
                   </div>
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:gauge text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">Network Speed: </span>
                     <span className="text-bolt-elements-textPrimary">
@@ -1681,7 +1681,7 @@ export default function DebugTab() {
                     </span>
                   </div>
                   {systemInfo.battery && (
-                    <div className="text-sm flex items-center gap-2">
+                    <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                       <div className="i-ph:battery-charging text-bolt-elements-textSecondary w-4 h-4" />
                       <span className="text-bolt-elements-textSecondary">Battery: </span>
                       <span className="text-bolt-elements-textPrimary">
@@ -1689,7 +1689,7 @@ export default function DebugTab() {
                       </span>
                     </div>
                   )}
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:hard-drive text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">Storage: </span>
                     <span className="text-bolt-elements-textPrimary">
@@ -1698,39 +1698,39 @@ export default function DebugTab() {
                     </span>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <div className="text-sm flex items-center gap-2">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:database text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">Memory Usage: </span>
                     <span className="text-bolt-elements-textPrimary">
                       {systemInfo.memory.used} / {systemInfo.memory.total} ({systemInfo.memory.percentage}%)
                     </span>
                   </div>
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:browser text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">Browser: </span>
                     <span className="text-bolt-elements-textPrimary">
                       {systemInfo.browser.name} {systemInfo.browser.version}
                     </span>
                   </div>
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:monitor text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">Screen: </span>
                     <span className="text-bolt-elements-textPrimary">
                       {systemInfo.screen.width}x{systemInfo.screen.height} ({systemInfo.screen.pixelRatio}x)
                     </span>
                   </div>
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:clock text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">Timezone: </span>
                     <span className="text-bolt-elements-textPrimary">{systemInfo.time.timezone}</span>
                   </div>
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:translate text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">Language: </span>
                     <span className="text-bolt-elements-textPrimary">{systemInfo.browser.language}</span>
                   </div>
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:chart-pie text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">JS Heap: </span>
                     <span className="text-bolt-elements-textPrimary">
@@ -1739,14 +1739,14 @@ export default function DebugTab() {
                       {systemInfo.performance.memory.usagePercentage.toFixed(1)}%)
                     </span>
                   </div>
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:timer text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">Page Load: </span>
                     <span className="text-bolt-elements-textPrimary">
                       {(systemInfo.performance.timing.loadTime / 1000).toFixed(2)}s
                     </span>
                   </div>
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                     <div className="i-ph:code text-bolt-elements-textSecondary w-4 h-4" />
                     <span className="text-bolt-elements-textSecondary">DOM Ready: </span>
                     <span className="text-bolt-elements-textPrimary">
@@ -1756,7 +1756,7 @@ export default function DebugTab() {
                 </div>
               </div>
             ) : (
-              <div className="text-sm text-bolt-elements-textSecondary">Loading system information...</div>
+              <div className="text-xs sm:text-sm text-bolt-elements-textSecondary">Loading system information...</div>
             )}
           </div>
         </CollapsibleContent>
@@ -1769,10 +1769,10 @@ export default function DebugTab() {
         className="w-full"
       >
         <CollapsibleTrigger className="w-full">
-          <div className="flex items-center justify-between p-6 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]">
-            <div className="flex items-center gap-3">
-              <div className="i-ph:chart-line text-purple-500 w-5 h-5" />
-              <h3 className="text-base font-medium text-bolt-elements-textPrimary">Performance Metrics</h3>
+          <div className="flex items-center justify-between p-3 sm:p-4 md:p-6 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="i-ph:chart-line text-purple-500 w-4 h-4 sm:w-5 sm:h-5" />
+              <h3 className="text-sm sm:text-base font-medium text-bolt-elements-textPrimary">Performance Metrics</h3>
             </div>
             <div
               className={classNames(
@@ -1784,50 +1784,50 @@ export default function DebugTab() {
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <div className="p-6 mt-2 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]">
+          <div className="p-3 sm:p-4 md:p-6 mt-1 sm:mt-2 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]">
             {systemInfo && (
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <div className="text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <div className="text-xs sm:text-sm">
                     <span className="text-bolt-elements-textSecondary">Page Load Time: </span>
                     <span className="text-bolt-elements-textPrimary">
                       {(systemInfo.performance.timing.loadTime / 1000).toFixed(2)}s
                     </span>
                   </div>
-                  <div className="text-sm">
+                  <div className="text-xs sm:text-sm">
                     <span className="text-bolt-elements-textSecondary">DOM Ready Time: </span>
                     <span className="text-bolt-elements-textPrimary">
                       {(systemInfo.performance.timing.domReadyTime / 1000).toFixed(2)}s
                     </span>
                   </div>
-                  <div className="text-sm">
+                  <div className="text-xs sm:text-sm">
                     <span className="text-bolt-elements-textSecondary">Request Time: </span>
                     <span className="text-bolt-elements-textPrimary">
                       {(systemInfo.performance.timing.requestTime / 1000).toFixed(2)}s
                     </span>
                   </div>
-                  <div className="text-sm">
+                  <div className="text-xs sm:text-sm">
                     <span className="text-bolt-elements-textSecondary">Redirect Time: </span>
                     <span className="text-bolt-elements-textPrimary">
                       {(systemInfo.performance.timing.redirectTime / 1000).toFixed(2)}s
                     </span>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <div className="text-sm">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <div className="text-xs sm:text-sm">
                     <span className="text-bolt-elements-textSecondary">JS Heap Usage: </span>
                     <span className="text-bolt-elements-textPrimary">
                       {(systemInfo.performance.memory.usedJSHeapSize / (1024 * 1024)).toFixed(1)}MB /{' '}
                       {(systemInfo.performance.memory.totalJSHeapSize / (1024 * 1024)).toFixed(1)}MB
                     </span>
                   </div>
-                  <div className="text-sm">
+                  <div className="text-xs sm:text-sm">
                     <span className="text-bolt-elements-textSecondary">Heap Utilization: </span>
                     <span className="text-bolt-elements-textPrimary">
                       {systemInfo.performance.memory.usagePercentage.toFixed(1)}%
                     </span>
                   </div>
-                  <div className="text-sm">
+                  <div className="text-xs sm:text-sm">
                     <span className="text-bolt-elements-textSecondary">Navigation Type: </span>
                     <span className="text-bolt-elements-textPrimary">
                       {systemInfo.performance.navigation.type === 0
@@ -1839,7 +1839,7 @@ export default function DebugTab() {
                             : 'Other'}
                     </span>
                   </div>
-                  <div className="text-sm">
+                  <div className="text-xs sm:text-sm">
                     <span className="text-bolt-elements-textSecondary">Redirects: </span>
                     <span className="text-bolt-elements-textPrimary">
                       {systemInfo.performance.navigation.redirectCount}
@@ -1859,10 +1859,10 @@ export default function DebugTab() {
         className="w-full"
       >
         <CollapsibleTrigger className="w-full">
-          <div className="flex items-center justify-between p-6 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]">
-            <div className="flex items-center gap-3">
-              <div className="i-ph:info text-blue-500 w-5 h-5" />
-              <h3 className="text-base font-medium text-bolt-elements-textPrimary">WebApp Information</h3>
+          <div className="flex items-center justify-between p-3 sm:p-4 md:p-6 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="i-ph:info text-blue-500 w-4 h-4 sm:w-5 sm:h-5" />
+              <h3 className="text-sm sm:text-base font-medium text-bolt-elements-textPrimary">WebApp Information</h3>
               {loading.webAppInfo && <span className="loading loading-spinner loading-sm" />}
             </div>
             <div
@@ -1875,48 +1875,48 @@ export default function DebugTab() {
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <div className="p-6 mt-2 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]">
+          <div className="p-3 sm:p-4 md:p-6 mt-1 sm:mt-2 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]">
             {loading.webAppInfo ? (
-              <div className="flex items-center justify-center p-8">
+              <div className="flex items-center justify-center p-6 sm:p-8">
                 <span className="loading loading-spinner loading-lg" />
               </div>
             ) : !webAppInfo ? (
-              <div className="flex flex-col items-center justify-center p-8 text-bolt-elements-textSecondary">
-                <div className="i-ph:warning-circle w-8 h-8 mb-2" />
-                <p>Failed to load WebApp information</p>
+              <div className="flex flex-col items-center justify-center p-6 sm:p-8 text-bolt-elements-textSecondary">
+                <div className="i-ph:warning-circle w-6 h-6 sm:w-8 sm:h-8 mb-1.5 sm:mb-2" />
+                <p className="text-xs sm:text-sm">Failed to load WebApp information</p>
                 <button
                   onClick={() => getWebAppInfo()}
-                  className="mt-4 px-4 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  className="mt-3 sm:mt-4 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm bg-blue-500 text-white rounded-md sm:rounded-lg hover:bg-blue-600 transition-colors"
                 >
                   Retry
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
                 <div>
-                  <h3 className="mb-4 text-base font-medium text-bolt-elements-textPrimary">Basic Information</h3>
-                  <div className="space-y-3">
-                    <div className="text-sm flex items-center gap-2">
+                  <h3 className="mb-2 sm:mb-3 md:mb-4 text-sm sm:text-base font-medium text-bolt-elements-textPrimary">Basic Information</h3>
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                       <div className="i-ph:app-window text-bolt-elements-textSecondary w-4 h-4" />
                       <span className="text-bolt-elements-textSecondary">Name:</span>
                       <span className="text-bolt-elements-textPrimary">{webAppInfo.name}</span>
                     </div>
-                    <div className="text-sm flex items-center gap-2">
+                    <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                       <div className="i-ph:tag text-bolt-elements-textSecondary w-4 h-4" />
                       <span className="text-bolt-elements-textSecondary">Version:</span>
                       <span className="text-bolt-elements-textPrimary">{webAppInfo.version}</span>
                     </div>
-                    <div className="text-sm flex items-center gap-2">
+                    <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                       <div className="i-ph:certificate text-bolt-elements-textSecondary w-4 h-4" />
                       <span className="text-bolt-elements-textSecondary">License:</span>
                       <span className="text-bolt-elements-textPrimary">{webAppInfo.license}</span>
                     </div>
-                    <div className="text-sm flex items-center gap-2">
+                    <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                       <div className="i-ph:cloud text-bolt-elements-textSecondary w-4 h-4" />
                       <span className="text-bolt-elements-textSecondary">Environment:</span>
                       <span className="text-bolt-elements-textPrimary">{webAppInfo.environment}</span>
                     </div>
-                    <div className="text-sm flex items-center gap-2">
+                    <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                       <div className="i-ph:graph text-bolt-elements-textSecondary w-4 h-4" />
                       <span className="text-bolt-elements-textSecondary">Node Version:</span>
                       <span className="text-bolt-elements-textPrimary">{webAppInfo.runtimeInfo.nodeVersion}</span>
@@ -1925,24 +1925,24 @@ export default function DebugTab() {
                 </div>
 
                 <div>
-                  <h3 className="mb-4 text-base font-medium text-bolt-elements-textPrimary">Git Information</h3>
-                  <div className="space-y-3">
-                    <div className="text-sm flex items-center gap-2">
+                  <h3 className="mb-2 sm:mb-3 md:mb-4 text-sm sm:text-base font-medium text-bolt-elements-textPrimary">Git Information</h3>
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                       <div className="i-ph:git-branch text-bolt-elements-textSecondary w-4 h-4" />
                       <span className="text-bolt-elements-textSecondary">Branch:</span>
                       <span className="text-bolt-elements-textPrimary">{webAppInfo.gitInfo.local.branch}</span>
                     </div>
-                    <div className="text-sm flex items-center gap-2">
+                    <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                       <div className="i-ph:git-commit text-bolt-elements-textSecondary w-4 h-4" />
                       <span className="text-bolt-elements-textSecondary">Commit:</span>
-                      <span className="text-bolt-elements-textPrimary">{webAppInfo.gitInfo.local.commitHash}</span>
+                      <span className="text-bolt-elements-textPrimary truncate max-w-[150px] xs:max-w-[200px] sm:max-w-xs">{webAppInfo.gitInfo.local.commitHash}</span>
                     </div>
-                    <div className="text-sm flex items-center gap-2">
+                    <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                       <div className="i-ph:user text-bolt-elements-textSecondary w-4 h-4" />
                       <span className="text-bolt-elements-textSecondary">Author:</span>
                       <span className="text-bolt-elements-textPrimary">{webAppInfo.gitInfo.local.author}</span>
                     </div>
-                    <div className="text-sm flex items-center gap-2">
+                    <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                       <div className="i-ph:clock text-bolt-elements-textSecondary w-4 h-4" />
                       <span className="text-bolt-elements-textSecondary">Commit Time:</span>
                       <span className="text-bolt-elements-textPrimary">{webAppInfo.gitInfo.local.commitTime}</span>
@@ -1950,8 +1950,8 @@ export default function DebugTab() {
 
                     {webAppInfo.gitInfo.github && (
                       <>
-                        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
-                          <div className="text-sm flex items-center gap-2">
+                        <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200 dark:border-gray-800">
+                          <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                             <div className="i-ph:git-fork text-bolt-elements-textSecondary w-4 h-4" />
                             <span className="text-bolt-elements-textSecondary">Repository:</span>
                             <span className="text-bolt-elements-textPrimary">
@@ -1960,7 +1960,7 @@ export default function DebugTab() {
                             </span>
                           </div>
 
-                          <div className="mt-2 flex items-center gap-4 text-sm">
+                          <div className="mt-1.5 sm:mt-2 flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
                             <div className="flex items-center gap-1">
                               <div className="i-ph:star text-yellow-500 w-4 h-4" />
                               <span className="text-bolt-elements-textSecondary">
@@ -1983,8 +1983,8 @@ export default function DebugTab() {
                         </div>
 
                         {webAppInfo.gitInfo.github.upstream && (
-                          <div className="mt-2">
-                            <div className="text-sm flex items-center gap-2">
+                          <div className="mt-1.5 sm:mt-2">
+                            <div className="text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                               <div className="i-ph:git-fork text-bolt-elements-textSecondary w-4 h-4" />
                               <span className="text-bolt-elements-textSecondary">Upstream:</span>
                               <span className="text-bolt-elements-textPrimary">
@@ -1992,7 +1992,7 @@ export default function DebugTab() {
                               </span>
                             </div>
 
-                            <div className="mt-2 flex items-center gap-4 text-sm">
+                            <div className="mt-1.5 sm:mt-2 flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
                               <div className="flex items-center gap-1">
                                 <div className="i-ph:star text-yellow-500 w-4 h-4" />
                                 <span className="text-bolt-elements-textSecondary">
@@ -2016,8 +2016,8 @@ export default function DebugTab() {
             )}
 
             {webAppInfo && (
-              <div className="mt-6">
-                <h3 className="mb-4 text-base font-medium text-bolt-elements-textPrimary">Dependencies</h3>
+              <div className="mt-4 sm:mt-6"> {/* Responsive margin */}
+                <h3 className="mb-2 sm:mb-3 md:mb-4 text-sm sm:text-base font-medium text-bolt-elements-textPrimary">Dependencies</h3> {/* Responsive margin & text */}
                 <div className="bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A] rounded-lg divide-y divide-[#E5E5E5] dark:divide-[#1A1A1A]">
                   <DependencySection title="Production" deps={webAppInfo.dependencies.production} />
                   <DependencySection title="Development" deps={webAppInfo.dependencies.development} />
@@ -2037,12 +2037,12 @@ export default function DebugTab() {
         className="w-full"
       >
         <CollapsibleTrigger className="w-full">
-          <div className="flex items-center justify-between p-6 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]">
-            <div className="flex items-center gap-3">
-              <div className="i-ph:warning text-red-500 w-5 h-5" />
-              <h3 className="text-base font-medium text-bolt-elements-textPrimary">Error Check</h3>
+          <div className="flex items-center justify-between p-3 sm:p-4 md:p-6 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="i-ph:warning text-red-500 w-4 h-4 sm:w-5 sm:h-5" />
+              <h3 className="text-sm sm:text-base font-medium text-bolt-elements-textPrimary">Error Check</h3>
               {errorLogs.length > 0 && (
-                <Badge variant="destructive" className="ml-2">
+                <Badge variant="destructive" className="ml-1 sm:ml-2 text-[9px] sm:text-xs px-1 sm:px-1.5"> {/* Responsive badge */}
                   {errorLogs.length} Errors
                 </Badge>
               )}
@@ -2057,19 +2057,19 @@ export default function DebugTab() {
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <div className="p-6 mt-2 rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]">
-            <ScrollArea className="h-[300px]">
-              <div className="space-y-4">
-                <div className="text-sm text-bolt-elements-textSecondary">
+          <div className="p-3 sm:p-4 md:p-6 mt-1 sm:mt-2 rounded-lg sm:rounded-xl bg-white dark:bg-[#0A0A0A] border border-[#E5E5E5] dark:border-[#1A1A1A]">
+            <ScrollArea className="h-[200px] sm:h-[250px] md:h-[300px]"> {/* Responsive height */}
+              <div className="space-y-3 sm:space-y-4"> {/* Responsive space */}
+                <div className="text-xs sm:text-sm text-bolt-elements-textSecondary"> {/* Responsive text */}
                   Checks for:
-                  <ul className="list-disc list-inside mt-2 space-y-1">
+                  <ul className="list-disc list-inside mt-1.5 sm:mt-2 space-y-1"> {/* Responsive margin & space */}
                     <li>Unhandled JavaScript errors</li>
                     <li>Unhandled Promise rejections</li>
                     <li>Runtime exceptions</li>
                     <li>Network errors</li>
                   </ul>
                 </div>
-                <div className="text-sm">
+                <div className="text-xs sm:text-sm"> {/* Responsive text */}
                   <span className="text-bolt-elements-textSecondary">Status: </span>
                   <span className="text-bolt-elements-textPrimary">
                     {loading.errors
@@ -2080,20 +2080,20 @@ export default function DebugTab() {
                   </span>
                 </div>
                 {errorLogs.length > 0 && (
-                  <div className="mt-4">
-                    <div className="text-sm font-medium text-bolt-elements-textPrimary mb-2">Recent Errors:</div>
-                    <div className="space-y-2">
+                  <div className="mt-3 sm:mt-4"> {/* Responsive margin */}
+                    <div className="text-xs sm:text-sm font-medium text-bolt-elements-textPrimary mb-1.5 sm:mb-2">Recent Errors:</div> {/* Responsive text & margin */}
+                    <div className="space-y-1.5 sm:space-y-2"> {/* Responsive space */}
                       {errorLogs.map((error) => (
-                        <div key={error.id} className="text-sm text-red-500 dark:text-red-400 p-2 rounded bg-red-500/5">
+                        <div key={error.id} className="text-xs sm:text-sm text-red-500 dark:text-red-400 p-1.5 sm:p-2 rounded-md bg-red-500/5"> {/* Responsive text, padding, rounding */}
                           <div className="font-medium">{error.message}</div>
                           {error.source && (
-                            <div className="text-xs mt-1 text-red-400">
+                            <div className="text-[10px] sm:text-xs mt-0.5 sm:mt-1 text-red-400"> {/* Responsive text & margin */}
                               Source: {error.source}
                               {error.details?.lineNumber && `:${error.details.lineNumber}`}
                             </div>
                           )}
                           {error.stack && (
-                            <div className="text-xs mt-1 text-red-400 font-mono whitespace-pre-wrap">{error.stack}</div>
+                            <div className="text-[10px] sm:text-xs mt-0.5 sm:mt-1 text-red-400 font-mono whitespace-pre-wrap">{error.stack}</div> {/* Responsive text & margin */}
                           )}
                         </div>
                       ))}

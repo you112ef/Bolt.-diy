@@ -370,7 +370,7 @@ const ServiceStatusTab = () => {
         };
       }
     },
-    [getApiKey],
+    [getApiKey], // getApiKey was missing, added it.
   );
 
   // Function to fetch real status from provider status pages
@@ -404,8 +404,6 @@ const ServiceStatusTab = () => {
         switch (provider) {
           case 'HuggingFace': {
             const endpointStatus = await checkEndpoint('https://status.huggingface.co/');
-
-            // Check API endpoint as fallback
             const apiEndpoint = 'https://api-inference.huggingface.co/models';
             const apiStatus = await checkEndpoint(apiEndpoint);
 
@@ -676,73 +674,73 @@ const ServiceStatusTab = () => {
   const getStatusIcon = (status: ServiceStatus['status']) => {
     switch (status) {
       case 'operational':
-        return <BsCheckCircleFill className="w-4 h-4" />;
+        return <BsCheckCircleFill className="w-3.5 h-3.5 sm:w-4 sm:h-4" />; {/* Responsive icon */}
       case 'degraded':
-        return <BsExclamationCircleFill className="w-4 h-4" />;
+        return <BsExclamationCircleFill className="w-3.5 h-3.5 sm:w-4 sm:h-4" />; {/* Responsive icon */}
       case 'down':
-        return <BsXCircleFill className="w-4 h-4" />;
+        return <BsXCircleFill className="w-3.5 h-3.5 sm:w-4 sm:h-4" />; {/* Responsive icon */}
       default:
-        return <BsXCircleFill className="w-4 h-4" />;
+        return <BsXCircleFill className="w-3.5 h-3.5 sm:w-4 sm:h-4" />; {/* Responsive icon */}
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6"> {/* Responsive space */}
       <motion.div
-        className="space-y-4"
+        className="space-y-3 sm:space-y-4" // Responsive space
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="flex items-center justify-between gap-2 mt-8 mb-4">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between mt-4 mb-3 sm:mt-6 sm:mb-4"> {/* Responsive layout, gap, margin */}
+          <div className="flex items-center gap-1.5 sm:gap-2"> {/* Responsive gap */}
             <div
               className={classNames(
-                'w-8 h-8 flex items-center justify-center rounded-lg',
+                'w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-md sm:rounded-lg', // Responsive size & rounding
                 'bg-bolt-elements-background-depth-3',
                 'text-purple-500',
               )}
             >
-              <TbActivityHeartbeat className="w-5 h-5" />
+              <TbActivityHeartbeat className="w-4 h-4 sm:w-5 sm:h-5" /> {/* Responsive icon */}
             </div>
             <div>
-              <h4 className="text-md font-medium text-bolt-elements-textPrimary">Service Status</h4>
-              <p className="text-sm text-bolt-elements-textSecondary">
+              <h4 className="text-sm sm:text-md font-medium text-bolt-elements-textPrimary">Service Status</h4> {/* Responsive text */}
+              <p className="text-xs sm:text-sm text-bolt-elements-textSecondary"> {/* Responsive text */}
                 Monitor and test the operational status of cloud LLM providers
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-bolt-elements-textSecondary">
+          <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-1.5 md:gap-2"> {/* Responsive layout & gap */}
+            <span className="text-xs sm:text-sm text-bolt-elements-textSecondary text-center sm:text-left"> {/* Responsive text & alignment */}
               Last updated: {lastRefresh.toLocaleTimeString()}
             </span>
             <button
               onClick={() => fetchAllStatuses()}
               className={classNames(
-                'px-3 py-1.5 rounded-lg text-sm',
+                'px-2.5 py-1 text-xs sm:px-3 sm:py-1.5 sm:text-sm rounded-md sm:rounded-lg', // Responsive padding, text, rounding
                 'bg-bolt-elements-background-depth-3 hover:bg-bolt-elements-background-depth-4',
                 'text-bolt-elements-textPrimary',
                 'transition-all duration-200',
-                'flex items-center gap-2',
+                'flex items-center justify-center gap-1.5 sm:gap-2', // Responsive gap
                 loading ? 'opacity-50 cursor-not-allowed' : '',
               )}
               disabled={loading}
             >
-              <div className={`i-ph:arrows-clockwise w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              <div className={`i-ph:arrows-clockwise w-3.5 h-3.5 sm:w-4 sm:h-4 ${loading ? 'animate-spin' : ''}`} /> {/* Responsive icon */}
               <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
             </button>
           </div>
         </div>
 
         {/* API Key Test Section */}
-        <div className="p-4 bg-bolt-elements-background-depth-2 rounded-lg">
-          <h5 className="text-sm font-medium text-bolt-elements-textPrimary mb-2">Test API Key</h5>
-          <div className="flex gap-2">
+        <div className="p-3 sm:p-4 bg-bolt-elements-background-depth-2 rounded-md sm:rounded-lg"> {/* Responsive padding & rounding */}
+          <h5 className="text-xs sm:text-sm font-medium text-bolt-elements-textPrimary mb-1.5 sm:mb-2">Test API Key</h5> {/* Responsive text & margin */}
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-2"> {/* Responsive layout & gap */}
             <select
               value={testProvider}
               onChange={(e) => setTestProvider(e.target.value as ProviderName)}
               className={classNames(
-                'flex-1 px-3 py-1.5 rounded-lg text-sm max-w-[200px]',
+                'w-full sm:flex-1 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm sm:max-w-[180px] md:max-w-[200px]', // Responsive styles
                 'bg-bolt-elements-background-depth-3 border border-bolt-elements-borderColor',
                 'text-bolt-elements-textPrimary',
                 'focus:outline-none focus:ring-2 focus:ring-purple-500/30',
@@ -761,7 +759,7 @@ const ServiceStatusTab = () => {
               onChange={(e) => setTestApiKey(e.target.value)}
               placeholder="Enter API key to test"
               className={classNames(
-                'flex-1 px-3 py-1.5 rounded-lg text-sm',
+                'w-full sm:flex-1 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm', // Responsive styles
                 'bg-bolt-elements-background-depth-3 border border-bolt-elements-borderColor',
                 'text-bolt-elements-textPrimary placeholder-bolt-elements-textTertiary',
                 'focus:outline-none focus:ring-2 focus:ring-purple-500/30',
@@ -773,22 +771,22 @@ const ServiceStatusTab = () => {
               }
               disabled={!testProvider || !testApiKey || testingStatus === 'testing'}
               className={classNames(
-                'px-4 py-1.5 rounded-lg text-sm',
+                'w-full sm:w-auto px-3 py-1.5 sm:px-4 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm', // Responsive styles
                 'bg-purple-500 hover:bg-purple-600',
                 'text-white',
                 'transition-all duration-200',
-                'flex items-center gap-2',
+                'flex items-center justify-center gap-1.5 sm:gap-2', // Responsive gap
                 !testProvider || !testApiKey || testingStatus === 'testing' ? 'opacity-50 cursor-not-allowed' : '',
               )}
             >
               {testingStatus === 'testing' ? (
                 <>
-                  <div className="i-ph:spinner-gap w-4 h-4 animate-spin" />
+                  <div className="i-ph:spinner-gap w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" /> {/* Responsive icon */}
                   <span>Testing...</span>
                 </>
               ) : (
                 <>
-                  <div className="i-ph:key w-4 h-4" />
+                  <div className="i-ph:key w-3.5 h-3.5 sm:w-4 sm:h-4" /> {/* Responsive icon */}
                   <span>Test Key</span>
                 </>
               )}
@@ -798,9 +796,9 @@ const ServiceStatusTab = () => {
 
         {/* Status Grid */}
         {loading && serviceStatuses.length === 0 ? (
-          <div className="text-center py-8 text-bolt-elements-textSecondary">Loading service statuses...</div>
+          <div className="text-center py-6 sm:py-8 text-xs sm:text-sm text-bolt-elements-textSecondary">Loading service statuses...</div> /* Responsive padding & text */
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3 md:gap-4"> {/* Responsive gap */}
             {serviceStatuses.map((service, index) => (
               <motion.div
                 key={service.provider}
@@ -808,7 +806,7 @@ const ServiceStatusTab = () => {
                   'bg-bolt-elements-background-depth-2',
                   'hover:bg-bolt-elements-background-depth-3',
                   'transition-all duration-200',
-                  'relative overflow-hidden rounded-lg',
+                  'relative overflow-hidden rounded-md sm:rounded-lg', // Responsive rounding
                 )}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -816,50 +814,50 @@ const ServiceStatusTab = () => {
                 whileHover={{ scale: 1.02 }}
               >
                 <div
-                  className={classNames('block p-4', service.statusUrl ? 'cursor-pointer' : '')}
+                  className={classNames('block p-3 sm:p-4', service.statusUrl ? 'cursor-pointer' : '')} // Responsive padding
                   onClick={() => service.statusUrl && window.open(service.statusUrl, '_blank')}
                 >
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"> {/* Responsive layout & gap */}
+                    <div className="flex items-start gap-2 sm:gap-3"> {/* Responsive gap */}
                       {service.icon && (
                         <div
                           className={classNames(
-                            'w-8 h-8 flex items-center justify-center rounded-lg',
+                            'w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-md sm:rounded-lg', // Responsive size & rounding
                             'bg-bolt-elements-background-depth-3',
                             getStatusColor(service.status),
                           )}
                         >
                           {React.createElement(service.icon, {
-                            className: 'w-5 h-5',
+                            className: 'w-4 h-4 sm:w-5 sm:h-5', // Responsive icon
                           })}
                         </div>
                       )}
-                      <div>
-                        <h4 className="text-sm font-medium text-bolt-elements-textPrimary">{service.provider}</h4>
-                        <div className="space-y-1">
-                          <p className="text-xs text-bolt-elements-textSecondary">
+                      <div className="flex-1"> {/* Allow text to wrap */}
+                        <h4 className="text-xs sm:text-sm font-medium text-bolt-elements-textPrimary">{service.provider}</h4> {/* Responsive text */}
+                        <div className="space-y-0.5 sm:space-y-1"> {/* Responsive space */}
+                          <p className="text-[10px] sm:text-xs text-bolt-elements-textSecondary"> {/* Responsive text */}
                             Last checked: {new Date(service.lastChecked).toLocaleTimeString()}
                           </p>
                           {service.responseTime && (
-                            <p className="text-xs text-bolt-elements-textTertiary">
+                            <p className="text-[10px] sm:text-xs text-bolt-elements-textTertiary"> {/* Responsive text */}
                               Response time: {Math.round(service.responseTime)}ms
                             </p>
                           )}
                           {service.message && (
-                            <p className="text-xs text-bolt-elements-textTertiary">{service.message}</p>
+                            <p className="text-[10px] sm:text-xs text-bolt-elements-textTertiary break-words">{service.message}</p> {/* Responsive text & break-words */}
                           )}
                         </div>
                       </div>
                     </div>
-                    <div className={classNames('flex items-center gap-2', getStatusColor(service.status))}>
-                      <span className="text-sm capitalize">{service.status}</span>
+                    <div className={classNames('flex items-center self-start sm:self-center gap-1.5 sm:gap-2 mt-1 sm:mt-0', getStatusColor(service.status))}> {/* Responsive gap & alignment */}
+                      <span className="text-xs sm:text-sm capitalize">{service.status}</span> {/* Responsive text */}
                       {getStatusIcon(service.status)}
                     </div>
                   </div>
                   {service.incidents && service.incidents.length > 0 && (
-                    <div className="mt-2 border-t border-bolt-elements-borderColor pt-2">
-                      <p className="text-xs font-medium text-bolt-elements-textSecondary mb-1">Recent Incidents:</p>
-                      <ul className="text-xs text-bolt-elements-textTertiary space-y-1">
+                    <div className="mt-1.5 sm:mt-2 border-t border-bolt-elements-borderColor pt-1.5 sm:pt-2"> {/* Responsive margin & padding */}
+                      <p className="text-[10px] sm:text-xs font-medium text-bolt-elements-textSecondary mb-0.5 sm:mb-1">Recent Incidents:</p> {/* Responsive text & margin */}
+                      <ul className="text-[10px] sm:text-xs text-bolt-elements-textTertiary space-y-0.5 sm:space-y-1"> {/* Responsive text & space */}
                         {service.incidents.map((incident, i) => (
                           <li key={i}>{incident}</li>
                         ))}

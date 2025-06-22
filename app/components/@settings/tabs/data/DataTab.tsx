@@ -207,7 +207,7 @@ export function DataTab() {
   }, [handleResetChats]);
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-6 sm:space-y-8 md:space-y-12"> {/* Responsive space-y */}
       {/* Hidden file inputs */}
       <input ref={fileInputRef} type="file" accept=".json" onChange={handleFileInputChange} className="hidden" />
       <input
@@ -279,25 +279,25 @@ export function DataTab() {
 
       {/* Chats Section */}
       <div>
-        <h2 className="text-xl font-semibold mb-4 text-bolt-elements-textPrimary">Chats</h2>
+        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-bolt-elements-textPrimary">Chats</h2>
         {dbLoading ? (
-          <div className="flex items-center justify-center p-4">
-            <div className="i-ph-spinner-gap-bold animate-spin w-6 h-6 mr-2" />
+          <div className="flex items-center justify-center p-3 sm:p-4 text-xs sm:text-sm">
+            <div className="i-ph-spinner-gap-bold animate-spin w-5 h-5 sm:w-6 sm:h-6 mr-1.5 sm:mr-2" />
             <span>Loading chats database...</span>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
             <Card>
               <CardHeader>
-                <div className="flex items-center mb-2">
-                  <motion.div className="text-accent-500 mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                    <div className="i-ph-download-duotone w-5 h-5" />
+                <div className="flex items-center mb-1 sm:mb-2">
+                  <motion.div className="text-accent-500 mr-1.5 sm:mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <div className="i-ph:download-duotone w-4 h-4 sm:w-5 sm:h-5" />
                   </motion.div>
-                  <CardTitle className="text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
+                  <CardTitle className="text-base sm:text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
                     Export All Chats
                   </CardTitle>
                 </div>
-                <CardDescription>Export all your chats to a JSON file.</CardDescription>
+                <CardDescription className="text-xs sm:text-sm">Export all your chats to a JSON file.</CardDescription>
               </CardHeader>
               <CardFooter>
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
@@ -338,7 +338,7 @@ export function DataTab() {
                   >
                     {isExporting ? (
                       <>
-                        <div className="i-ph-spinner-gap-bold animate-spin w-4 h-4 mr-2" />
+                        <div className="i-ph-spinner-gap-bold animate-spin w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                         Exporting...
                       </>
                     ) : availableChats.length === 0 ? (
@@ -353,15 +353,15 @@ export function DataTab() {
 
             <Card>
               <CardHeader>
-                <div className="flex items-center mb-2">
-                  <motion.div className="text-accent-500 mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                    <div className="i-ph:list-checks w-5 h-5" />
+                <div className="flex items-center mb-1 sm:mb-2">
+                  <motion.div className="text-accent-500 mr-1.5 sm:mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <div className="i-ph:list-checks w-4 h-4 sm:w-5 sm:h-5" />
                   </motion.div>
-                  <CardTitle className="text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
+                  <CardTitle className="text-base sm:text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
                     Export Selected Chats
                   </CardTitle>
                 </div>
-                <CardDescription>Choose specific chats to export.</CardDescription>
+                <CardDescription className="text-xs sm:text-sm">Choose specific chats to export.</CardDescription>
               </CardHeader>
               <CardFooter>
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
@@ -377,7 +377,7 @@ export function DataTab() {
                   >
                     {isExporting ? (
                       <>
-                        <div className="i-ph-spinner-gap-bold animate-spin w-4 h-4 mr-2" />
+                        <div className="i-ph-spinner-gap-bold animate-spin w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                         Exporting...
                       </>
                     ) : (
@@ -390,15 +390,15 @@ export function DataTab() {
 
             <Card>
               <CardHeader>
-                <div className="flex items-center mb-2">
-                  <motion.div className="text-accent-500 mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                    <div className="i-ph-upload-duotone w-5 h-5" />
+                <div className="flex items-center mb-1 sm:mb-2">
+                  <motion.div className="text-accent-500 mr-1.5 sm:mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <div className="i-ph:upload-duotone w-4 h-4 sm:w-5 sm:h-5" />
                   </motion.div>
-                  <CardTitle className="text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
+                  <CardTitle className="text-base sm:text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
                     Import Chats
                   </CardTitle>
                 </div>
-                <CardDescription>Import chats from a JSON file.</CardDescription>
+                <CardDescription className="text-xs sm:text-sm">Import chats from a JSON file.</CardDescription>
               </CardHeader>
               <CardFooter>
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
@@ -414,7 +414,7 @@ export function DataTab() {
                   >
                     {isImporting ? (
                       <>
-                        <div className="i-ph-spinner-gap-bold animate-spin w-4 h-4 mr-2" />
+                        <div className="i-ph-spinner-gap-bold animate-spin w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                         Importing...
                       </>
                     ) : (
@@ -427,19 +427,19 @@ export function DataTab() {
 
             <Card>
               <CardHeader>
-                <div className="flex items-center mb-2">
+                <div className="flex items-center mb-1 sm:mb-2">
                   <motion.div
-                    className="text-red-500 dark:text-red-400 mr-2"
+                    className="text-red-500 dark:text-red-400 mr-1.5 sm:mr-2"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                   >
-                    <div className="i-ph-trash-duotone w-5 h-5" />
+                    <div className="i-ph:trash-duotone w-4 h-4 sm:w-5 sm:h-5" />
                   </motion.div>
-                  <CardTitle className="text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
+                  <CardTitle className="text-base sm:text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
                     Delete All Chats
                   </CardTitle>
                 </div>
-                <CardDescription>Delete all your chat history.</CardDescription>
+                <CardDescription className="text-xs sm:text-sm">Delete all your chat history.</CardDescription>
               </CardHeader>
               <CardFooter>
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
@@ -455,7 +455,7 @@ export function DataTab() {
                   >
                     {isDeleting ? (
                       <>
-                        <div className="i-ph-spinner-gap-bold animate-spin w-4 h-4 mr-2" />
+                        <div className="i-ph-spinner-gap-bold animate-spin w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                         Deleting...
                       </>
                     ) : (
@@ -471,19 +471,19 @@ export function DataTab() {
 
       {/* Settings Section */}
       <div>
-        <h2 className="text-xl font-semibold mb-4 text-bolt-elements-textPrimary">Settings</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-bolt-elements-textPrimary">Settings</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
           <Card>
             <CardHeader>
-              <div className="flex items-center mb-2">
-                <motion.div className="text-accent-500 mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                  <div className="i-ph-download-duotone w-5 h-5" />
+              <div className="flex items-center mb-1 sm:mb-2">
+                <motion.div className="text-accent-500 mr-1.5 sm:mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <div className="i-ph:download-duotone w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.div>
-                <CardTitle className="text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
+                <CardTitle className="text-base sm:text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
                   Export All Settings
                 </CardTitle>
               </div>
-              <CardDescription>Export all your settings to a JSON file.</CardDescription>
+              <CardDescription className="text-xs sm:text-sm">Export all your settings to a JSON file.</CardDescription>
             </CardHeader>
             <CardFooter>
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
@@ -499,7 +499,7 @@ export function DataTab() {
                 >
                   {isExporting ? (
                     <>
-                      <div className="i-ph-spinner-gap-bold animate-spin w-4 h-4 mr-2" />
+                      <div className="i-ph-spinner-gap-bold animate-spin w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                       Exporting...
                     </>
                   ) : (
@@ -512,15 +512,15 @@ export function DataTab() {
 
           <Card>
             <CardHeader>
-              <div className="flex items-center mb-2">
-                <motion.div className="text-accent-500 mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                  <div className="i-ph-filter-duotone w-5 h-5" />
+              <div className="flex items-center mb-1 sm:mb-2">
+                <motion.div className="text-accent-500 mr-1.5 sm:mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <div className="i-ph:filter-duotone w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.div>
-                <CardTitle className="text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
+                <CardTitle className="text-base sm:text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
                   Export Selected Settings
                 </CardTitle>
               </div>
-              <CardDescription>Choose specific settings to export.</CardDescription>
+              <CardDescription className="text-xs sm:text-sm">Choose specific settings to export.</CardDescription>
             </CardHeader>
             <CardFooter>
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
@@ -536,7 +536,7 @@ export function DataTab() {
                 >
                   {isExporting ? (
                     <>
-                      <div className="i-ph-spinner-gap-bold animate-spin w-4 h-4 mr-2" />
+                      <div className="i-ph-spinner-gap-bold animate-spin w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                       Exporting...
                     </>
                   ) : (
@@ -549,15 +549,15 @@ export function DataTab() {
 
           <Card>
             <CardHeader>
-              <div className="flex items-center mb-2">
-                <motion.div className="text-accent-500 mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                  <div className="i-ph-upload-duotone w-5 h-5" />
+              <div className="flex items-center mb-1 sm:mb-2">
+                <motion.div className="text-accent-500 mr-1.5 sm:mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <div className="i-ph:upload-duotone w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.div>
-                <CardTitle className="text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
+                <CardTitle className="text-base sm:text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
                   Import Settings
                 </CardTitle>
               </div>
-              <CardDescription>Import settings from a JSON file.</CardDescription>
+              <CardDescription className="text-xs sm:text-sm">Import settings from a JSON file.</CardDescription>
             </CardHeader>
             <CardFooter>
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
@@ -573,7 +573,7 @@ export function DataTab() {
                 >
                   {isImporting ? (
                     <>
-                      <div className="i-ph-spinner-gap-bold animate-spin w-4 h-4 mr-2" />
+                      <div className="i-ph-spinner-gap-bold animate-spin w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                       Importing...
                     </>
                   ) : (
@@ -586,19 +586,19 @@ export function DataTab() {
 
           <Card>
             <CardHeader>
-              <div className="flex items-center mb-2">
+              <div className="flex items-center mb-1 sm:mb-2">
                 <motion.div
-                  className="text-red-500 dark:text-red-400 mr-2"
+                  className="text-red-500 dark:text-red-400 mr-1.5 sm:mr-2"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  <div className="i-ph-arrow-counter-clockwise-duotone w-5 h-5" />
+                  <div className="i-ph:arrow-counter-clockwise-duotone w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.div>
-                <CardTitle className="text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
+                <CardTitle className="text-base sm:text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
                   Reset All Settings
                 </CardTitle>
               </div>
-              <CardDescription>Reset all settings to their default values.</CardDescription>
+              <CardDescription className="text-xs sm:text-sm">Reset all settings to their default values.</CardDescription>
             </CardHeader>
             <CardFooter>
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
@@ -614,7 +614,7 @@ export function DataTab() {
                 >
                   {isResetting ? (
                     <>
-                      <div className="i-ph-spinner-gap-bold animate-spin w-4 h-4 mr-2" />
+                      <div className="i-ph-spinner-gap-bold animate-spin w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                       Resetting...
                     </>
                   ) : (
@@ -629,19 +629,19 @@ export function DataTab() {
 
       {/* API Keys Section */}
       <div>
-        <h2 className="text-xl font-semibold mb-4 text-bolt-elements-textPrimary">API Keys</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-bolt-elements-textPrimary">API Keys</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3 md:gap-4"> {/* Adjusted to md:grid-cols-2 as there are only 2 cards */}
           <Card>
             <CardHeader>
-              <div className="flex items-center mb-2">
-                <motion.div className="text-accent-500 mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                  <div className="i-ph-file-text-duotone w-5 h-5" />
+              <div className="flex items-center mb-1 sm:mb-2">
+                <motion.div className="text-accent-500 mr-1.5 sm:mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <div className="i-ph:file-text-duotone w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.div>
-                <CardTitle className="text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
+                <CardTitle className="text-base sm:text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
                   Download Template
                 </CardTitle>
               </div>
-              <CardDescription>Download a template file for your API keys.</CardDescription>
+              <CardDescription className="text-xs sm:text-sm">Download a template file for your API keys.</CardDescription>
             </CardHeader>
             <CardFooter>
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
@@ -657,7 +657,7 @@ export function DataTab() {
                 >
                   {isDownloadingTemplate ? (
                     <>
-                      <div className="i-ph-spinner-gap-bold animate-spin w-4 h-4 mr-2" />
+                      <div className="i-ph-spinner-gap-bold animate-spin w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                       Downloading...
                     </>
                   ) : (
@@ -670,15 +670,15 @@ export function DataTab() {
 
           <Card>
             <CardHeader>
-              <div className="flex items-center mb-2">
-                <motion.div className="text-accent-500 mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                  <div className="i-ph-upload-duotone w-5 h-5" />
+              <div className="flex items-center mb-1 sm:mb-2">
+                <motion.div className="text-accent-500 mr-1.5 sm:mr-2" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <div className="i-ph:upload-duotone w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.div>
-                <CardTitle className="text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
+                <CardTitle className="text-base sm:text-lg group-hover:text-bolt-elements-item-contentAccent transition-colors">
                   Import API Keys
                 </CardTitle>
               </div>
-              <CardDescription>Import API keys from a JSON file.</CardDescription>
+              <CardDescription className="text-xs sm:text-sm">Import API keys from a JSON file.</CardDescription>
             </CardHeader>
             <CardFooter>
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
@@ -694,7 +694,7 @@ export function DataTab() {
                 >
                   {isImportingKeys ? (
                     <>
-                      <div className="i-ph-spinner-gap-bold animate-spin w-4 h-4 mr-2" />
+                      <div className="i-ph-spinner-gap-bold animate-spin w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                       Importing...
                     </>
                   ) : (
@@ -709,9 +709,9 @@ export function DataTab() {
 
       {/* Data Visualization */}
       <div>
-        <h2 className="text-xl font-semibold mb-4 text-bolt-elements-textPrimary">Data Usage</h2>
+        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-bolt-elements-textPrimary">Data Usage</h2>
         <Card>
-          <CardContent className="p-5">
+          <CardContent className="p-3 sm:p-4 md:p-5"> {/* Responsive CardContent padding */}
             <DataVisualization chats={availableChats} />
           </CardContent>
         </Card>

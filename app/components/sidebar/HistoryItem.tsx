@@ -68,28 +68,28 @@ export function HistoryItem({
   return (
     <div
       className={classNames(
-        'group rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50/80 dark:hover:bg-gray-800/30 overflow-hidden flex justify-between items-center px-3 py-2 transition-colors',
+        'group rounded-lg text-xs sm:text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50/80 dark:hover:bg-gray-800/30 overflow-hidden flex justify-between items-center px-2 py-1.5 sm:px-3 sm:py-2 transition-colors',
         { 'text-gray-900 dark:text-white bg-gray-50/80 dark:bg-gray-800/30': isActiveChat },
         { 'cursor-pointer': selectionMode },
       )}
       onClick={selectionMode ? handleItemClick : undefined}
     >
       {selectionMode && (
-        <div className="flex items-center mr-2" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center mr-1 sm:mr-2" onClick={(e) => e.stopPropagation()}>
           <Checkbox
             id={`select-${item.id}`}
             checked={isSelected}
             onCheckedChange={handleCheckboxChange}
-            className="h-4 w-4"
+            className="h-3 w-3 sm:h-4 sm:w-4" // Scaled checkbox
           />
         </div>
       )}
 
       {editing ? (
-        <form onSubmit={handleSubmit} className="flex-1 flex items-center gap-2">
+        <form onSubmit={handleSubmit} className="flex-1 flex items-center gap-1 sm:gap-2">
           <input
             type="text"
-            className="flex-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-md px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-800 focus:outline-none focus:ring-1 focus:ring-purple-500/50"
+            className="flex-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-md px-2 py-1 text-xs sm:px-3 sm:py-1.5 sm:text-sm border border-gray-200 dark:border-gray-800 focus:outline-none focus:ring-1 focus:ring-purple-500/50"
             autoFocus
             value={currentDescription}
             onChange={handleChange}
@@ -98,28 +98,30 @@ export function HistoryItem({
           />
           <button
             type="submit"
-            className="i-ph:check h-4 w-4 text-gray-500 hover:text-purple-500 transition-colors"
+            className="i-ph:check h-3 w-3 sm:h-4 sm:w-4 text-gray-500 hover:text-purple-500 transition-colors" // Scaled icon
             onMouseDown={handleSubmit}
           />
         </form>
       ) : (
         <a
           href={`/chat/${item.urlId}`}
-          className="flex w-full relative truncate block"
+          className="flex w-full relative truncate block" // Text size inherited (text-xs sm:text-sm)
           onClick={selectionMode ? handleItemClick : undefined}
         >
           <WithTooltip tooltip={currentDescription}>
-            <span className="truncate pr-24">{currentDescription}</span>
+            {/* Adjusted pr for actions visibility */}
+            <span className="truncate pr-16 sm:pr-20 md:pr-24">{currentDescription}</span>
           </WithTooltip>
           <div
             className={classNames(
-              'absolute right-0 top-0 bottom-0 flex items-center bg-transparent px-2 transition-colors',
+              'absolute right-0 top-0 bottom-0 flex items-center bg-transparent px-1 sm:px-2 transition-colors', // Adjusted padding
             )}
           >
-            <div className="flex items-center gap-2.5 text-gray-400 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
+            {/* Adjusted gap and icon sizes */}
+            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-2.5 text-gray-400 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
               <ChatActionButton
                 toolTipContent="Export"
-                icon="i-ph:download-simple h-4 w-4"
+                icon="i-ph:download-simple h-3 w-3 sm:h-4 sm:w-4"
                 onClick={(event) => {
                   event.preventDefault();
                   exportChat(item.id);
@@ -128,7 +130,7 @@ export function HistoryItem({
               {onDuplicate && (
                 <ChatActionButton
                   toolTipContent="Duplicate"
-                  icon="i-ph:copy h-4 w-4"
+                  icon="i-ph:copy h-3 w-3 sm:h-4 sm:w-4"
                   onClick={(event) => {
                     event.preventDefault();
                     onDuplicate?.(item.id);
@@ -137,7 +139,7 @@ export function HistoryItem({
               )}
               <ChatActionButton
                 toolTipContent="Rename"
-                icon="i-ph:pencil-fill h-4 w-4"
+                icon="i-ph:pencil-fill h-3 w-3 sm:h-4 sm:w-4"
                 onClick={(event) => {
                   event.preventDefault();
                   toggleEditMode();
@@ -145,7 +147,7 @@ export function HistoryItem({
               />
               <ChatActionButton
                 toolTipContent="Delete"
-                icon="i-ph:trash h-4 w-4"
+                icon="i-ph:trash h-3 w-3 sm:h-4 sm:w-4"
                 className="hover:text-red-500 dark:hover:text-red-400"
                 onClick={handleDeleteClick}
               />
@@ -166,7 +168,7 @@ const ChatActionButton = forwardRef(
       onClick,
     }: {
       toolTipContent: string;
-      icon: string;
+      icon: string; // Icon class now includes responsive size, e.g., "i-ph:trash h-3 w-3 sm:h-4 sm:w-4"
       className?: string;
       onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
       btnTitle?: string;
@@ -178,7 +180,8 @@ const ChatActionButton = forwardRef(
         <button
           ref={ref}
           type="button"
-          className={`text-gray-400 dark:text-gray-500 hover:text-purple-500 dark:hover:text-purple-400 transition-colors ${icon} ${className ? className : ''}`}
+          // Icon class is now fully responsible for its size and appearance
+          className={`text-gray-400 dark:text-gray-500 hover:text-purple-500 dark:hover:text-purple-400 transition-colors ${icon} ${className || ''}`}
           onClick={onClick}
         />
       </WithTooltip>

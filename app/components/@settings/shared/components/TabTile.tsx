@@ -34,8 +34,8 @@ export const TabTile: React.FC<TabTileProps> = ({
           <motion.div
             onClick={onClick}
             className={classNames(
-              'relative flex flex-col items-center p-6 rounded-xl',
-              'w-full h-full min-h-[160px]',
+              'relative flex flex-col items-center p-3 sm:p-4 md:p-6 rounded-lg sm:rounded-xl', // Responsive padding and rounding
+              'w-full h-full min-h-[120px] sm:min-h-[140px] md:min-h-[160px]', // Responsive min-height
               'bg-white dark:bg-[#141414]',
               'border border-[#E5E5E5] dark:border-[#333333]',
               'group',
@@ -52,9 +52,9 @@ export const TabTile: React.FC<TabTileProps> = ({
               <motion.div
                 className={classNames(
                   'relative',
-                  'w-14 h-14',
+                  'w-10 h-10 sm:w-12 sm:w-12 md:w-14 md:h-14', // Responsive icon background size
                   'flex items-center justify-center',
-                  'rounded-xl',
+                  'rounded-lg sm:rounded-xl', // Responsive rounding for icon background
                   'bg-gray-100 dark:bg-gray-800',
                   'ring-1 ring-gray-200 dark:ring-gray-700',
                   'group-hover:bg-purple-100 dark:group-hover:bg-gray-700/80',
@@ -65,7 +65,7 @@ export const TabTile: React.FC<TabTileProps> = ({
                 <motion.div
                   className={classNames(
                     TAB_ICONS[tab.id],
-                    'w-8 h-8',
+                    'w-5 h-5 sm:w-6 sm:w-6 md:w-8 md:h-8', // Responsive icon size
                     'text-gray-600 dark:text-gray-300',
                     'group-hover:text-purple-500 dark:group-hover:text-purple-400/80',
                     isActive ? 'text-purple-500 dark:text-purple-400/90' : '',
@@ -74,10 +74,10 @@ export const TabTile: React.FC<TabTileProps> = ({
               </motion.div>
 
               {/* Label and Description */}
-              <div className="flex flex-col items-center mt-5 w-full">
+              <div className="flex flex-col items-center mt-2 sm:mt-3 md:mt-5 w-full"> {/* Responsive margin-top */}
                 <h3
                   className={classNames(
-                    'text-[15px] font-medium leading-snug mb-2',
+                    'text-xs sm:text-sm md:text-[15px] font-medium leading-snug mb-1 sm:mb-1.5 md:mb-2', // Responsive font size and margin
                     'text-gray-700 dark:text-gray-200',
                     'group-hover:text-purple-600 dark:group-hover:text-purple-300/90',
                     isActive ? 'text-purple-500 dark:text-purple-400/90' : '',
@@ -88,9 +88,9 @@ export const TabTile: React.FC<TabTileProps> = ({
                 {description && (
                   <p
                     className={classNames(
-                      'text-[13px] leading-relaxed',
+                      'text-[10px] sm:text-xs md:text-[13px] leading-relaxed', // Responsive font size
                       'text-gray-500 dark:text-gray-400',
-                      'max-w-[85%]',
+                      'max-w-[90%] sm:max-w-[85%]', // Responsive max-width
                       'text-center',
                       'group-hover:text-purple-500 dark:group-hover:text-purple-400/70',
                       isActive ? 'text-purple-400 dark:text-purple-400/80' : '',
@@ -105,13 +105,14 @@ export const TabTile: React.FC<TabTileProps> = ({
             {/* Update Indicator with Tooltip */}
             {hasUpdate && (
               <>
-                <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-purple-500 dark:bg-purple-400 animate-pulse" />
+                {/* Responsive position and size for update dot */}
+                <div className="absolute top-2 right-2 w-1.5 h-1.5 sm:top-3 sm:right-3 sm:w-2 sm:w-2 rounded-full bg-purple-500 dark:bg-purple-400 animate-pulse" />
                 <Tooltip.Portal>
                   <Tooltip.Content
                     className={classNames(
-                      'px-3 py-1.5 rounded-lg',
+                      'px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg', // Responsive padding for tooltip
                       'bg-[#18181B] text-white',
-                      'text-sm font-medium',
+                      'text-xs sm:text-sm font-medium', // Responsive text for tooltip
                       'select-none',
                       'z-[100]',
                     )}

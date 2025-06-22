@@ -46,7 +46,7 @@ export const IconButton = memo(
         <button
           ref={ref}
           className={classNames(
-            'flex items-center text-bolt-elements-item-contentDefault bg-transparent enabled:hover:text-bolt-elements-item-contentActive rounded-md p-1 enabled:hover:bg-bolt-elements-item-backgroundActive disabled:cursor-not-allowed focus:outline-none',
+            'flex items-center text-bolt-elements-item-contentDefault bg-transparent enabled:hover:text-bolt-elements-item-contentActive rounded-md p-0.5 sm:p-1 enabled:hover:bg-bolt-elements-item-backgroundActive disabled:cursor-not-allowed focus:outline-none', // Responsive padding
             {
               [classNames('opacity-30', disabledClassName)]: disabled,
             },
@@ -70,15 +70,17 @@ export const IconButton = memo(
 );
 
 function getIconSize(size: IconSize) {
+  // Returns responsive text size classes
   if (size === 'sm') {
-    return 'text-sm';
+    return 'text-xs sm:text-sm';
   } else if (size === 'md') {
-    return 'text-md';
+    return 'text-sm sm:text-base'; // Was 'text-md', using standard Tailwind classes
   } else if (size === 'lg') {
-    return 'text-lg';
+    return 'text-base sm:text-lg';
   } else if (size === 'xl') {
-    return 'text-xl';
+    return 'text-lg sm:text-xl'; // Default
   } else {
-    return 'text-2xl';
+    // xxl
+    return 'text-xl sm:text-2xl';
   }
 }

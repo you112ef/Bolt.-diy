@@ -36,23 +36,24 @@ const FeatureCard = memo(
         'bg-bolt-elements-background-depth-2',
         'hover:bg-bolt-elements-background-depth-3',
         'transition-colors duration-200',
-        'rounded-lg overflow-hidden',
+        'rounded-md sm:rounded-lg overflow-hidden', // Responsive rounding
       )}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
     >
-      <div className="p-4">
+      <div className="p-3 sm:p-4"> {/* Responsive padding */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={classNames(feature.icon, 'w-5 h-5 text-bolt-elements-textSecondary')} />
-            <div className="flex items-center gap-2">
-              <h4 className="font-medium text-bolt-elements-textPrimary">{feature.title}</h4>
+          <div className="flex items-center gap-2 sm:gap-3"> {/* Responsive gap */}
+            <div className={classNames(feature.icon, 'w-4 h-4 sm:w-5 sm:h-5 text-bolt-elements-textSecondary')} /> {/* Responsive icon size */}
+            <div className="flex items-center gap-1.5 sm:gap-2"> {/* Responsive gap */}
+              {/* Responsive text for title - inherits from ControlPanel (text-xs sm:text-sm) then gets font-medium */}
+              <h4 className="font-medium text-bolt-elements-textPrimary text-sm">{feature.title}</h4>
               {feature.beta && (
-                <span className="px-2 py-0.5 text-xs rounded-full bg-blue-500/10 text-blue-500 font-medium">Beta</span>
+                <span className="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs rounded-full bg-blue-500/10 text-blue-500 font-medium">Beta</span> {/* Responsive tag */}
               )}
               {feature.experimental && (
-                <span className="px-2 py-0.5 text-xs rounded-full bg-orange-500/10 text-orange-500 font-medium">
+                <span className="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs rounded-full bg-orange-500/10 text-orange-500 font-medium"> {/* Responsive tag */}
                   Experimental
                 </span>
               )}
@@ -60,8 +61,9 @@ const FeatureCard = memo(
           </div>
           <Switch checked={feature.enabled} onCheckedChange={(checked) => onToggle(feature.id, checked)} />
         </div>
-        <p className="mt-2 text-sm text-bolt-elements-textSecondary">{feature.description}</p>
-        {feature.tooltip && <p className="mt-1 text-xs text-bolt-elements-textTertiary">{feature.tooltip}</p>}
+        {/* Responsive description and tooltip text */}
+        <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-bolt-elements-textSecondary">{feature.description}</p>
+        {feature.tooltip && <p className="mt-1 text-[10px] sm:text-xs text-bolt-elements-textTertiary">{feature.tooltip}</p>}
       </div>
     </motion.div>
   ),
@@ -83,20 +85,21 @@ const FeatureSection = memo(
   }) => (
     <motion.div
       layout
-      className="flex flex-col gap-4"
+      className="flex flex-col gap-2 sm:gap-3 md:gap-4" // Responsive gap
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="flex items-center gap-3">
-        <div className={classNames(icon, 'text-xl text-purple-500')} />
+      <div className="flex items-center gap-2 sm:gap-3"> {/* Responsive gap */}
+        <div className={classNames(icon, 'text-lg sm:text-xl text-purple-500')} /> {/* Responsive icon size */}
         <div>
-          <h3 className="text-lg font-medium text-bolt-elements-textPrimary">{title}</h3>
-          <p className="text-sm text-bolt-elements-textSecondary">{description}</p>
+          {/* Responsive title and description text */}
+          <h3 className="text-base sm:text-lg font-medium text-bolt-elements-textPrimary">{title}</h3>
+          <p className="text-xs sm:text-sm text-bolt-elements-textSecondary">{description}</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3 md:gap-4"> {/* Responsive gap */}
         {features.map((feature, index) => (
           <FeatureCard key={feature.id} feature={feature} index={index} onToggle={onToggleFeature} />
         ))}
@@ -216,7 +219,7 @@ export default function FeaturesTab() {
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4 sm:gap-6 md:gap-8"> {/* Responsive gap */}
       <FeatureSection
         title="Core Features"
         features={features.stable}
@@ -241,17 +244,18 @@ export default function FeaturesTab() {
           'bg-bolt-elements-background-depth-2',
           'hover:bg-bolt-elements-background-depth-3',
           'transition-all duration-200',
-          'rounded-lg p-4',
+          'rounded-md sm:rounded-lg p-3 sm:p-4', // Responsive rounding and padding
           'group',
         )}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <div className="flex items-center gap-4">
+        {/* Responsive flex direction and gap for prompt library section */}
+        <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-4">
           <div
             className={classNames(
-              'p-2 rounded-lg text-xl',
+              'p-1.5 sm:p-2 rounded-md sm:rounded-lg text-lg sm:text-xl', // Responsive padding, rounding, icon size
               'bg-bolt-elements-background-depth-3 group-hover:bg-bolt-elements-background-depth-4',
               'transition-colors duration-200',
               'text-purple-500',
@@ -260,13 +264,15 @@ export default function FeaturesTab() {
             <div className="i-ph:book" />
           </div>
           <div className="flex-1">
-            <h4 className="text-sm font-medium text-bolt-elements-textPrimary group-hover:text-purple-500 transition-colors">
+            {/* Responsive text for title and description */}
+            <h4 className="text-xs sm:text-sm font-medium text-bolt-elements-textPrimary group-hover:text-purple-500 transition-colors">
               Prompt Library
             </h4>
-            <p className="text-xs text-bolt-elements-textSecondary mt-0.5">
+            <p className="text-[10px] sm:text-xs text-bolt-elements-textSecondary mt-0.5">
               Choose a prompt from the library to use as the system prompt
             </p>
           </div>
+          {/* Responsive select input */}
           <select
             value={promptId}
             onChange={(e) => {
@@ -274,7 +280,7 @@ export default function FeaturesTab() {
               toast.success('Prompt template updated');
             }}
             className={classNames(
-              'p-2 rounded-lg text-sm min-w-[200px]',
+              'w-full sm:w-auto p-1.5 sm:p-2 rounded-md sm:rounded-lg text-xs sm:text-sm min-w-0 sm:min-w-[160px] md:min-w-[200px]', // Responsive width and min-width
               'bg-bolt-elements-background-depth-3 border border-bolt-elements-borderColor',
               'text-bolt-elements-textPrimary',
               'focus:outline-none focus:ring-2 focus:ring-purple-500/30',

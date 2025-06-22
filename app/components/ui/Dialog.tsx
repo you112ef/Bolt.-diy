@@ -22,7 +22,7 @@ export const DialogButton = memo(({ type, children, onClick, disabled }: DialogB
   return (
     <button
       className={classNames(
-        'inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors',
+        'inline-flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-colors', // Responsive adjustments
         type === 'primary'
           ? 'bg-purple-500 text-white hover:bg-purple-600 dark:bg-purple-500 dark:hover:bg-purple-600'
           : type === 'secondary'
@@ -40,7 +40,10 @@ export const DialogButton = memo(({ type, children, onClick, disabled }: DialogB
 export const DialogTitle = memo(({ className, children, ...props }: RadixDialog.DialogTitleProps) => {
   return (
     <RadixDialog.Title
-      className={classNames('text-lg font-medium text-bolt-elements-textPrimary flex items-center gap-2', className)}
+      className={classNames(
+        'text-base sm:text-lg font-medium text-bolt-elements-textPrimary flex items-center gap-1 sm:gap-2', // Responsive adjustments
+        className,
+      )}
       {...props}
     >
       {children}
@@ -51,7 +54,7 @@ export const DialogTitle = memo(({ className, children, ...props }: RadixDialog.
 export const DialogDescription = memo(({ className, children, ...props }: RadixDialog.DialogDescriptionProps) => {
   return (
     <RadixDialog.Description
-      className={classNames('text-sm text-bolt-elements-textSecondary mt-1', className)}
+      className={classNames('text-xs sm:text-sm text-bolt-elements-textSecondary mt-1', className)} // Responsive adjustments
       {...props}
     >
       {children}
@@ -116,7 +119,9 @@ export const Dialog = memo(({ children, className, showCloseButton = true, onClo
       <RadixDialog.Content asChild>
         <motion.div
           className={classNames(
-            'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-950 rounded-lg shadow-xl border border-bolt-elements-borderColor z-[9999] w-[520px] focus:outline-none',
+            'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-950 rounded-lg shadow-xl border border-bolt-elements-borderColor z-[9999]',
+            'w-[90vw] sm:w-[520px] max-h-[90vh]', // Responsive width and max height
+            'focus:outline-none flex flex-col', // Added flex-col here for overflow to work correctly with children
             className,
           )}
           initial="closed"
@@ -124,17 +129,18 @@ export const Dialog = memo(({ children, className, showCloseButton = true, onClo
           exit="closed"
           variants={dialogVariants}
         >
-          <div className="flex flex-col">
+          {/* Apply overflow to an inner container if direct children need to scroll, or manage scrolling within child components */}
+          <div className="flex-1 overflow-y-auto"> {/* Inner scrollable container */}
             {children}
-            {showCloseButton && (
-              <RadixDialog.Close asChild onClick={onClose}>
-                <IconButton
-                  icon="i-ph:x"
-                  className="absolute top-3 right-3 text-bolt-elements-textTertiary hover:text-bolt-elements-textSecondary"
-                />
-              </RadixDialog.Close>
-            )}
           </div>
+          {showCloseButton && (
+            <RadixDialog.Close asChild onClick={onClose}>
+              <IconButton
+                icon="i-ph:x" // IconButton itself needs responsive sizing
+                className="absolute top-2 right-2 sm:top-3 sm:right-3 text-bolt-elements-textTertiary hover:text-bolt-elements-textSecondary" // Adjusted position slightly for smaller screens
+              />
+            </RadixDialog.Close>
+          )}
         </motion.div>
       </RadixDialog.Content>
     </RadixDialog.Portal>
@@ -208,10 +214,13 @@ export function ConfirmationDialog({
   return (
     <RadixDialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog showCloseButton={false}>
-        <div className="p-6 bg-white dark:bg-gray-950 relative z-10">
+        {/* Responsive padding for the dialog content area */}
+        <div className="p-3 sm:p-4 md:p-6 bg-white dark:bg-gray-950 relative z-10">
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className="mb-4">{description}</DialogDescription>
-          <div className="flex justify-end space-x-2">
+          {/* mb-2 sm:mb-4 for description margin */}
+          <DialogDescription className="mb-2 sm:mb-4">{description}</DialogDescription>
+          {/* Responsive spacing for buttons */}
+          <div className="flex justify-end space-x-1 sm:space-x-2">
             <Button variant="outline" onClick={onClose} disabled={isLoading}>
               {cancelLabel}
             </Button>
@@ -227,7 +236,8 @@ export function ConfirmationDialog({
             >
               {isLoading ? (
                 <>
-                  <div className="i-ph-spinner-gap-bold animate-spin w-4 h-4 mr-2" />
+                  {/* Responsive icon size and margin */}
+                  <div className="i-ph-spinner-gap-bold animate-spin w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   {confirmLabel}
                 </>
               ) : (
@@ -300,7 +310,7 @@ export function SelectionDialog({
   onClose,
   onConfirm,
   confirmLabel = 'Confirm',
-  maxHeight = '60vh',
+  maxHeight = '60vh', // Keep as string for style prop
 }: SelectionDialogProps) {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -332,10 +342,18 @@ export function SelectionDialog({
     onClose();
   };
 
+  // Item size for FixedSizeList - make it responsive
+  const itemSize = window.innerWidth < 640 ? 52 : 60; // 52px for small screens, 60px for sm and up
+
   // Calculate the height for the virtualized list
   const listHeight = Math.min(
-    items.length * 60,
-    parseInt(maxHeight.replace('vh', '')) * window.innerHeight * 0.01 - 40,
+    items.length * itemSize, // Use responsive itemSize
+    // Ensure maxHeight is treated as a number for calculation if it's a vh unit
+    typeof maxHeight === 'string' && maxHeight.endsWith('vh')
+      ? (parseInt(maxHeight.replace('vh', '')) / 100) * window.innerHeight - 40 // Approximation
+      : typeof maxHeight === 'number'
+        ? maxHeight - 40
+        : 300, // fallback height
   );
 
   // Render each item in the virtualized list
@@ -345,7 +363,7 @@ export function SelectionDialog({
       <div
         key={item.id}
         className={classNames(
-          'flex items-start space-x-3 p-2 rounded-md transition-colors',
+          'flex items-start space-x-1.5 sm:space-x-2 md:space-x-3 p-1.5 sm:p-2 rounded-md transition-colors', // Responsive padding and spacing
           selectedItems.includes(item.id)
             ? 'bg-bolt-elements-item-backgroundAccent'
             : 'bg-bolt-elements-bg-depth-2 hover:bg-bolt-elements-item-backgroundActive',
@@ -360,12 +378,13 @@ export function SelectionDialog({
           id={`item-${item.id}`}
           checked={selectedItems.includes(item.id)}
           onCheckedChange={() => handleToggleItem(item.id)}
+          // Checkbox component itself should be responsive (h-3 w-3 sm:h-4 sm:w-4 from previous changes if applied)
         />
-        <div className="grid gap-1.5 leading-none">
+        <div className="grid gap-1 sm:gap-1.5 leading-none">
           <Label
             htmlFor={`item-${item.id}`}
             className={classNames(
-              'text-sm font-medium cursor-pointer',
+              'text-xs sm:text-sm font-medium cursor-pointer', // Responsive text
               selectedItems.includes(item.id)
                 ? 'text-bolt-elements-item-contentAccent'
                 : 'text-bolt-elements-textPrimary',
@@ -382,32 +401,37 @@ export function SelectionDialog({
   return (
     <RadixDialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog showCloseButton={false}>
-        <div className="p-6 bg-white dark:bg-gray-950 relative z-10">
+        {/* Responsive padding */}
+        <div className="p-3 sm:p-4 md:p-6 bg-white dark:bg-gray-950 relative z-10">
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className="mt-2 mb-4">
+          {/* Responsive margins */}
+          <DialogDescription className="mt-1 mb-2 sm:mt-2 sm:mb-4">
             Select the items you want to include and click{' '}
             <span className="text-bolt-elements-item-contentAccent font-medium">{confirmLabel}</span>.
           </DialogDescription>
 
-          <div className="py-4">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-bolt-elements-textSecondary">
+          {/* Responsive padding and margins */}
+          <div className="py-2 sm:py-4">
+            <div className="flex items-center justify-between mb-2 sm:mb-4">
+              {/* Responsive text */}
+              <span className="text-xs sm:text-sm font-medium text-bolt-elements-textSecondary">
                 {selectedItems.length} of {items.length} selected
               </span>
               <Button
                 variant="ghost"
-                size="sm"
+                size="sm" // Button size 'sm' is now responsive
                 onClick={handleSelectAll}
-                className="text-xs h-8 px-2 text-bolt-elements-textPrimary hover:text-bolt-elements-item-contentAccent hover:bg-bolt-elements-item-backgroundAccent bg-bolt-elements-bg-depth-2 dark:bg-transparent"
+                // text-xs is already part of new 'sm' button size. Adjusted h-7 for sm button.
+                className="h-7 sm:h-8 px-2 text-bolt-elements-textPrimary hover:text-bolt-elements-item-contentAccent hover:bg-bolt-elements-item-backgroundAccent bg-bolt-elements-bg-depth-2 dark:bg-transparent"
               >
                 {selectAll ? 'Deselect All' : 'Select All'}
               </Button>
             </div>
 
             <div
-              className="pr-2 border rounded-md border-bolt-elements-borderColor bg-bolt-elements-bg-depth-2"
+              className="pr-1 sm:pr-2 border rounded-md border-bolt-elements-borderColor bg-bolt-elements-bg-depth-2" // Responsive padding
               style={{
-                maxHeight,
+                maxHeight, // maxHeight prop is fine as string (e.g. "60vh")
               }}
             >
               {items.length > 0 ? (
@@ -415,18 +439,22 @@ export function SelectionDialog({
                   height={listHeight}
                   width="100%"
                   itemCount={items.length}
-                  itemSize={60}
+                  itemSize={itemSize} // Use responsive itemSize
                   className="scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-bolt-elements-bg-depth-3"
                 >
                   {ItemRenderer}
                 </FixedSizeList>
               ) : (
-                <div className="text-center py-4 text-sm text-bolt-elements-textTertiary">No items to display</div>
+                // Responsive text and padding
+                <div className="text-center py-3 sm:py-4 text-xs sm:text-sm text-bolt-elements-textTertiary">
+                  No items to display
+                </div>
               )}
             </div>
           </div>
 
-          <div className="flex justify-between mt-6">
+          {/* Responsive margin */}
+          <div className="flex justify-between mt-3 sm:mt-4 md:mt-6">
             <Button
               variant="outline"
               onClick={onClose}

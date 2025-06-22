@@ -70,6 +70,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     document.querySelector('html')?.setAttribute('data-theme', theme);
+    // Apply global overflow and max-width styles to the html element
+    document.documentElement.classList.add('overflow-x-hidden', 'max-w-full');
   }, [theme]);
 
   return (

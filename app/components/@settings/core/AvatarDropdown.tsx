@@ -22,7 +22,8 @@ export const AvatarDropdown = ({ onSelectTab }: AvatarDropdownProps) => {
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <motion.button
-          className="w-10 h-10 rounded-full bg-transparent flex items-center justify-center focus:outline-none"
+          // Responsive trigger size
+          className="w-8 h-8 sm:w-9 sm:w-9 md:w-10 md:h-10 rounded-full bg-transparent flex items-center justify-center focus:outline-none"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -36,7 +37,8 @@ export const AvatarDropdown = ({ onSelectTab }: AvatarDropdownProps) => {
             />
           ) : (
             <div className="w-full h-full rounded-full flex items-center justify-center bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500">
-              <div className="i-ph:question w-6 h-6" />
+              {/* Responsive fallback icon size */}
+              <div className="i-ph:question w-5 h-5 sm:w-5 sm:w-5 md:w-6 md:h-6" />
             </div>
           )}
         </motion.button>
@@ -45,7 +47,7 @@ export const AvatarDropdown = ({ onSelectTab }: AvatarDropdownProps) => {
       <DropdownMenu.Portal>
         <DropdownMenu.Content
           className={classNames(
-            'min-w-[240px] z-[250]',
+            'min-w-[220px] sm:min-w-[240px] z-[250]', // Responsive min-width
             'bg-white dark:bg-[#141414]',
             'rounded-lg shadow-lg',
             'border border-gray-200/50 dark:border-gray-800/50',
@@ -55,13 +57,14 @@ export const AvatarDropdown = ({ onSelectTab }: AvatarDropdownProps) => {
           sideOffset={5}
           align="end"
         >
+          {/* User Info Section - Responsive padding, gap, avatar size, text sizes */}
           <div
             className={classNames(
-              'px-4 py-3 flex items-center gap-3',
+              'px-3 py-2 sm:px-4 sm:py-3 flex items-center gap-2 sm:gap-3',
               'border-b border-gray-200/50 dark:border-gray-800/50',
             )}
           >
-            <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-white dark:bg-gray-800 shadow-sm">
+            <div className="w-8 h-8 sm:w-9 sm:w-9 md:w-10 md:h-10 rounded-full overflow-hidden flex-shrink-0 bg-white dark:bg-gray-800 shadow-sm">
               {profile?.avatar ? (
                 <img
                   src={profile.avatar}
@@ -71,23 +74,24 @@ export const AvatarDropdown = ({ onSelectTab }: AvatarDropdownProps) => {
                   decoding="sync"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 font-medium text-lg">
+                <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 font-medium text-base sm:text-lg">
                   <span className="relative -top-0.5">?</span>
                 </div>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-medium text-sm text-gray-900 dark:text-white truncate">
+              <div className="font-medium text-xs sm:text-sm text-gray-900 dark:text-white truncate">
                 {profile?.username || 'Guest User'}
               </div>
               {profile?.bio && <div className="text-xs text-gray-500 dark:text-gray-400 truncate">{profile.bio}</div>}
             </div>
           </div>
 
+          {/* Dropdown Items - Responsive padding, gap, text size, icon size */}
           <DropdownMenu.Item
             className={classNames(
-              'flex items-center gap-2 px-4 py-2.5',
-              'text-sm text-gray-700 dark:text-gray-200',
+              'flex items-center gap-1.5 px-3 py-2 sm:gap-2 sm:px-4 sm:py-2.5',
+              'text-xs sm:text-sm text-gray-700 dark:text-gray-200',
               'hover:bg-purple-50 dark:hover:bg-purple-500/10',
               'hover:text-purple-500 dark:hover:text-purple-400',
               'cursor-pointer transition-all duration-200',
@@ -96,14 +100,14 @@ export const AvatarDropdown = ({ onSelectTab }: AvatarDropdownProps) => {
             )}
             onClick={() => onSelectTab('profile')}
           >
-            <div className="i-ph:user-circle w-4 h-4 text-gray-400 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors" />
+            <div className="i-ph:user-circle w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors" />
             Edit Profile
           </DropdownMenu.Item>
 
           <DropdownMenu.Item
             className={classNames(
-              'flex items-center gap-2 px-4 py-2.5',
-              'text-sm text-gray-700 dark:text-gray-200',
+              'flex items-center gap-1.5 px-3 py-2 sm:gap-2 sm:px-4 sm:py-2.5',
+              'text-xs sm:text-sm text-gray-700 dark:text-gray-200',
               'hover:bg-purple-50 dark:hover:bg-purple-500/10',
               'hover:text-purple-500 dark:hover:text-purple-400',
               'cursor-pointer transition-all duration-200',
@@ -112,7 +116,7 @@ export const AvatarDropdown = ({ onSelectTab }: AvatarDropdownProps) => {
             )}
             onClick={() => onSelectTab('settings')}
           >
-            <div className="i-ph:gear-six w-4 h-4 text-gray-400 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors" />
+            <div className="i-ph:gear-six w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors" />
             Settings
           </DropdownMenu.Item>
 
@@ -120,8 +124,8 @@ export const AvatarDropdown = ({ onSelectTab }: AvatarDropdownProps) => {
 
           <DropdownMenu.Item
             className={classNames(
-              'flex items-center gap-2 px-4 py-2.5',
-              'text-sm text-gray-700 dark:text-gray-200',
+              'flex items-center gap-1.5 px-3 py-2 sm:gap-2 sm:px-4 sm:py-2.5',
+              'text-xs sm:text-sm text-gray-700 dark:text-gray-200',
               'hover:bg-purple-50 dark:hover:bg-purple-500/10',
               'hover:text-purple-500 dark:hover:text-purple-400',
               'cursor-pointer transition-all duration-200',
@@ -130,15 +134,16 @@ export const AvatarDropdown = ({ onSelectTab }: AvatarDropdownProps) => {
             )}
             onClick={() => onSelectTab('task-manager')}
           >
-            <div className="i-ph:activity w-4 h-4 text-gray-400 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors" />
+            <div className="i-ph:activity w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors" />
             Task Manager
-            <BetaLabel />
+            {/* Responsive BetaLabel margin */}
+            <span className="px-1.5 py-0.5 rounded-full bg-purple-500/10 dark:bg-purple-500/20 text-[10px] font-medium text-purple-600 dark:text-purple-400 ml-1 sm:ml-2">BETA</span>
           </DropdownMenu.Item>
 
           <DropdownMenu.Item
             className={classNames(
-              'flex items-center gap-2 px-4 py-2.5',
-              'text-sm text-gray-700 dark:text-gray-200',
+              'flex items-center gap-1.5 px-3 py-2 sm:gap-2 sm:px-4 sm:py-2.5',
+              'text-xs sm:text-sm text-gray-700 dark:text-gray-200',
               'hover:bg-purple-50 dark:hover:bg-purple-500/10',
               'hover:text-purple-500 dark:hover:text-purple-400',
               'cursor-pointer transition-all duration-200',
@@ -147,9 +152,10 @@ export const AvatarDropdown = ({ onSelectTab }: AvatarDropdownProps) => {
             )}
             onClick={() => onSelectTab('service-status')}
           >
-            <div className="i-ph:heartbeat w-4 h-4 text-gray-400 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors" />
+            <div className="i-ph:heartbeat w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors" />
             Service Status
-            <BetaLabel />
+            {/* Responsive BetaLabel margin */}
+            <span className="px-1.5 py-0.5 rounded-full bg-purple-500/10 dark:bg-purple-500/20 text-[10px] font-medium text-purple-600 dark:text-purple-400 ml-1 sm:ml-2">BETA</span>
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>

@@ -132,10 +132,15 @@ const LogEntryItem = ({ log, isExpanded: forceExpanded, use24Hour, showTimestamp
   }, [log.level, log.category]);
 
   const renderDetails = (details: any) => {
+    // Responsive text sizes for details
+    const textClass = "text-[10px] sm:text-xs";
+    const preClass = `${textClass} bg-gray-50 dark:bg-gray-800/50 rounded p-1.5 sm:p-2 whitespace-pre-wrap`;
+    const titleClass = `${textClass} font-medium text-gray-700 dark:text-gray-300`;
+
     if (log.category === 'provider') {
       return (
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex flex-col gap-1 sm:gap-2">
+          <div className={`flex items-center gap-1.5 sm:gap-2 ${textClass} text-gray-500 dark:text-gray-400`}>
             <span>Model: {details.model}</span>
             <span>•</span>
             <span>Tokens: {details.totalTokens}</span>
@@ -143,19 +148,15 @@ const LogEntryItem = ({ log, isExpanded: forceExpanded, use24Hour, showTimestamp
             <span>Duration: {details.duration}ms</span>
           </div>
           {details.prompt && (
-            <div className="flex flex-col gap-1">
-              <div className="text-xs font-medium text-gray-700 dark:text-gray-300">Prompt:</div>
-              <pre className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded p-2 whitespace-pre-wrap">
-                {details.prompt}
-              </pre>
+            <div className="flex flex-col gap-0.5 sm:gap-1">
+              <div className={titleClass}>Prompt:</div>
+              <pre className={preClass}>{details.prompt}</pre>
             </div>
           )}
           {details.response && (
-            <div className="flex flex-col gap-1">
-              <div className="text-xs font-medium text-gray-700 dark:text-gray-300">Response:</div>
-              <pre className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded p-2 whitespace-pre-wrap">
-                {details.response}
-              </pre>
+            <div className="flex flex-col gap-0.5 sm:gap-1">
+              <div className={titleClass}>Response:</div>
+              <pre className={preClass}>{details.response}</pre>
             </div>
           )}
         </div>
@@ -164,35 +165,31 @@ const LogEntryItem = ({ log, isExpanded: forceExpanded, use24Hour, showTimestamp
 
     if (log.category === 'api') {
       return (
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex flex-col gap-1 sm:gap-2">
+          <div className={`flex items-center gap-1.5 sm:gap-2 ${textClass} text-gray-500 dark:text-gray-400`}>
             <span className={details.method === 'GET' ? 'text-green-500' : 'text-blue-500'}>{details.method}</span>
             <span>•</span>
             <span>Status: {details.statusCode}</span>
             <span>•</span>
             <span>Duration: {details.duration}ms</span>
           </div>
-          <div className="text-xs text-gray-600 dark:text-gray-400 break-all">{details.url}</div>
+          <div className={`${textClass} text-gray-600 dark:text-gray-400 break-all`}>{details.url}</div>
           {details.request && (
-            <div className="flex flex-col gap-1">
-              <div className="text-xs font-medium text-gray-700 dark:text-gray-300">Request:</div>
-              <pre className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded p-2 whitespace-pre-wrap">
-                {JSON.stringify(details.request, null, 2)}
-              </pre>
+            <div className="flex flex-col gap-0.5 sm:gap-1">
+              <div className={titleClass}>Request:</div>
+              <pre className={preClass}>{JSON.stringify(details.request, null, 2)}</pre>
             </div>
           )}
           {details.response && (
-            <div className="flex flex-col gap-1">
-              <div className="text-xs font-medium text-gray-700 dark:text-gray-300">Response:</div>
-              <pre className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded p-2 whitespace-pre-wrap">
-                {JSON.stringify(details.response, null, 2)}
-              </pre>
+            <div className="flex flex-col gap-0.5 sm:gap-1">
+              <div className={titleClass}>Response:</div>
+              <pre className={preClass}>{JSON.stringify(details.response, null, 2)}</pre>
             </div>
           )}
           {details.error && (
-            <div className="flex flex-col gap-1">
-              <div className="text-xs font-medium text-red-500">Error:</div>
-              <pre className="text-xs text-red-400 bg-red-50 dark:bg-red-500/10 rounded p-2 whitespace-pre-wrap">
+            <div className="flex flex-col gap-0.5 sm:gap-1">
+              <div className={`${textClass} font-medium text-red-500`}>Error:</div>
+              <pre className={`${textClass} text-red-400 bg-red-50 dark:bg-red-500/10 rounded p-1.5 sm:p-2 whitespace-pre-wrap`}>
                 {JSON.stringify(details.error, null, 2)}
               </pre>
             </div>
@@ -202,7 +199,7 @@ const LogEntryItem = ({ log, isExpanded: forceExpanded, use24Hour, showTimestamp
     }
 
     return (
-      <pre className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded whitespace-pre-wrap">
+      <pre className={preClass}>
         {JSON.stringify(details, null, 2)}
       </pre>
     );
@@ -213,43 +210,43 @@ const LogEntryItem = ({ log, isExpanded: forceExpanded, use24Hour, showTimestamp
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={classNames(
-        'flex flex-col gap-2',
-        'rounded-lg p-4',
+        'flex flex-col gap-1.5 sm:gap-2', // Responsive gap
+        'rounded-md sm:rounded-lg p-3 sm:p-4', // Responsive padding and rounding
         'bg-[#FAFAFA] dark:bg-[#0A0A0A]',
         'border border-[#E5E5E5] dark:border-[#1A1A1A]',
         style.bg,
         'transition-all duration-200',
       )}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <span className={classNames('text-lg', style.icon, style.color)} />
-          <div className="flex flex-col gap-1">
-            <div className="text-sm font-medium text-gray-900 dark:text-white">{log.message}</div>
+      <div className="flex items-start justify-between gap-2 sm:gap-4"> {/* Responsive gap */}
+        <div className="flex items-start gap-2 sm:gap-3"> {/* Responsive gap */}
+          <span className={classNames('text-base sm:text-lg', style.icon, style.color)} /> {/* Responsive icon size */}
+          <div className="flex flex-col gap-0.5 sm:gap-1"> {/* Responsive gap */}
+            <div className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">{log.message}</div> {/* Responsive text */}
             {log.details && (
               <>
                 <button
                   onClick={() => setLocalExpanded(!localExpanded)}
-                  className="text-xs text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
+                  className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 transition-colors self-start" // Responsive text, self-start
                 >
                   {localExpanded ? 'Hide' : 'Show'} Details
                 </button>
-                {localExpanded && renderDetails(log.details)}
+                {localExpanded && <div className="mt-1 sm:mt-2">{renderDetails(log.details)}</div>} {/* Responsive margin */}
               </>
             )}
-            <div className="flex items-center gap-2">
-              <div className={classNames('px-2 py-0.5 rounded text-xs font-medium uppercase', style.badge)}>
+            <div className="flex items-center gap-1.5 sm:gap-2 mt-1 sm:mt-1.5"> {/* Responsive gap and margin */}
+              <div className={classNames('px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-xs font-medium uppercase', style.badge)}> {/* Responsive padding and text */}
                 {log.level}
               </div>
               {log.category && (
-                <div className="px-2 py-0.5 rounded-full text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                <div className="px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"> {/* Responsive padding and text */}
                   {log.category}
                 </div>
               )}
             </div>
           </div>
         </div>
-        {showTimestamp && <time className="shrink-0 text-xs text-gray-500 dark:text-gray-400">{timestamp}</time>}
+        {showTimestamp && <time className="shrink-0 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">{timestamp}</time>} {/* Responsive text */}
       </div>
     </motion.div>
   );
@@ -803,33 +800,33 @@ export function EventLogsTab() {
         <button
           onClick={() => setIsOpen(true)}
           className={classNames(
-            'group flex items-center gap-2',
-            'rounded-lg px-3 py-1.5',
-            'text-sm text-gray-900 dark:text-white',
+            'group flex items-center gap-1 sm:gap-2', // Responsive gap
+            'rounded-md sm:rounded-lg px-2.5 py-1 sm:px-3 sm:py-1.5', // Responsive padding & rounding
+            'text-xs sm:text-sm text-gray-900 dark:text-white', // Responsive text
             'bg-[#FAFAFA] dark:bg-[#0A0A0A]',
             'border border-[#E5E5E5] dark:border-[#1A1A1A]',
             'hover:bg-purple-500/10 dark:hover:bg-purple-500/20',
             'transition-all duration-200',
           )}
         >
-          <span className="i-ph:download text-lg text-gray-500 dark:text-gray-400 group-hover:text-purple-500 transition-colors" />
+          <span className="i-ph:download text-base sm:text-lg text-gray-500 dark:text-gray-400 group-hover:text-purple-500 transition-colors" /> {/* Responsive icon */}
           Export
         </button>
 
         <Dialog showCloseButton>
-          <div className="p-6">
-            <DialogTitle className="flex items-center gap-2">
-              <div className="i-ph:download w-5 h-5" />
+          <div className="p-3 sm:p-4 md:p-6"> {/* Responsive padding */}
+            <DialogTitle className="flex items-center gap-1.5 sm:gap-2"> {/* Responsive gap */}
+              <div className="i-ph:download w-4 h-4 sm:w-5 sm:h-5" /> {/* Responsive icon */}
               Export Event Logs
             </DialogTitle>
 
-            <div className="mt-4 flex flex-col gap-2">
+            <div className="mt-3 sm:mt-4 flex flex-col gap-1.5 sm:gap-2"> {/* Responsive margin & gap */}
               {exportFormats.map((format) => (
                 <button
                   key={format.id}
                   onClick={() => handleFormatClick(format.handler)}
                   className={classNames(
-                    'flex items-center gap-3 px-4 py-3 text-sm rounded-lg transition-colors w-full text-left',
+                    'flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm rounded-md sm:rounded-lg transition-colors w-full text-left', // Responsive padding, text, rounding, gap
                     'bg-white dark:bg-[#0A0A0A]',
                     'border border-[#E5E5E5] dark:border-[#1A1A1A]',
                     'hover:bg-purple-50 dark:hover:bg-[#1a1a1a]',
@@ -837,10 +834,10 @@ export function EventLogsTab() {
                     'text-bolt-elements-textPrimary',
                   )}
                 >
-                  <div className={classNames(format.icon, 'w-5 h-5')} />
+                  <div className={classNames(format.icon, 'w-4 h-4 sm:w-5 sm:h-5')} /> {/* Responsive icon */}
                   <div>
                     <div className="font-medium">{format.label}</div>
-                    <div className="text-xs text-bolt-elements-textSecondary mt-0.5">
+                    <div className="text-[10px] sm:text-xs text-bolt-elements-textSecondary mt-0.5"> {/* Responsive text */}
                       {format.id === 'json' && 'Export as a structured JSON file'}
                       {format.id === 'csv' && 'Export as a CSV spreadsheet'}
                       {format.id === 'pdf' && 'Export as a formatted PDF document'}
@@ -857,46 +854,47 @@ export function EventLogsTab() {
   };
 
   return (
-    <div className="flex h-full flex-col gap-6">
-      <div className="flex items-center justify-between">
+    <div className="flex h-full flex-col gap-3 sm:gap-4 md:gap-6"> {/* Responsive gap */}
+      {/* Top controls bar */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"> {/* Stack on small, row on sm+ */}
+        {/* Filter Dropdown */}
         <DropdownMenu.Root open={showLevelFilter} onOpenChange={setShowLevelFilter}>
           <DropdownMenu.Trigger asChild>
             <button
               className={classNames(
-                'flex items-center gap-2',
-                'rounded-lg px-3 py-1.5',
-                'text-sm text-gray-900 dark:text-white',
+                'flex items-center justify-center sm:justify-start gap-1 sm:gap-2', // Responsive gap & justification
+                'rounded-md sm:rounded-lg px-2.5 py-1 sm:px-3 sm:py-1.5', // Responsive padding & rounding
+                'text-xs sm:text-sm text-gray-900 dark:text-white', // Responsive text
                 'bg-[#FAFAFA] dark:bg-[#0A0A0A]',
                 'border border-[#E5E5E5] dark:border-[#1A1A1A]',
                 'hover:bg-purple-500/10 dark:hover:bg-purple-500/20',
-                'transition-all duration-200',
+                'transition-all duration-200 w-full sm:w-auto', // Full width on mobile stack
               )}
             >
               <span
-                className={classNames('text-lg', selectedLevelOption?.icon || 'i-ph:funnel')}
+                className={classNames('text-base sm:text-lg', selectedLevelOption?.icon || 'i-ph:funnel')} // Responsive icon
                 style={{ color: selectedLevelOption?.color }}
               />
               {selectedLevelOption?.label || 'All Types'}
-              <span className="i-ph:caret-down text-lg text-gray-500 dark:text-gray-400" />
+              <span className="i-ph:caret-down text-base sm:text-lg text-gray-500 dark:text-gray-400" /> {/* Responsive icon */}
             </button>
           </DropdownMenu.Trigger>
-
           <DropdownMenu.Portal>
             <DropdownMenu.Content
               className="min-w-[200px] bg-white dark:bg-[#0A0A0A] rounded-lg shadow-lg py-1 z-[250] animate-in fade-in-0 zoom-in-95 border border-[#E5E5E5] dark:border-[#1A1A1A]"
               sideOffset={5}
-              align="start"
+              align="start" // Keep align start
               side="bottom"
             >
               {logLevelOptions.map((option) => (
                 <DropdownMenu.Item
                   key={option.value}
-                  className="group flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-500/10 dark:hover:bg-purple-500/20 cursor-pointer transition-colors"
+                  className="group flex items-center px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-500/10 dark:hover:bg-purple-500/20 cursor-pointer transition-colors" // Responsive padding & text
                   onClick={() => handleLevelFilterChange(option.value)}
                 >
-                  <div className="mr-3 flex h-5 w-5 items-center justify-center">
+                  <div className="mr-2 sm:mr-3 flex h-4 sm:h-5 w-4 sm:w-5 items-center justify-center"> {/* Responsive margin & size */}
                     <div
-                      className={classNames(option.icon, 'text-lg group-hover:text-purple-500 transition-colors')}
+                      className={classNames(option.icon, 'text-base sm:text-lg group-hover:text-purple-500 transition-colors')} // Responsive icon
                       style={{ color: option.color }}
                     />
                   </div>
@@ -907,58 +905,61 @@ export function EventLogsTab() {
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Switch
-              checked={showTimestamps}
-              onCheckedChange={(value) => handlePreferenceChange('timestamps', value)}
-              className="data-[state=checked]:bg-purple-500"
-            />
-            <span className="text-sm text-gray-500 dark:text-gray-400">Show Timestamps</span>
+        {/* Preferences and Actions - wrap on small screens */}
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3 md:gap-4">
+          <div className="flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-3 md:gap-4"> {/* Inner wrap for preferences */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Switch
+                checked={showTimestamps}
+                onCheckedChange={(value) => handlePreferenceChange('timestamps', value)}
+                className="data-[state=checked]:bg-purple-500"
+              />
+              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Timestamps</span> {/* Responsive text */}
+            </div>
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Switch
+                checked={use24Hour}
+                onCheckedChange={(value) => handlePreferenceChange('24hour', value)}
+                className="data-[state=checked]:bg-purple-500"
+              />
+              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">24h Time</span> {/* Responsive text */}
+            </div>
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Switch
+                checked={autoExpand}
+                onCheckedChange={(value) => handlePreferenceChange('autoExpand', value)}
+                className="data-[state=checked]:bg-purple-500"
+              />
+              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Auto Expand</span> {/* Responsive text */}
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Switch
-              checked={use24Hour}
-              onCheckedChange={(value) => handlePreferenceChange('24hour', value)}
-              className="data-[state=checked]:bg-purple-500"
-            />
-            <span className="text-sm text-gray-500 dark:text-gray-400">24h Time</span>
+          <div className="hidden sm:block w-px h-4 bg-gray-200 dark:bg-gray-700" /> {/* Divider hidden on smallest */}
+
+          <div className="flex items-center justify-center sm:justify-start gap-2 sm:gap-3 md:gap-4"> {/* Inner wrap for actions */}
+            <button
+              onClick={handleRefresh}
+              className={classNames(
+                'group flex items-center gap-1 sm:gap-2', // Responsive gap
+                'rounded-md sm:rounded-lg px-2.5 py-1 sm:px-3 sm:py-1.5', // Responsive padding & rounding
+                'text-xs sm:text-sm text-gray-900 dark:text-white', // Responsive text
+                'bg-[#FAFAFA] dark:bg-[#0A0A0A]',
+                'border border-[#E5E5E5] dark:border-[#1A1A1A]',
+                'hover:bg-purple-500/10 dark:hover:bg-purple-500/20',
+                'transition-all duration-200',
+                { 'animate-spin': isRefreshing },
+              )}
+            >
+              <span className="i-ph:arrows-clockwise text-base sm:text-lg text-gray-500 dark:text-gray-400 group-hover:text-purple-500 transition-colors" /> {/* Responsive icon */}
+              Refresh
+            </button>
+            <ExportButton /> {/* ExportButton is already made responsive internally */}
           </div>
-
-          <div className="flex items-center gap-2">
-            <Switch
-              checked={autoExpand}
-              onCheckedChange={(value) => handlePreferenceChange('autoExpand', value)}
-              className="data-[state=checked]:bg-purple-500"
-            />
-            <span className="text-sm text-gray-500 dark:text-gray-400">Auto Expand</span>
-          </div>
-
-          <div className="w-px h-4 bg-gray-200 dark:bg-gray-700" />
-
-          <button
-            onClick={handleRefresh}
-            className={classNames(
-              'group flex items-center gap-2',
-              'rounded-lg px-3 py-1.5',
-              'text-sm text-gray-900 dark:text-white',
-              'bg-[#FAFAFA] dark:bg-[#0A0A0A]',
-              'border border-[#E5E5E5] dark:border-[#1A1A1A]',
-              'hover:bg-purple-500/10 dark:hover:bg-purple-500/20',
-              'transition-all duration-200',
-              { 'animate-spin': isRefreshing },
-            )}
-          >
-            <span className="i-ph:arrows-clockwise text-lg text-gray-500 dark:text-gray-400 group-hover:text-purple-500 transition-colors" />
-            Refresh
-          </button>
-
-          <ExportButton />
         </div>
       </div>
 
-      <div className="flex flex-col gap-4">
+      {/* Search Input */}
+      <div className="flex flex-col gap-2 sm:gap-3 md:gap-4"> {/* Responsive gap */}
         <div className="relative">
           <input
             type="text"
@@ -966,34 +967,35 @@ export function EventLogsTab() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={classNames(
-              'w-full px-4 py-2 pl-10 rounded-lg',
+              'w-full px-3 py-1.5 sm:px-4 sm:py-2 pl-8 sm:pl-10 rounded-md sm:rounded-lg', // Responsive padding & rounding
               'bg-[#FAFAFA] dark:bg-[#0A0A0A]',
               'border border-[#E5E5E5] dark:border-[#1A1A1A]',
-              'text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400',
+              'text-xs sm:text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400', // Responsive text
               'focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500',
               'transition-all duration-200',
             )}
           />
-          <div className="absolute left-3 top-1/2 -translate-y-1/2">
-            <div className="i-ph:magnifying-glass text-lg text-gray-500 dark:text-gray-400" />
+          <div className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2"> {/* Responsive icon position */}
+            <div className="i-ph:magnifying-glass text-base sm:text-lg text-gray-500 dark:text-gray-400" /> {/* Responsive icon size */}
           </div>
         </div>
 
+        {/* Log List or Empty State */}
         {filteredLogs.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className={classNames(
-              'flex flex-col items-center justify-center gap-4',
-              'rounded-lg p-8 text-center',
+              'flex flex-col items-center justify-center gap-2 sm:gap-4', // Responsive gap
+              'rounded-md sm:rounded-lg p-6 sm:p-8 text-center', // Responsive padding & rounding
               'bg-[#FAFAFA] dark:bg-[#0A0A0A]',
               'border border-[#E5E5E5] dark:border-[#1A1A1A]',
             )}
           >
-            <span className="i-ph:clipboard-text text-4xl text-gray-400 dark:text-gray-600" />
-            <div className="flex flex-col gap-1">
-              <h3 className="text-sm font-medium text-gray-900 dark:text-white">No Logs Found</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Try adjusting your search or filters</p>
+            <span className="i-ph:clipboard-text text-3xl sm:text-4xl text-gray-400 dark:text-gray-600" /> {/* Responsive icon size */}
+            <div className="flex flex-col gap-0.5 sm:gap-1"> {/* Responsive gap */}
+              <h3 className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">No Logs Found</h3> {/* Responsive text */}
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Try adjusting your search or filters</p> {/* Responsive text */}
             </div>
           </motion.div>
         ) : (

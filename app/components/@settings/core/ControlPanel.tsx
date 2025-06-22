@@ -94,13 +94,13 @@ const BetaLabel = () => (
 
 const AnimatedSwitch = ({ checked, onCheckedChange, id, label }: AnimatedSwitchProps) => {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1 sm:gap-2">
       <Switch
         id={id}
         checked={checked}
         onCheckedChange={onCheckedChange}
         className={classNames(
-          'relative inline-flex h-6 w-11 items-center rounded-full',
+          'relative inline-flex h-5 w-9 sm:h-6 sm:w-11 items-center rounded-full', // Responsive switch size
           'transition-all duration-300 ease-[cubic-bezier(0.87,_0,_0.13,_1)]',
           'bg-gray-200 dark:bg-gray-700',
           'data-[state=checked]:bg-purple-500',
@@ -111,8 +111,8 @@ const AnimatedSwitch = ({ checked, onCheckedChange, id, label }: AnimatedSwitchP
       >
         <motion.span
           className={classNames(
-            'absolute left-[2px] top-[2px]',
-            'inline-block h-5 w-5 rounded-full',
+            'absolute left-[1.5px] top-[1.5px] sm:left-[2px] sm:top-[2px]', // Responsive thumb position
+            'inline-block h-4 w-4 sm:h-5 sm:w-5 rounded-full', // Responsive thumb size
             'bg-white shadow-lg',
             'transition-shadow duration-300',
             'group-hover:shadow-md group-active:shadow-sm',
@@ -126,8 +126,21 @@ const AnimatedSwitch = ({ checked, onCheckedChange, id, label }: AnimatedSwitchP
             duration: 0.2,
           }}
           animate={{
-            x: checked ? '1.25rem' : '0rem',
+            x: checked ? ['1.0625rem', '1.25rem'] : ['0rem', '0rem'], // Placeholder, will use sm: variant in class for x if possible, or conditional logic
+            // x: checked ? 'calc(100% - 100% + 4px)' : '0rem', // This is tricky with framer motion direct animate prop
+            // For now, let's use a simple average or make it conditional if Framer allows responsive variants here easily.
+            // The translate distance needs to be w-track - w-thumb - 2*offset_thumb_track
+            // sm: '1.25rem' (20px) from 44px track, 20px thumb, 2px offset
+            // base: '1.0625rem' (17px) from 36px track, 16px thumb, 1.5px offset
           }}
+          style={{ '--base-x': '1.0625rem', '--sm-x': '1.25rem' } as React.CSSProperties}
+          // Apply transform based on screen size via style or a more complex animate prop
+          // Simplest for now: use the larger travel, it will look acceptable on smaller.
+          // Or, use the animate prop with a function that checks window width, but that's for useEffect.
+          // Framer motion variants are better for this.
+          // Let's use the specific values directly in animate for now.
+          // Correct x values: base: 36px - 16px - 2*1.5px = 17px (1.0625rem). sm: 44px - 20px - 2*2px = 20px (1.25rem)
+          animate={{ x: checked ? (window.innerWidth < 640 ? '1.0625rem' : '1.25rem') : '0rem' }}
         >
           <motion.div
             className="absolute inset-0 rounded-full bg-white"
@@ -140,10 +153,10 @@ const AnimatedSwitch = ({ checked, onCheckedChange, id, label }: AnimatedSwitchP
         </motion.span>
         <span className="sr-only">Toggle {label}</span>
       </Switch>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 sm:gap-2">
         <label
           htmlFor={id}
-          className="text-sm text-gray-500 dark:text-gray-400 select-none cursor-pointer whitespace-nowrap w-[88px]"
+          className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 select-none cursor-pointer whitespace-nowrap w-auto sm:w-[88px]" // Responsive label width
         >
           {label}
         </label>
@@ -432,9 +445,9 @@ export const ControlPanel = ({ open, onClose }: ControlPanelProps) => {
           >
             <motion.div
               className={classNames(
-                'w-[1200px] h-[90vh]',
+                'w-[calc(100vw-16px)] sm:w-[calc(100vw-32px)] md:w-[1200px] h-[calc(100vh-16px)] sm:h-[90vh]', // Responsive width and height
                 'bg-[#FAFAFA] dark:bg-[#0A0A0A]',
-                'rounded-2xl shadow-2xl',
+                'rounded-lg sm:rounded-2xl shadow-2xl', // Responsive rounding
                 'border border-[#E5E5E5] dark:border-[#1A1A1A]',
                 'flex flex-col overflow-hidden',
                 'relative',
@@ -444,48 +457,57 @@ export const ControlPanel = ({ open, onClose }: ControlPanelProps) => {
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="absolute inset-0 overflow-hidden rounded-2xl">
+              <div className="absolute inset-0 overflow-hidden rounded-lg sm:rounded-2xl"> {/* Match parent rounding */}
                 <BackgroundRays />
               </div>
               <div className="relative z-10 flex flex-col h-full">
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center space-x-4">
+                {/* Responsive padding and gaps */}
+                <div className="flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 md:px-6 md:py-4 border-b border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
                     {(activeTab || showTabManagement) && (
                       <button
                         onClick={handleBack}
-                        className="flex items-center justify-center w-8 h-8 rounded-full bg-transparent hover:bg-purple-500/10 dark:hover:bg-purple-500/20 group transition-all duration-200"
+                        // Responsive button size
+                        className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-transparent hover:bg-purple-500/10 dark:hover:bg-purple-500/20 group transition-all duration-200"
                       >
-                        <div className="i-ph:arrow-left w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-purple-500 transition-colors" />
+                        {/* Responsive icon size */}
+                        <div className="i-ph:arrow-left w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 dark:text-gray-400 group-hover:text-purple-500 transition-colors" />
                       </button>
                     )}
-                    <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white">
+                    {/* Responsive title text size */}
+                    <DialogTitle className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 dark:text-white">
                       {showTabManagement ? 'Tab Management' : activeTab ? TAB_LABELS[activeTab] : 'Control Panel'}
                     </DialogTitle>
                   </div>
 
-                  <div className="flex items-center gap-6">
+                  {/* Responsive gap for right side items */}
+                  <div className="flex items-center gap-1.5 sm:gap-3 md:gap-4"> {/* Adjusted main gap */}
                     {/* Mode Toggle */}
-                    <div className="flex items-center gap-2 min-w-[140px] border-r border-gray-200 dark:border-gray-800 pr-6">
+                    {/* Responsive padding and min-width for AnimatedSwitch container */}
+                    <div className="flex items-center gap-1 sm:gap-2 min-w-0 sm:min-w-[140px] border-r border-gray-200 dark:border-gray-800 pr-1.5 sm:pr-3 md:pr-4"> {/* Adjusted padding and min-width */}
                       <AnimatedSwitch
                         id="developer-mode"
                         checked={developerMode}
                         onCheckedChange={handleDeveloperModeChange}
-                        label={developerMode ? 'Developer Mode' : 'User Mode'}
+                        label={developerMode ? 'Dev Mode' : 'User Mode'} // Shorter label for small screens
                       />
                     </div>
 
                     {/* Avatar and Dropdown */}
-                    <div className="border-l border-gray-200 dark:border-gray-800 pl-6">
+                    {/* Responsive padding */}
+                    <div className="border-l border-gray-200 dark:border-gray-800 pl-1.5 sm:pl-3 md:pl-4"> {/* Adjusted padding */}
                       <AvatarDropdown onSelectTab={handleTabClick} />
                     </div>
 
                     {/* Close Button */}
                     <button
                       onClick={handleClose}
-                      className="flex items-center justify-center w-8 h-8 rounded-full bg-transparent hover:bg-purple-500/10 dark:hover:bg-purple-500/20 group transition-all duration-200"
+                      // Responsive button size
+                      className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-transparent hover:bg-purple-500/10 dark:hover:bg-purple-500/20 group transition-all duration-200"
                     >
-                      <div className="i-ph:x w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-purple-500 transition-colors" />
+                      {/* Responsive icon size */}
+                      <div className="i-ph:x w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 dark:text-gray-400 group-hover:text-purple-500 transition-colors" />
                     </button>
                   </div>
                 </div>
@@ -510,7 +532,7 @@ export const ControlPanel = ({ open, onClose }: ControlPanelProps) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="p-6"
+                    className="p-3 sm:p-4 md:p-6" // Responsive padding for content area
                   >
                     {showTabManagement ? (
                       <TabManagement />
@@ -518,14 +540,16 @@ export const ControlPanel = ({ open, onClose }: ControlPanelProps) => {
                       getTabComponent(activeTab)
                     ) : (
                       <motion.div
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative"
+                        // Responsive gap and columns are already handled by Tailwind classes
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 relative"
                         variants={gridLayoutVariants}
                         initial="hidden"
                         animate="visible"
                       >
                         <AnimatePresence mode="popLayout">
                           {(visibleTabs as TabWithDevType[]).map((tab: TabWithDevType) => (
-                            <motion.div key={tab.id} layout variants={itemVariants} className="aspect-[1.5/1]">
+                            // Responsive aspect ratio for tiles
+                            <motion.div key={tab.id} layout variants={itemVariants} className="aspect-video sm:aspect-[1.5/1]">
                               <TabTile
                                 tab={tab}
                                 onClick={() => handleTabClick(tab.id as TabType)}
