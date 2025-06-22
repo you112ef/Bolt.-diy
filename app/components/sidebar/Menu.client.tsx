@@ -19,7 +19,7 @@ const menuVariants = {
   closed: {
     opacity: 0,
     visibility: 'hidden',
-    left: '-340px',
+    left: '-280px', // Adjusted for base width - will be overridden by sm:left-[-340px] if needed via className
     transition: {
       duration: 0.2,
       ease: cubicEasingFn,
@@ -329,21 +329,28 @@ export const Menu = () => {
         initial="closed"
         animate={open ? 'open' : 'closed'}
         variants={menuVariants}
-        style={{ width: '340px' }}
+        // style={{ width: '340px' }} // Replaced by Tailwind classes below
         className={classNames(
+          'w-[280px] sm:w-[340px]', // Base width 280px, sm and up 340px
           'flex selection-accent flex-col side-menu fixed top-0 h-full',
           'bg-white dark:bg-gray-950 border-r border-gray-100 dark:border-gray-800/50',
-          'shadow-sm text-xs sm:text-sm', // Adjusted base text size
+          'shadow-sm text-xs sm:text-sm',
           isSettingsOpen ? 'z-40' : 'z-sidebar',
+          // For framer motion `left` property, we might need to handle sm variant differently if variants don't support responsive arrays easily.
+          // If menuVariants.closed.left needs to be responsive, it's tricky.
+          // For now, the JS sets left: '-280px'. The Tailwind width classes will control the actual width.
+          // The motion `left` should ideally match the current non-`sm:` width.
         )}
       >
-        <div className="h-10 sm:h-12 flex items-center justify-between px-3 sm:px-4 border-b border-gray-100 dark:border-gray-800/50 bg-gray-50/50 dark:bg-gray-900/50">
-          <div className="text-gray-900 dark:text-white font-medium"></div>
-          <div className="flex items-center gap-2 sm:gap-3">
+        {/* Header section: Use px-2, h-9 (36px) for base */}
+        <div className="h-9 sm:h-12 flex items-center justify-between px-2 sm:px-4 border-b border-gray-100 dark:border-gray-800/50 bg-gray-50/50 dark:bg-gray-900/50">
+          <div className="text-gray-900 dark:text-white font-medium"></div> {/* Empty div */}
+          <div className="flex items-center gap-1.5 sm:gap-3"> {/* Reduced base gap */}
             <span className="font-medium text-xs sm:text-sm text-gray-900 dark:text-white truncate">
               {profile?.username || 'Guest User'}
             </span>
-            <div className="flex items-center justify-center w-[28px] h-[28px] sm:w-[32px] sm:h-[32px] overflow-hidden bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-500 rounded-full shrink-0">
+            {/* Avatar size: w-6 h-6 (24px) for base */}
+            <div className="flex items-center justify-center w-6 h-6 sm:w-[32px] sm:h-[32px] overflow-hidden bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-500 rounded-full shrink-0">
               {profile?.avatar ? (
                 <img
                   src={profile.avatar}
@@ -353,26 +360,29 @@ export const Menu = () => {
                   decoding="sync"
                 />
               ) : (
-                <div className="i-ph:user-fill text-base sm:text-lg" />
+                <div className="i-ph:user-fill text-sm sm:text-lg" /> {/* Icon size text-sm for base */}
               )}
             </div>
           </div>
         </div>
-        <CurrentDateTime />
+        <CurrentDateTime /> {/* Internal paddings px-2 py-1, text-xs. Icon h-3 w-3 */}
         <div className="flex-1 flex flex-col h-full w-full overflow-hidden">
-          <div className="p-3 space-y-2 sm:p-4 sm:space-y-3">
+          {/* Main actions section: p-2 space-y-1.5 */}
+          <div className="p-2 space-y-1.5 sm:p-4 sm:space-y-3">
             <div className="flex gap-1 sm:gap-2">
+              {/* New Chat button: px-2 py-1 text-xs. Icon h-3 w-3 */}
               <a
                 href="/"
-                className="flex-1 flex gap-1 sm:gap-2 items-center bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-500/20 rounded-lg px-3 py-1.5 sm:px-4 sm:py-2 transition-colors text-xs sm:text-sm"
+                className="flex-1 flex gap-1 items-center bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-500/20 rounded-md sm:rounded-lg px-2 py-1 sm:px-4 sm:py-2 transition-colors text-xs sm:text-sm"
               >
                 <span className="inline-block i-ph:plus-circle h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="font-medium">Start new chat</span> {/* Text size inherited */}
+                <span className="font-medium">Start new chat</span>
               </a>
+              {/* Select mode button: px-1.5 py-1 text-xs. Icon h-3 w-3 */}
               <button
                 onClick={toggleSelectionMode}
                 className={classNames(
-                  'flex gap-1 items-center rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 transition-colors',
+                  'flex gap-0.5 sm:gap-1 items-center rounded-md sm:rounded-lg px-1.5 py-1 sm:px-3 sm:py-2 transition-colors text-xs',
                   selectionMode
                     ? 'bg-purple-600 dark:bg-purple-500 text-white border border-purple-700 dark:border-purple-600'
                     : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700',
@@ -382,12 +392,13 @@ export const Menu = () => {
                 <span className={selectionMode ? 'i-ph:x h-3 w-3 sm:h-4 sm:w-4' : 'i-ph:check-square h-3 w-3 sm:h-4 sm:w-4'} />
               </button>
             </div>
+            {/* Search input: pl-6 (for icon) pr-1.5 py-1 text-xs. Icon h-3 w-3, left-1.5 */}
             <div className="relative w-full">
-              <div className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2">
+              <div className="absolute left-1.5 sm:left-3 top-1/2 -translate-y-1/2"> {/* Adjusted icon position for base */}
                 <span className="i-ph:magnifying-glass h-3 w-3 sm:h-4 sm:w-4 text-gray-400 dark:text-gray-500" />
               </div>
               <input
-                className="w-full bg-gray-50 dark:bg-gray-900 relative pl-7 pr-2 py-1.5 sm:pl-9 sm:pr-3 sm:py-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500/50 text-xs sm:text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-500 border border-gray-200 dark:border-gray-800"
+                className="w-full bg-gray-50 dark:bg-gray-900 relative pl-6 pr-1.5 py-1 sm:pl-9 sm:pr-3 sm:py-2 rounded-md sm:rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500/50 text-xs sm:text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-500 border border-gray-200 dark:border-gray-800" /* Adjusted base padding */
                 type="search"
                 placeholder="Search chats..."
                 onChange={handleSearchChange}
@@ -395,38 +406,41 @@ export const Menu = () => {
               />
             </div>
           </div>
-          <div className="flex items-center justify-between text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2">
+          {/* "Your Chats" header: px-2 py-1 text-xs. Buttons size="xs" effectively */}
+          <div className="flex items-center justify-between text-xs sm:text-sm px-2 py-1 sm:px-4 sm:py-2">
             <div className="font-medium text-gray-600 dark:text-gray-400">Your Chats</div>
             {selectionMode && (
               <div className="flex items-center gap-1 sm:gap-2">
-                <Button variant="ghost" size="sm" onClick={selectAll} className="text-xs sm:text-sm">
+                <Button variant="ghost" size="xs" onClick={selectAll} className="text-xs px-1.5 sm:px-2"> {/* size xs, adjusted padding */}
                   {selectedItems.length === filteredList.length ? 'Deselect all' : 'Select all'}
                 </Button>
                 <Button
                   variant="destructive"
-                  size="sm"
+                  size="xs"
                   onClick={handleBulkDeleteClick}
                   disabled={selectedItems.length === 0}
-                  className="text-xs sm:text-sm"
+                  className="text-xs px-1.5 sm:px-2" /* size xs, adjusted padding */
                 >
                   Delete selected
                 </Button>
               </div>
             )}
           </div>
-          <div className="flex-1 overflow-auto px-3 pb-3">
+          {/* History List: px-2 pb-2 */}
+          <div className="flex-1 overflow-auto px-2 pb-2 sm:px-3 sm:pb-3">
             {filteredList.length === 0 && (
-              <div className="px-3 sm:px-4 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+              <div className="px-2 sm:px-4 text-xs sm:text-sm text-gray-500 dark:text-gray-400"> {/* Adjusted base padding */}
                 {list.length === 0 ? 'No previous conversations' : 'No matches found'}
               </div>
             )}
             <DialogRoot open={dialogContent !== null}>
               {binDates(filteredList).map(({ category, items }) => (
-                <div key={category} className="mt-2 first:mt-0 space-y-1">
-                  <div className="text-[0.65rem] sm:text-xs font-medium text-gray-500 dark:text-gray-400 sticky top-0 z-1 bg-white dark:bg-gray-950 px-3 sm:px-4 py-0.5 sm:py-1">
+                <div key={category} className="mt-1.5 sm:mt-2 first:mt-0 space-y-0.5 sm:space-y-1"> {/* Adjusted mt and space-y */}
+                  {/* Category Header: text-[0.6rem], px-2 py-0.5 */}
+                  <div className="text-[0.6rem] sm:text-xs font-medium text-gray-500 dark:text-gray-400 sticky top-0 z-1 bg-white dark:bg-gray-950 px-2 sm:px-4 py-0.5"> {/* Adjusted base padding */}
                     {category}
                   </div>
-                  <div className="space-y-0.5 pr-1">
+                  <div className="space-y-0.5 pr-0.5 sm:pr-1"> {/* Adjusted space-y and pr */}
                     {items.map((item) => (
                       <HistoryItem
                         key={item.id}
@@ -442,6 +456,7 @@ export const Menu = () => {
                         selectionMode={selectionMode}
                         isSelected={selectedItems.includes(item.id)}
                         onToggleSelection={toggleItemSelection}
+                        // HistoryItem itself will need internal scaling
                       />
                     ))}
                   </div>
@@ -525,14 +540,15 @@ export const Menu = () => {
               </Dialog>
             </DialogRoot>
           </div>
-          <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-800 px-3 py-2 sm:px-4 sm:py-3">
-            <SettingsButton onClick={handleSettingsClick} />
+          {/* Footer: px-2 py-1.5 */}
+          <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-800 px-2 py-1.5 sm:px-4 sm:py-3">
+            <SettingsButton onClick={handleSettingsClick} /> {/* Relies on SettingsButton and ThemeSwitch scaling */}
             <ThemeSwitch />
           </div>
         </div>
       </motion.div>
 
-      <ControlPanel open={isSettingsOpen} onClose={handleSettingsClose} />
+      <ControlPanel open={isSettingsOpen} onClose={handleSettingsClose} /> {/* ControlPanel scaling will be handled separately */}
     </>
   );
 };

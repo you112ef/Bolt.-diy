@@ -17,10 +17,10 @@ const buttonVariants = cva(
         link: 'text-bolt-elements-textPrimary underline-offset-4 hover:underline',
       },
       size: {
-        default: 'h-8 sm:h-9 px-3 sm:px-4 py-1.5 sm:py-2', // Responsive default
-        sm: 'h-7 sm:h-8 rounded-md px-2 sm:px-3 text-xs', // Responsive sm (already text-xs)
-        lg: 'h-9 sm:h-10 rounded-md px-6 sm:px-8', // Responsive lg
-        icon: 'h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9', // Responsive icon
+        default: 'h-6 px-2 py-1 sm:h-9 sm:px-4 sm:py-2', // Base: h-6(24px), px-2(8px), py-1(4px)
+        sm: 'h-5 px-1.5 text-xs sm:h-8 sm:px-3',      // Base: h-5(20px), px-1.5(6px), text-xs
+        lg: 'h-7 px-4 sm:h-10 sm:px-8',               // Base: h-7(28px), px-4(16px)
+        icon: 'h-5 w-5 sm:h-8 sm:w-8 md:h-9 md:w-9',   // Base: h-5 w-5 (20px)
       },
     },
     defaultVariants: {

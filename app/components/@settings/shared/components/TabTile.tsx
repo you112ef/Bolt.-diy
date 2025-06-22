@@ -34,8 +34,8 @@ export const TabTile: React.FC<TabTileProps> = ({
           <motion.div
             onClick={onClick}
             className={classNames(
-              'relative flex flex-col items-center p-3 sm:p-4 md:p-6 rounded-lg sm:rounded-xl', // Responsive padding and rounding
-              'w-full h-full min-h-[120px] sm:min-h-[140px] md:min-h-[160px]', // Responsive min-height
+              'relative flex flex-col items-center p-2 sm:p-4 md:p-6 rounded-lg sm:rounded-xl', // Base p-2
+              'w-full h-full min-h-[100px] sm:min-h-[140px] md:min-h-[160px]', // Base min-h-[100px]
               'bg-white dark:bg-[#141414]',
               'border border-[#E5E5E5] dark:border-[#333333]',
               'group',
@@ -52,9 +52,9 @@ export const TabTile: React.FC<TabTileProps> = ({
               <motion.div
                 className={classNames(
                   'relative',
-                  'w-10 h-10 sm:w-12 sm:w-12 md:w-14 md:h-14', // Responsive icon background size
+                  'w-8 h-8 sm:w-12 sm:w-12 md:w-14 md:h-14', // Base w-8 h-8 (32px)
                   'flex items-center justify-center',
-                  'rounded-lg sm:rounded-xl', // Responsive rounding for icon background
+                  'rounded-md sm:rounded-xl', // Base rounded-md
                   'bg-gray-100 dark:bg-gray-800',
                   'ring-1 ring-gray-200 dark:ring-gray-700',
                   'group-hover:bg-purple-100 dark:group-hover:bg-gray-700/80',
@@ -74,10 +74,10 @@ export const TabTile: React.FC<TabTileProps> = ({
               </motion.div>
 
               {/* Label and Description */}
-              <div className="flex flex-col items-center mt-2 sm:mt-3 md:mt-5 w-full"> {/* Responsive margin-top */}
+              <div className="flex flex-col items-center mt-1.5 sm:mt-3 md:mt-5 w-full"> {/* Base mt-1.5 */}
                 <h3
                   className={classNames(
-                    'text-xs sm:text-sm md:text-[15px] font-medium leading-snug mb-1 sm:mb-1.5 md:mb-2', // Responsive font size and margin
+                    'text-xs sm:text-sm md:text-[15px] font-medium leading-snug mb-1 sm:mb-1.5 md:mb-2', // Base text-xs, mb-1 fine
                     'text-gray-700 dark:text-gray-200',
                     'group-hover:text-purple-600 dark:group-hover:text-purple-300/90',
                     isActive ? 'text-purple-500 dark:text-purple-400/90' : '',

@@ -70,17 +70,17 @@ export const IconButton = memo(
 );
 
 function getIconSize(size: IconSize) {
-  // Returns responsive text size classes
+  // Returns responsive text size classes, scaled down for base
   if (size === 'sm') {
-    return 'text-xs sm:text-sm';
+    return 'text-xs sm:text-sm'; // Base text-xs is already small
   } else if (size === 'md') {
-    return 'text-sm sm:text-base'; // Was 'text-md', using standard Tailwind classes
+    return 'text-xs sm:text-base'; // Base text-xs (scaled from text-sm)
   } else if (size === 'lg') {
-    return 'text-base sm:text-lg';
+    return 'text-sm sm:text-lg';  // Base text-sm (scaled from text-base)
   } else if (size === 'xl') {
-    return 'text-lg sm:text-xl'; // Default
+    return 'text-base sm:text-xl'; // Base text-base (scaled from text-lg) - Default
   } else {
     // xxl
-    return 'text-xl sm:text-2xl';
+    return 'text-lg sm:text-2xl';  // Base text-lg (scaled from text-xl)
   }
 }

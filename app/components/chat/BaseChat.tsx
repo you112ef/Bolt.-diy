@@ -338,28 +338,28 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
         <div className="flex flex-col lg:flex-row overflow-y-auto w-full h-full">
           <div className={classNames(styles.Chat, 'flex flex-col flex-grow lg:min-w-[var(--chat-min-width)] h-full')}>
             {!chatStarted && (
-              <div id="intro" className="mt-[16vh] max-w-chat mx-auto text-center px-4 lg:px-0">
-                <h1 className="text-3xl lg:text-6xl font-bold text-bolt-elements-textPrimary mb-4 animate-fade-in">
+              <div id="intro" className="mt-[10vh] sm:mt-[16vh] max-w-chat mx-auto text-center px-4 lg:px-0"> {/* Base mt-[10vh] */}
+                <h1 className="text-2xl sm:text-3xl lg:text-6xl font-bold text-bolt-elements-textPrimary mb-3 sm:mb-4 animate-fade-in"> {/* Base text-2xl, mb-3 */}
                   Where ideas begin
                 </h1>
-                <p className="text-md lg:text-xl mb-8 text-bolt-elements-textSecondary animate-fade-in animation-delay-200">
+                <p className="text-sm sm:text-base lg:text-xl mb-6 sm:mb-8 text-bolt-elements-textSecondary animate-fade-in animation-delay-200"> {/* Base text-sm, mb-6 */}
                   Bring ideas to life in seconds or get help on existing projects.
                 </p>
               </div>
             )}
             <StickToBottom
-              className={classNames('pt-6 px-2 sm:px-6 relative', {
+              className={classNames('pt-4 px-2 sm:pt-6 sm:px-6 relative', { // Base pt-4
                 'h-full flex flex-col modern-scrollbar': chatStarted,
               })}
               resize="smooth"
               initial="smooth"
             >
-              <StickToBottom.Content className="flex flex-col gap-4">
+              <StickToBottom.Content className="flex flex-col gap-3 sm:gap-4"> {/* Base gap-3 */}
                 <ClientOnly>
                   {() => {
                     return chatStarted ? (
                       <Messages
-                        className="flex flex-col w-full flex-1 max-w-chat pb-6 mx-auto z-1"
+                        className="flex flex-col w-full flex-1 max-w-chat pb-4 sm:pb-6 mx-auto z-1" // Base pb-4
                         messages={messages}
                         isStreaming={isStreaming}
                       />
@@ -368,11 +368,11 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                 </ClientOnly>
               </StickToBottom.Content>
               <div
-                className={classNames('my-auto flex flex-col gap-2 w-full max-w-chat mx-auto z-prompt mb-6', {
+                className={classNames('my-auto flex flex-col gap-1.5 sm:gap-2 w-full max-w-chat mx-auto z-prompt mb-4 sm:mb-6', { // Base mb-4, gap-1.5
                   'sticky bottom-2': chatStarted,
                 })}
               >
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1.5 sm:gap-2"> {/* Base gap-1.5 */}
                   {deployAlert && (
                     <DeployChatAlert
                       alert={deployAlert}
@@ -408,13 +408,8 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                 {progressAnnotations && <ProgressCompilation data={progressAnnotations} />}
                 <div
                   className={classNames(
-                    'relative bg-bolt-elements-background-depth-2 p-3 rounded-lg border border-bolt-elements-borderColor relative w-full max-w-chat mx-auto z-prompt',
-
-                    /*
-                     * {
-                     *   'sticky bottom-2': chatStarted,
-                     * },
-                     */
+                    'relative bg-bolt-elements-background-depth-2 p-2 sm:p-3 rounded-lg border border-bolt-elements-borderColor relative w-full max-w-chat mx-auto z-prompt', // Base p-2
+                    // Sticky behavior might need adjustment for very small screens if it causes overlap with virtual keyboard
                   )}
                 >
                   <svg className={classNames(styles.PromptEffectContainer)}>
@@ -447,7 +442,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                     <ClientOnly>
                       {() => (
                         <div className={isModelSettingsCollapsed ? 'hidden' : ''}>
-                          <ModelSelector
+                          <ModelSelector // Assuming ModelSelector uses scaled ui/Input, ui/Button
                             key={provider?.name + ':' + modelList.length}
                             model={model}
                             setModel={setModel}
@@ -461,7 +456,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                           {(providerList || []).length > 0 &&
                             provider &&
                             (!LOCAL_PROVIDERS.includes(provider.name) || 'OpenAILike') && (
-                              <APIKeyManager
+                              <APIKeyManager // Assuming APIKeyManager uses scaled ui/Input, ui/Button
                                 provider={provider}
                                 apiKey={apiKeys[provider.name] || ''}
                                 setApiKey={(key) => {
@@ -473,7 +468,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                       )}
                     </ClientOnly>
                   </div>
-                  <FilePreview
+                  <FilePreview // Assuming FilePreview elements are scaled or use text-xs
                     files={uploadedFiles}
                     imageDataList={imageDataList}
                     onRemove={(index) => {
@@ -493,13 +488,13 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                   </ClientOnly>
                   <div
                     className={classNames(
-                      'relative shadow-xs border border-bolt-elements-borderColor backdrop-blur rounded-lg',
+                      'relative shadow-xs border border-bolt-elements-borderColor backdrop-blur rounded-md sm:rounded-lg', // base rounded-md
                     )}
                   >
                     <textarea
                       ref={textareaRef}
                       className={classNames(
-                        'w-full pl-4 pt-4 pr-16 outline-none resize-none text-bolt-elements-textPrimary placeholder-bolt-elements-textTertiary bg-transparent text-sm',
+                        'w-full pl-2.5 pt-2.5 pr-10 outline-none resize-none text-bolt-elements-textPrimary placeholder-bolt-elements-textTertiary bg-transparent text-xs sm:text-sm', // Base: pl-2.5 pt-2.5 pr-10 text-xs
                         'transition-all duration-200',
                         'hover:border-bolt-elements-focus',
                       )}
@@ -560,15 +555,15 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                       }}
                       onPaste={handlePaste}
                       style={{
-                        minHeight: TEXTAREA_MIN_HEIGHT,
-                        maxHeight: TEXTAREA_MAX_HEIGHT,
+                        minHeight: 60, // Scaled from 76px
+                        maxHeight: chatStarted ? 300 : 150, // Scaled from 400 : 200
                       }}
                       placeholder="How can Bolt help you today?"
                       translate="no"
                     />
                     <ClientOnly>
                       {() => (
-                        <SendButton
+                        <SendButton // SendButton will use scaled IconButton
                           show={input.length > 0 || isStreaming || uploadedFiles.length > 0}
                           isStreaming={isStreaming}
                           disabled={!providerList || providerList.length === 0}
@@ -585,10 +580,11 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                         />
                       )}
                     </ClientOnly>
-                    <div className="flex justify-between items-center text-sm p-4 pt-2">
-                      <div className="flex gap-1 items-center">
+                    {/* Footer action buttons: p-2 pt-1. IconButtons use new scaled base sizes. */}
+                    <div className="flex justify-between items-center text-xs sm:text-sm p-2 pt-1 sm:p-4 sm:pt-2">
+                      <div className="flex gap-0.5 sm:gap-1 items-center"> {/* Base gap-0.5 */}
                         <IconButton title="Upload file" className="transition-all" onClick={() => handleFileUpload()}>
-                          <div className="i-ph:paperclip text-xl"></div>
+                          <div className="i-ph:paperclip text-base sm:text-xl"></div> {/* Base text-base */}
                         </IconButton>
                         <IconButton
                           title="Enhance prompt"
@@ -600,22 +596,22 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                           }}
                         >
                           {enhancingPrompt ? (
-                            <div className="i-svg-spinners:90-ring-with-bg text-bolt-elements-loader-progress text-xl animate-spin"></div>
+                            <div className="i-svg-spinners:90-ring-with-bg text-bolt-elements-loader-progress text-base sm:text-xl animate-spin"></div> {/* Base text-base */}
                           ) : (
-                            <div className="i-bolt:stars text-xl"></div>
+                            <div className="i-bolt:stars text-base sm:text-xl"></div> {/* Base text-base */}
                           )}
                         </IconButton>
 
-                        <SpeechRecognitionButton
+                        <SpeechRecognitionButton // Assuming internal scaling or uses IconButton
                           isListening={isListening}
                           onStart={startListening}
                           onStop={stopListening}
                           disabled={isStreaming}
                         />
-                        {chatStarted && <ClientOnly>{() => <ExportChatButton exportChat={exportChat} />}</ClientOnly>}
+                        {chatStarted && <ClientOnly>{() => <ExportChatButton exportChat={exportChat} />}</ClientOnly>} {/* Uses Button, already scaled */}
                         <IconButton
                           title="Model Settings"
-                          className={classNames('transition-all flex items-center gap-1', {
+                          className={classNames('transition-all flex items-center gap-0.5 sm:gap-1', { // Base gap-0.5
                             'bg-bolt-elements-item-backgroundAccent text-bolt-elements-item-contentAccent':
                               isModelSettingsCollapsed,
                             'bg-bolt-elements-item-backgroundDefault text-bolt-elements-item-contentDefault':
@@ -624,18 +620,19 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                           onClick={() => setIsModelSettingsCollapsed(!isModelSettingsCollapsed)}
                           disabled={!providerList || providerList.length === 0}
                         >
-                          <div className={`i-ph:caret-${isModelSettingsCollapsed ? 'right' : 'down'} text-lg`} />
+                          <div className={`i-ph:caret-${isModelSettingsCollapsed ? 'right' : 'down'} text-base sm:text-lg`} /> {/* Base text-base */}
                           {isModelSettingsCollapsed ? <span className="text-xs">{model}</span> : <span />}
                         </IconButton>
                       </div>
                       {input.length > 3 ? (
                         <div className="text-xs text-bolt-elements-textTertiary">
+                          {/* kbd elements are already small */}
                           Use <kbd className="kdb px-1.5 py-0.5 rounded bg-bolt-elements-background-depth-2">Shift</kbd>{' '}
                           + <kbd className="kdb px-1.5 py-0.5 rounded bg-bolt-elements-background-depth-2">Return</kbd>{' '}
                           a new line
                         </div>
                       ) : null}
-                      <SupabaseConnection />
+                      <SupabaseConnection /> {/* Assuming this is small or uses scaled components */}
                       <ExpoQrModal open={qrModalOpen} onClose={() => setQrModalOpen(false)} />
                     </div>
                   </div>
@@ -644,12 +641,12 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
             </StickToBottom>
             <div className="flex flex-col justify-center">
               {!chatStarted && (
-                <div className="flex justify-center gap-2">
+                <div className="flex justify-center gap-1.5 sm:gap-2"> {/* Base gap-1.5 */}
                   {ImportButtons(importChat)}
                   <GitCloneButton importChat={importChat} />
                 </div>
               )}
-              <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-3 sm:gap-5"> {/* Base gap-3 */}
                 {!chatStarted &&
                   ExamplePrompts((event, messageInput) => {
                     if (isStreaming) {
@@ -665,7 +662,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
           </div>
           <ClientOnly>
             {() => (
-              <Workbench
+              <Workbench // Workbench scaling is a separate large task
                 actionRunner={actionRunner ?? ({} as ActionRunner)}
                 chatStarted={chatStarted}
                 isStreaming={isStreaming}

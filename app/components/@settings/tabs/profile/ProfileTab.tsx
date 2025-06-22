@@ -60,15 +60,15 @@ export default function ProfileTab() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="space-y-4 sm:space-y-6"> {/* Responsive space-y */}
+    <div className="max-w-2xl mx-auto"> {/* This max-width is fine as tab content is constrained by ControlPanel */}
+      <div className="space-y-3 sm:space-y-6"> {/* Base space-y-3 */}
         {/* Personal Information Section */}
         <div>
-          {/* Avatar Upload - Responsive flex direction, gap, margin */}
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
+          {/* Avatar Upload - Base gap-2, mb-3 */}
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4 md:gap-6 mb-3 sm:mb-6 md:mb-8">
             <div
               className={classNames(
-                'w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden', // Responsive avatar size
+                'w-16 h-16 sm:w-24 sm:h-24 rounded-full overflow-hidden', // Base w-16 h-16 (64px)
                 'bg-gray-100 dark:bg-gray-800/50',
                 'flex items-center justify-center',
                 'ring-1 ring-gray-200 dark:ring-gray-700',
@@ -89,8 +89,8 @@ export default function ProfileTab() {
                   )}
                 />
               ) : (
-                // Responsive fallback icon size
-                <div className="i-ph:robot-fill w-12 h-12 sm:w-16 sm:h-16 text-gray-400 dark:text-gray-500 transition-colors group-hover:text-purple-500/70 transform sm:-translate-y-1" />
+                // Base fallback icon size w-9 h-9 (36px)
+                <div className="i-ph:robot-fill w-9 h-9 sm:w-16 sm:h-16 text-gray-400 dark:text-gray-500 transition-colors group-hover:text-purple-500/70 transform sm:-translate-y-1" />
               )}
 
               <label
@@ -130,11 +130,11 @@ export default function ProfileTab() {
             </div>
           </div>
 
-          {/* Username Input - Responsive margin, label, icon, input padding and rounding */}
-          <div className="mb-4 sm:mb-6">
+          {/* Username Input - Base mb-3. Input: pl-7 pr-2 py-1.5 rounded-md text-xs */}
+          <div className="mb-3 sm:mb-6">
             <label className="block text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100 mb-1 sm:mb-2">Username</label>
             <div className="relative group">
-              <div className="absolute left-3 sm:left-3.5 top-1/2 -translate-y-1/2">
+              <div className="absolute left-2.5 sm:left-3.5 top-1/2 -translate-y-1/2"> {/* Adjusted left for base */}
                 <div className="i-ph:user-circle-fill w-4 h-4 sm:w-5 sm:h-5 text-gray-400 dark:text-gray-500 transition-colors group-focus-within:text-purple-500" />
               </div>
               <input
@@ -142,10 +142,10 @@ export default function ProfileTab() {
                 value={profile.username}
                 onChange={(e) => handleProfileUpdate('username', e.target.value)}
                 className={classNames(
-                  'w-full pl-8 sm:pl-10 md:pl-11 pr-3 sm:pr-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl',
+                  'w-full pl-7 pr-2 py-1.5 rounded-md sm:pl-10 sm:pr-4 sm:py-2.5 sm:rounded-xl', // Base: pl-7, pr-2, py-1.5, rounded-md
                   'bg-white dark:bg-gray-800/50',
                   'border border-gray-200 dark:border-gray-700/50',
-                  'text-gray-900 dark:text-white text-xs sm:text-sm', // Responsive text size for input
+                  'text-gray-900 dark:text-white text-xs sm:text-sm',
                   'placeholder-gray-400 dark:placeholder-gray-500',
                   'focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50',
                   'transition-all duration-300 ease-out',
@@ -155,26 +155,26 @@ export default function ProfileTab() {
             </div>
           </div>
 
-          {/* Bio Input - Responsive margin, label, icon, textarea padding, rounding and height */}
-          <div className="mb-6 sm:mb-8">
+          {/* Bio Input - Base mb-4. Textarea: pl-7 pr-2 py-1.5 rounded-md text-xs, h-20 */}
+          <div className="mb-4 sm:mb-8">
             <label className="block text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100 mb-1 sm:mb-2">Bio</label>
             <div className="relative group">
-              <div className="absolute left-3 top-2.5 sm:left-3.5 sm:top-3">
+              <div className="absolute left-2.5 top-2 sm:left-3.5 sm:top-3"> {/* Adjusted left & top for base */}
                 <div className="i-ph:text-aa w-4 h-4 sm:w-5 sm:h-5 text-gray-400 dark:text-gray-500 transition-colors group-focus-within:text-purple-500" />
               </div>
               <textarea
                 value={profile.bio}
                 onChange={(e) => handleProfileUpdate('bio', e.target.value)}
                 className={classNames(
-                  'w-full pl-8 sm:pl-10 md:pl-11 pr-3 sm:pr-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl',
+                  'w-full pl-7 pr-2 py-1.5 rounded-md sm:pl-10 sm:pr-4 sm:py-2.5 sm:rounded-xl', // Base: pl-7, pr-2, py-1.5, rounded-md
                   'bg-white dark:bg-gray-800/50',
                   'border border-gray-200 dark:border-gray-700/50',
-                  'text-gray-900 dark:text-white text-xs sm:text-sm', // Responsive text size for textarea
+                  'text-gray-900 dark:text-white text-xs sm:text-sm',
                   'placeholder-gray-400 dark:placeholder-gray-500',
                   'focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50',
                   'transition-all duration-300 ease-out',
                   'resize-none',
-                  'h-28 sm:h-32', // Responsive height
+                  'h-20 sm:h-32', // Base h-20 (80px)
                 )}
                 placeholder="Tell us about yourself"
               />

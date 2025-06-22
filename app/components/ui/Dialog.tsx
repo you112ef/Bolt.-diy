@@ -22,7 +22,8 @@ export const DialogButton = memo(({ type, children, onClick, disabled }: DialogB
   return (
     <button
       className={classNames(
-        'inline-flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-colors', // Responsive adjustments
+        'inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs transition-colors', // Base: gap-1, px-2, py-1, rounded-md, text-xs
+        'sm:gap-2 sm:px-4 sm:py-2 sm:rounded-lg sm:text-sm', // SM screens and up
         type === 'primary'
           ? 'bg-purple-500 text-white hover:bg-purple-600 dark:bg-purple-500 dark:hover:bg-purple-600'
           : type === 'secondary'
@@ -41,7 +42,7 @@ export const DialogTitle = memo(({ className, children, ...props }: RadixDialog.
   return (
     <RadixDialog.Title
       className={classNames(
-        'text-base sm:text-lg font-medium text-bolt-elements-textPrimary flex items-center gap-1 sm:gap-2', // Responsive adjustments
+        'text-sm sm:text-lg font-medium text-bolt-elements-textPrimary flex items-center gap-1 sm:gap-2', // Base: text-sm. SM and up: text-lg, gap-2
         className,
       )}
       {...props}
@@ -214,20 +215,20 @@ export function ConfirmationDialog({
   return (
     <RadixDialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog showCloseButton={false}>
-        {/* Responsive padding for the dialog content area */}
-        <div className="p-3 sm:p-4 md:p-6 bg-white dark:bg-gray-950 relative z-10">
+        {/* Base padding p-2, description margin mb-1.5 */}
+        <div className="p-2 sm:p-4 md:p-6 bg-white dark:bg-gray-950 relative z-10">
           <DialogTitle>{title}</DialogTitle>
-          {/* mb-2 sm:mb-4 for description margin */}
-          <DialogDescription className="mb-2 sm:mb-4">{description}</DialogDescription>
-          {/* Responsive spacing for buttons */}
+          <DialogDescription className="mb-1.5 sm:mb-4">{description}</DialogDescription> {/* Base mb-1.5 */}
+          {/* Responsive spacing for buttons, base space-x-1 */}
           <div className="flex justify-end space-x-1 sm:space-x-2">
-            <Button variant="outline" onClick={onClose} disabled={isLoading}>
+            <Button variant="outline" onClick={onClose} disabled={isLoading} size="sm"> {/* Explicitly use new sm Button size */}
               {cancelLabel}
             </Button>
             <Button
               variant={variant}
               onClick={onConfirm}
               disabled={isLoading}
+              size="sm" // Explicitly use new sm Button size
               className={
                 variant === 'destructive'
                   ? 'bg-red-500 text-white hover:bg-red-600'
@@ -236,8 +237,8 @@ export function ConfirmationDialog({
             >
               {isLoading ? (
                 <>
-                  {/* Responsive icon size and margin */}
-                  <div className="i-ph-spinner-gap-bold animate-spin w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  {/* Base icon size w-3 h-3, mr-1 */}
+                  <div className="i-ph-spinner-gap-bold animate-spin w-3 h-3 mr-1 sm:w-4 sm:h-4 sm:mr-2" />
                   {confirmLabel}
                 </>
               ) : (
@@ -342,8 +343,8 @@ export function SelectionDialog({
     onClose();
   };
 
-  // Item size for FixedSizeList - make it responsive
-  const itemSize = window.innerWidth < 640 ? 52 : 60; // 52px for small screens, 60px for sm and up
+  // Item size for FixedSizeList - base 40px
+  const itemSize = typeof window !== 'undefined' && window.innerWidth < 640 ? 40 : 60; // 40px for base, 60px for sm+
 
   // Calculate the height for the virtualized list
   const listHeight = Math.min(
@@ -401,37 +402,35 @@ export function SelectionDialog({
   return (
     <RadixDialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog showCloseButton={false}>
-        {/* Responsive padding */}
-        <div className="p-3 sm:p-4 md:p-6 bg-white dark:bg-gray-950 relative z-10">
+        {/* Base padding p-2 */}
+        <div className="p-2 sm:p-4 md:p-6 bg-white dark:bg-gray-950 relative z-10">
           <DialogTitle>{title}</DialogTitle>
-          {/* Responsive margins */}
-          <DialogDescription className="mt-1 mb-2 sm:mt-2 sm:mb-4">
+          {/* Base margins mt-0.5 mb-1.5 */}
+          <DialogDescription className="mt-0.5 mb-1.5 sm:mt-2 sm:mb-4">
             Select the items you want to include and click{' '}
             <span className="text-bolt-elements-item-contentAccent font-medium">{confirmLabel}</span>.
           </DialogDescription>
 
-          {/* Responsive padding and margins */}
-          <div className="py-2 sm:py-4">
-            <div className="flex items-center justify-between mb-2 sm:mb-4">
-              {/* Responsive text */}
+          {/* Base padding py-1.5, margin mb-1.5 */}
+          <div className="py-1.5 sm:py-4">
+            <div className="flex items-center justify-between mb-1.5 sm:mb-4">
               <span className="text-xs sm:text-sm font-medium text-bolt-elements-textSecondary">
                 {selectedItems.length} of {items.length} selected
               </span>
               <Button
                 variant="ghost"
-                size="sm" // Button size 'sm' is now responsive
+                size="sm" // Uses new scaled sm size (base h-5 px-1.5)
                 onClick={handleSelectAll}
-                // text-xs is already part of new 'sm' button size. Adjusted h-7 for sm button.
-                className="h-7 sm:h-8 px-2 text-bolt-elements-textPrimary hover:text-bolt-elements-item-contentAccent hover:bg-bolt-elements-item-backgroundAccent bg-bolt-elements-bg-depth-2 dark:bg-transparent"
+                className="text-bolt-elements-textPrimary hover:text-bolt-elements-item-contentAccent hover:bg-bolt-elements-item-backgroundAccent bg-bolt-elements-bg-depth-2 dark:bg-transparent"
               >
                 {selectAll ? 'Deselect All' : 'Select All'}
               </Button>
             </div>
 
             <div
-              className="pr-1 sm:pr-2 border rounded-md border-bolt-elements-borderColor bg-bolt-elements-bg-depth-2" // Responsive padding
+              className="pr-0.5 sm:pr-2 border rounded-md border-bolt-elements-borderColor bg-bolt-elements-bg-depth-2" // Base pr-0.5
               style={{
-                maxHeight, // maxHeight prop is fine as string (e.g. "60vh")
+                maxHeight,
               }}
             >
               {items.length > 0 ? (
@@ -439,24 +438,24 @@ export function SelectionDialog({
                   height={listHeight}
                   width="100%"
                   itemCount={items.length}
-                  itemSize={itemSize} // Use responsive itemSize
+                  itemSize={itemSize}
                   className="scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-bolt-elements-bg-depth-3"
                 >
                   {ItemRenderer}
                 </FixedSizeList>
               ) : (
-                // Responsive text and padding
-                <div className="text-center py-3 sm:py-4 text-xs sm:text-sm text-bolt-elements-textTertiary">
+                <div className="text-center py-2 sm:py-4 text-xs sm:text-sm text-bolt-elements-textTertiary"> {/* Base py-2 */}
                   No items to display
                 </div>
               )}
             </div>
           </div>
 
-          {/* Responsive margin */}
-          <div className="flex justify-between mt-3 sm:mt-4 md:mt-6">
+          {/* Base margin mt-2 */}
+          <div className="flex justify-between mt-2 sm:mt-4 md:mt-6">
             <Button
               variant="outline"
+              size="sm" // Use new scaled sm size
               onClick={onClose}
               className="border-bolt-elements-borderColor text-bolt-elements-textPrimary hover:bg-bolt-elements-item-backgroundActive"
             >
@@ -464,6 +463,7 @@ export function SelectionDialog({
             </Button>
             <Button
               onClick={handleConfirm}
+              size="sm" // Use new scaled sm size
               disabled={selectedItems.length === 0}
               className="bg-accent-500 text-white hover:bg-accent-600 disabled:opacity-50 disabled:pointer-events-none"
             >

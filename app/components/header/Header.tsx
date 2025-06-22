@@ -11,7 +11,7 @@ export function Header() {
   return (
     <header
       className={classNames(
-        'flex items-center p-3 sm:p-4 md:p-5 border-b h-[44px] sm:h-[var(--header-height)]',
+        'flex items-center p-2 sm:p-4 md:p-5 border-b h-[34px] sm:h-[var(--header-height)]', // Adjusted p-3 to p-2, h-[44px] to h-[34px]
         {
           'border-transparent': !chat.started,
           'border-bolt-elements-borderColor': chat.started,
@@ -19,18 +19,18 @@ export function Header() {
       )}
     >
       <div className="flex items-center gap-1 sm:gap-2 z-logo text-bolt-elements-textPrimary cursor-pointer">
-        <div className="i-ph:sidebar-simple-duotone text-lg sm:text-xl" />
-        <a href="/" className="text-xl sm:text-2xl font-semibold text-accent flex items-center">
+        <div className="i-ph:sidebar-simple-duotone text-base sm:text-xl" /> {/* Adjusted text-lg to text-base */}
+        <a href="/" className="text-lg sm:text-2xl font-semibold text-accent flex items-center"> {/* Adjusted text-xl to text-lg */}
           {/* <span className="i-bolt:logo-text?mask w-[46px] inline-block" /> */}
           <img
             src="/logo-light-styled.png"
             alt="logo"
-            className="w-[70px] sm:w-[90px] inline-block dark:hidden"
+            className="w-[52px] sm:w-[90px] inline-block dark:hidden" // Adjusted w-[70px] to w-[52px]
           />
           <img
             src="/logo-dark-styled.png"
             alt="logo"
-            className="w-[70px] sm:w-[90px] inline-block hidden dark:block"
+            className="w-[52px] sm:w-[90px] inline-block hidden dark:block" // Adjusted w-[70px] to w-[52px]
           />
         </a>
       </div>

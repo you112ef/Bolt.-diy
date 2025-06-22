@@ -109,15 +109,15 @@ export function HistoryItem({
           onClick={selectionMode ? handleItemClick : undefined}
         >
           <WithTooltip tooltip={currentDescription}>
-            {/* Adjusted pr for actions visibility */}
-            <span className="truncate pr-16 sm:pr-20 md:pr-24">{currentDescription}</span>
+            {/* Adjusted pr for actions visibility: pr-18 (72px) for base */}
+            <span className="truncate pr-18 sm:pr-20 md:pr-24">{currentDescription}</span>
           </WithTooltip>
           <div
             className={classNames(
-              'absolute right-0 top-0 bottom-0 flex items-center bg-transparent px-1 sm:px-2 transition-colors', // Adjusted padding
+              'absolute right-0 top-0 bottom-0 flex items-center bg-transparent px-1 sm:px-2 transition-colors', // Base px-1 is fine
             )}
           >
-            {/* Adjusted gap and icon sizes */}
+            {/* Base gap-1.5, icons h-3 w-3 are fine */}
             <div className="flex items-center gap-1.5 sm:gap-2 md:gap-2.5 text-gray-400 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
               <ChatActionButton
                 toolTipContent="Export"

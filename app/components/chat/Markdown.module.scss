@@ -1,5 +1,5 @@
 $font-mono: ui-monospace, 'Fira Code', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-$code-font-size: 13px;
+$code-font-size: 10px; // Scaled down from 13px
 
 @mixin not-inside-actions {
   &:not(:has(:global(.actions)), :global(.actions *)) {
@@ -8,53 +8,61 @@ $code-font-size: 13px;
 }
 
 .MarkdownContent {
-  line-height: 1.6;
+  line-height: 1.6; // Keep line-height for readability
   color: var(--bolt-elements-textPrimary);
 
+  // Base font size for markdown content will be set by parent (e.g. chat message text-sm)
+  // These margins are relative to that. 1em = current font size.
+  // 16px (default base) * 0.75 = 12px.
+  // 12px / 14px (if parent is text-sm) = ~0.85em.
+  // Let's use slightly smaller em values or fixed small px values.
+  // For simplicity and consistency with previous px based scaling, let's use px for now.
+
   > *:not(:last-child) {
-    margin-block-end: 16px;
+    margin-block-end: 12px; // Scaled from 16px
   }
 
   :global(.artifact) {
-    margin: 1.5em 0;
+    margin: 1.2em 0; // Scaled from 1.5em
   }
 
   :is(h1, h2, h3, h4, h5, h6) {
     @include not-inside-actions {
-      margin-block-start: 24px;
-      margin-block-end: 16px;
+      margin-block-start: 18px; // Scaled from 24px
+      margin-block-end: 12px;  // Scaled from 16px
       font-weight: 600;
       line-height: 1.25;
       color: var(--bolt-elements-textPrimary);
     }
   }
 
+  // Font sizes for headings are relative (em), they will scale with parent text.
   h1 {
-    font-size: 2em;
+    font-size: 1.8em; // Scaled from 2em
     border-bottom: 1px solid var(--bolt-elements-borderColor);
-    padding-bottom: 0.3em;
+    padding-bottom: 0.25em; // Scaled from 0.3em
   }
 
   h2 {
-    font-size: 1.5em;
+    font-size: 1.35em; // Scaled from 1.5em
     border-bottom: 1px solid var(--bolt-elements-borderColor);
-    padding-bottom: 0.3em;
+    padding-bottom: 0.25em; // Scaled from 0.3em
   }
 
   h3 {
-    font-size: 1.25em;
+    font-size: 1.1em; // Scaled from 1.25em
   }
 
   h4 {
-    font-size: 1em;
+    font-size: 0.9em; // Scaled from 1em
   }
 
   h5 {
-    font-size: 0.875em;
+    font-size: 0.75em; // Scaled from 0.875em
   }
 
   h6 {
-    font-size: 0.85em;
+    font-size: 0.7em; // Scaled from 0.85em
     color: #6a737d;
   }
 
@@ -63,7 +71,7 @@ $code-font-size: 13px;
 
     &:not(:last-of-type) {
       margin-block-start: 0;
-      margin-block-end: 16px;
+      margin-block-end: 12px; // Scaled from 16px
     }
   }
 
@@ -79,24 +87,24 @@ $code-font-size: 13px;
 
   :not(pre) > code {
     font-family: $font-mono;
-    font-size: $code-font-size;
+    font-size: $code-font-size; // Uses new scaled $code-font-size
 
     @include not-inside-actions {
-      border-radius: 6px;
-      padding: 0.2em 0.4em;
+      border-radius: 4px; // Scaled from 6px
+      padding: 0.15em 0.3em; // Scaled from 0.2em 0.4em
       background-color: var(--bolt-elements-messages-inlineCode-background);
       color: var(--bolt-elements-messages-inlineCode-text);
     }
   }
 
   pre {
-    padding: 20px 16px;
-    border-radius: 6px;
+    padding: 12px 10px; // Scaled from 20px 16px
+    border-radius: 4px; // Scaled from 6px
   }
 
   pre:has(> code) {
     font-family: $font-mono;
-    font-size: $code-font-size;
+    font-size: $code-font-size; // Uses new scaled $code-font-size
     background: transparent;
     overflow-x: auto;
     min-width: 0;
@@ -104,16 +112,16 @@ $code-font-size: 13px;
 
   blockquote {
     margin: 0;
-    padding: 0 1em;
+    padding: 0 0.75em; // Scaled from 1em
     color: var(--bolt-elements-textTertiary);
-    border-left: 0.25em solid var(--bolt-elements-borderColor);
+    border-left: 0.2em solid var(--bolt-elements-borderColor); // Scaled from 0.25em
   }
 
   :is(ul, ol) {
     @include not-inside-actions {
-      padding-left: 2em;
+      padding-left: 1.5em; // Scaled from 2em
       margin-block-start: 0;
-      margin-block-end: 16px;
+      margin-block-end: 12px; // Scaled from 16px
     }
   }
 
@@ -132,11 +140,11 @@ $code-font-size: 13px;
   li {
     @include not-inside-actions {
       & + li {
-        margin-block-start: 8px;
+        margin-block-start: 6px; // Scaled from 8px
       }
 
       > *:not(:last-child) {
-        margin-block-end: 16px;
+        margin-block-end: 12px; // Scaled from 16px
       }
     }
   }
@@ -147,9 +155,9 @@ $code-font-size: 13px;
   }
 
   hr {
-    height: 0.25em;
+    height: 0.2em; // Scaled from 0.25em
     padding: 0;
-    margin: 24px 0;
+    margin: 18px 0; // Scaled from 24px
     background-color: var(--bolt-elements-borderColor);
     border: 0;
   }
@@ -157,15 +165,15 @@ $code-font-size: 13px;
   table {
     border-collapse: collapse;
     width: 100%;
-    margin-block-end: 16px;
+    margin-block-end: 12px; // Scaled from 16px
 
     :is(th, td) {
-      padding: 6px 13px;
+      padding: 4px 10px; // Scaled from 6px 13px
       border: 1px solid #dfe2e5;
     }
 
     tr:nth-child(2n) {
-      background-color: #f6f8fa;
+      background-color: #f6f8fa; // Keep as is, this is subtle
     }
   }
 }

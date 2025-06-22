@@ -12,7 +12,7 @@ export const Switch = memo(({ className, onCheckedChange, checked }: SwitchProps
   return (
     <SwitchPrimitive.Root
       className={classNames(
-        'relative h-5 w-9 sm:h-6 sm:w-11 cursor-pointer rounded-full bg-bolt-elements-button-primary-background', // Responsive track size
+        'relative h-3.5 w-7 sm:h-6 sm:w-11 cursor-pointer rounded-full bg-bolt-elements-button-primary-background', // Base: h-3.5 (14px), w-7 (28px)
         'transition-colors duration-200 ease-in-out',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
         'disabled:cursor-not-allowed disabled:opacity-50',
@@ -24,12 +24,12 @@ export const Switch = memo(({ className, onCheckedChange, checked }: SwitchProps
     >
       <SwitchPrimitive.Thumb
         className={classNames(
-          'block h-4 w-4 sm:h-5 sm:w-5 rounded-full bg-white', // Responsive thumb size
+          'block h-3 w-3 sm:h-5 sm:w-5 rounded-full bg-white', // Base: h-3 w-3 (12px)
           'shadow-lg shadow-black/20',
           'transition-transform duration-200 ease-in-out',
-          // Responsive translation: translate-x-[1.5px] for base, translate-x-0.5 (2px) for sm
-          // data-[state=checked]: translate-x-[1.15625rem] (18.5px) for base, translate-x-[1.375rem] (22px) for sm
-          'translate-x-[1.5px] data-[state=checked]:translate-x-[1.15625rem]',
+          // Base translation: translate-x-[1.5px], data-[state=checked]:translate-x-3.5 (14px)
+          // SM translation: translate-x-0.5 (2px), data-[state=checked]:translate-x-[1.375rem] (22px)
+          'translate-x-[1.5px] data-[state=checked]:translate-x-3.5',
           'sm:translate-x-0.5 sm:data-[state=checked]:translate-x-[1.375rem]',
           'will-change-transform',
         )}
