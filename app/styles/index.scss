@@ -56,6 +56,43 @@ body {
   scrollbar-color: var(--modern-scrollbar-thumb-backgroundHover) transparent; // Use hover color for thumb for consistency
 }
 
+/* Mobile Optimizations */
+@media (max-width: 360px) {
+  html {
+    font-size: 75%;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Constrain main layout containers */
+  body > div { /* Targeting the typical main app wrapper in Remix */
+    max-width: 360px !important;
+    margin-left: auto !important; /* Center the container */
+    margin-right: auto !important; /* Center the container */
+  }
+
+  /* Optimize Modals and Popups */
+  /* Targeting the motion.div in Dialog.tsx and Popover.Content in Popover.tsx */
+  .fixed.top-1\/2.left-1\/2.-translate-x-1\/2.-translate-y-1\/2, /* Dialog */
+  div[role="dialog"] > div[class*="bg-white"], /* Fallback for Dialog if class names change slightly */
+  div[data-radix-popper-content-wrapper] > div[role="dialog"], /* Radix Dialog generic selector */
+  .bg-bolt-elements-background-depth-2[data-side] /* Popover.Content */ {
+    max-width: 90% !important;
+    max-height: 90vh !important;
+    overflow: auto !important;
+  }
+
+  /* Ensure dialog content within the main dialog container also scrolls if needed */
+  .fixed.top-1\/2.left-1\/2.-translate-x-1\/2.-translate-y-1\/2 > div,
+  div[role="dialog"] > div[class*="bg-white"] > div,
+  div[data-radix-popper-content-wrapper] > div[role="dialog"] > div {
+    overflow-y: auto !important; /* Allow vertical scrolling for content inside dialogs */
+    max-height: calc(90vh - 4rem); /* Adjust based on padding/header inside dialog */
+  }
+}
+
 .modern-scrollbar-invert {
   &::-webkit-scrollbar-thumb {
     // Override with a contrasting color, e.g., primary text color with transparency
