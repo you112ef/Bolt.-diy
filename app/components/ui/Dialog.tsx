@@ -116,7 +116,7 @@ export const Dialog = memo(({ children, className, showCloseButton = true, onClo
       <RadixDialog.Content asChild>
         <motion.div
           className={classNames(
-            'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-950 rounded-lg shadow-xl border border-bolt-elements-borderColor z-[9999] w-[520px] focus:outline-none',
+            'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-950 rounded-lg shadow-xl border border-bolt-elements-borderColor z-[9999] w-full sm:w-[520px] max-w-[90vw] focus:outline-none',
             className,
           )}
           initial="closed"
@@ -124,7 +124,7 @@ export const Dialog = memo(({ children, className, showCloseButton = true, onClo
           exit="closed"
           variants={dialogVariants}
         >
-          <div className="flex flex-col">
+          <div className="flex flex-col max-h-[90vh] overflow-y-auto"> {/* Added max-h and overflow-y-auto here */}
             {children}
             {showCloseButton && (
               <RadixDialog.Close asChild onClick={onClose}>
@@ -333,9 +333,10 @@ export function SelectionDialog({
   };
 
   // Calculate the height for the virtualized list
+  const newItemSize = 45; // Original: 60px, reduced by 25%
   const listHeight = Math.min(
-    items.length * 60,
-    parseInt(maxHeight.replace('vh', '')) * window.innerHeight * 0.01 - 40,
+    items.length * newItemSize,
+    parseInt(maxHeight.replace('vh', '')) * window.innerHeight * 0.01 - 40, // Assuming -40 is for other UI elements/paddings
   );
 
   // Render each item in the virtualized list
@@ -415,7 +416,7 @@ export function SelectionDialog({
                   height={listHeight}
                   width="100%"
                   itemCount={items.length}
-                  itemSize={60}
+                   itemSize={newItemSize} // Use the new item size
                   className="scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-bolt-elements-bg-depth-3"
                 >
                   {ItemRenderer}

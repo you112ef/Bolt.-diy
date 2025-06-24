@@ -113,6 +113,58 @@ export default defineConfig({
     ['b', {}],
   ],
   theme: {
+    fontSize: {
+      xs: '0.6rem',    // Original: 0.75rem (12px) -> 9.6px
+      sm: '0.7rem',    // Original: 0.875rem (14px) -> 11.2px
+      base: '0.8rem',  // Original: 1rem (16px) -> 12.8px
+      lg: '0.9rem',    // Original: 1.125rem (18px) -> 14.4px
+      xl: '1rem',      // Original: 1.25rem (20px) -> 16px
+      '2xl': '1.2rem', // Original: 1.5rem (24px) -> 19.2px
+      '3xl': '1.5rem', // Original: 1.875rem (30px) -> 24px
+      '4xl': '1.9rem', // Original: 2.25rem (36px) -> 30.4px
+      '5xl': '2.4rem', // Original: 3rem (48px) -> 38.4px
+      '6xl': '3rem',   // Original: 3.75rem (60px) -> 48px
+      '7xl': '3.8rem', // Original: 4.5rem (72px) -> 60.8px
+      '8xl': '4.8rem', // Original: 6rem (96px) -> 76.8px
+      '9xl': '6.4rem', // Original: 8rem (128px) -> 102.4px
+    },
+    spacing: {
+      px: '1px',
+      0: '0',
+      0.5: '0.09375rem', // 0.125rem * 0.75
+      1: '0.1875rem',  // 0.25rem * 0.75
+      1.5: '0.28125rem', // 0.375rem * 0.75
+      2: '0.375rem',   // 0.5rem * 0.75
+      2.5: '0.46875rem', // 0.625rem * 0.75
+      3: '0.5625rem',  // 0.75rem * 0.75
+      3.5: '0.65625rem', // 0.875rem * 0.75
+      4: '0.75rem',    // 1rem * 0.75
+      5: '0.9375rem',  // 1.25rem * 0.75
+      6: '1.125rem',   // 1.5rem * 0.75
+      7: '1.3125rem',  // 1.75rem * 0.75
+      8: '1.5rem',     // 2rem * 0.75
+      9: '1.6875rem',  // 2.25rem * 0.75
+      10: '1.875rem',   // 2.5rem * 0.75
+      11: '2.0625rem',  // 2.75rem * 0.75
+      12: '2.25rem',    // 3rem * 0.75
+      14: '2.625rem',   // 3.5rem * 0.75
+      16: '3rem',      // 4rem * 0.75
+      20: '3.75rem',   // 5rem * 0.75
+      24: '4.5rem',    // 6rem * 0.75
+      28: '5.25rem',   // 7rem * 0.75
+      32: '6rem',      // 8rem * 0.75
+      36: '6.75rem',   // 9rem * 0.75
+      40: '7.5rem',    // 10rem * 0.75
+      44: '8.25rem',   // 11rem * 0.75
+      48: '9rem',      // 12rem * 0.75
+      52: '9.75rem',   // 13rem * 0.75
+      56: '10.5rem',   // 14rem * 0.75
+      60: '11.25rem',  // 15rem * 0.75
+      64: '12rem',     // 16rem * 0.75
+      72: '13.5rem',   // 18rem * 0.75
+      80: '15rem',     // 20rem * 0.75
+      96: '18rem',     // 24rem * 0.75
+    },
     colors: {
       ...COLOR_PRIMITIVES,
       bolt: {

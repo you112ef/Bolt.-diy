@@ -88,7 +88,7 @@ const BETA_TABS = new Set<TabType>(['task-manager', 'service-status', 'update', 
 
 const BetaLabel = () => (
   <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-purple-500/10 dark:bg-purple-500/20">
-    <span className="text-[10px] font-medium text-purple-600 dark:text-purple-400">BETA</span>
+    <span className="text-xs font-medium text-purple-600 dark:text-purple-400">BETA</span> {/* Changed from text-[10px] */}
   </div>
 );
 
@@ -432,7 +432,7 @@ export const ControlPanel = ({ open, onClose }: ControlPanelProps) => {
           >
             <motion.div
               className={classNames(
-                'w-[1200px] h-[90vh]',
+                'w-full max-w-[calc(min(1200px,95vw))] sm:max-w-[1200px] h-[90vh]', // Adjusted width
                 'bg-[#FAFAFA] dark:bg-[#0A0A0A]',
                 'rounded-2xl shadow-2xl',
                 'border border-[#E5E5E5] dark:border-[#1A1A1A]',

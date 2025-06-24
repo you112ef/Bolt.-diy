@@ -73,11 +73,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
   }, [theme]);
 
   return (
-    <>
+    // Apply global container constraints here
+    <div className="w-full max-w-[360px] mx-auto overflow-x-hidden">
       <ClientOnly>{() => <DndProvider backend={HTML5Backend}>{children}</DndProvider>}</ClientOnly>
       <ScrollRestoration />
       <Scripts />
-    </>
+    </div>
   );
 }
 

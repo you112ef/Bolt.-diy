@@ -343,7 +343,7 @@ export const Menu = () => {
             <span className="font-medium text-sm text-gray-900 dark:text-white truncate">
               {profile?.username || 'Guest User'}
             </span>
-            <div className="flex items-center justify-center w-[32px] h-[32px] overflow-hidden bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-500 rounded-full shrink-0">
+            <div className="flex items-center justify-center w-6 h-6 overflow-hidden bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-500 rounded-full shrink-0"> {/* Scaled from w-[32px] h-[32px] */}
               {profile?.avatar ? (
                 <img
                   src={profile.avatar}

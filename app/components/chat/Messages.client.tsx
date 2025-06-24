@@ -70,7 +70,7 @@ export const Messages = forwardRef<HTMLDivElement, MessagesProps>(
                   })}
                 >
                   {isUserMessage && (
-                    <div className="flex items-center justify-center w-[40px] h-[40px] overflow-hidden bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-500 rounded-full shrink-0 self-start">
+                    <div className="flex items-center justify-center w-[30px] h-[30px] overflow-hidden bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-500 rounded-full shrink-0 self-start"> {/* Scaled from 40px */}
                       {profile?.avatar ? (
                         <img
                           src={profile.avatar}
