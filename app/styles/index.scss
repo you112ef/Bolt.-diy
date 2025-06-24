@@ -14,6 +14,15 @@ body {
   background-color: var(--bolt-elements-bg-depth-1);
 }
 
+body {
+  // Added for mobile optimization
+  max-width: 360px;
+  margin: 0 auto; // Center content if screen is wider
+  overflow-x: hidden;
+  // Consider reducing base font size if needed, e.g., font-size: 14px;
+  // However, text-xs and text-sm utilities will be preferred for components
+}
+
 :root {
   --gradient-opacity: 0.8;
   --primary-color: rgba(158, 117, 240, var(--gradient-opacity));

@@ -60,6 +60,10 @@ export const Head = createHead(() => (
     <meta charSet="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <Meta />
+    {/* PWA Support Start */}
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#000000" />
+    {/* PWA Support End */}
     <Links />
     <script dangerouslySetInnerHTML={{ __html: inlineThemeCode }} />
   </>
@@ -77,6 +81,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <ClientOnly>{() => <DndProvider backend={HTML5Backend}>{children}</DndProvider>}</ClientOnly>
       <ScrollRestoration />
       <Scripts />
+      {/* PWA Support: Service Worker Registration */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                  .then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                  })
+                  .catch(error => {
+                    console.log('ServiceWorker registration failed: ', error);
+                  });
+              });
+            }
+          `,
+        }}
+      />
     </>
   );
 }

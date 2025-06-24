@@ -9,7 +9,8 @@ import FilePreview from './FilePreview';
 import { ScreenshotStateManager } from './ScreenshotStateManager';
 import { SendButton } from './SendButton.client';
 import { IconButton } from '~/components/ui/IconButton';
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify'; // Replaced with wrapper
+import { showSuccessToast } from '~/utils/toastFeedback'; // Import new wrapper
 import { SpeechRecognitionButton } from '~/components/chat/SpeechRecognition';
 import { SupabaseConnection } from './SupabaseConnection';
 import { ExpoQrModal } from '~/components/workbench/ExpoQrModal';
@@ -66,13 +67,14 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
   return (
     <div
       className={classNames(
-        'relative bg-bolt-elements-background-depth-2 backdrop-blur p-3 rounded-lg border border-bolt-elements-borderColor relative w-full max-w-chat mx-auto z-prompt',
-
-        /*
-         * {
-         *   'sticky bottom-2': chatStarted,
-         * },
-         */
+        // Original classes: 'relative bg-bolt-elements-background-depth-2 backdrop-blur p-3 rounded-lg border border-bolt-elements-borderColor relative w-full max-w-chat mx-auto z-prompt',
+        'fixed bottom-0 left-0 right-0 z-40 h-16', // Applied fixed positioning, z-index, and height
+        'bg-white dark:bg-slate-900', // Applied specific background colors
+        'shadow-md', // Added shadow
+        'p-3 w-full max-w-chat mx-auto', // Kept padding and width constraints for content within the bar
+                                         // Removed rounded-lg and border for a flush fixed bar appearance.
+                                         // Kept backdrop-blur, though its effect might be minimal with opaque bg.
+        'backdrop-blur',
       )}
     >
       <svg className={classNames(styles.PromptEffectContainer)}>
@@ -269,7 +271,7 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
               className={classNames('transition-all', props.enhancingPrompt ? 'opacity-100' : '')}
               onClick={() => {
                 props.enhancePrompt?.();
-                toast.success('Prompt enhanced!');
+                showSuccessToast('Prompt enhanced!');
               }}
             >
               {props.enhancingPrompt ? (

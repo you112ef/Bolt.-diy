@@ -7,7 +7,8 @@ import type { Message } from 'ai';
 import { useChat } from 'ai/react';
 import { useAnimate } from 'framer-motion';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { cssTransition, toast, ToastContainer } from 'react-toastify';
+import { cssTransition, ToastContainer } from 'react-toastify'; // Removed toast import
+import { showErrorToast, showWarningToast } from '~/utils/toastFeedback'; // Import new wrappers
 import { useMessageParser, usePromptEnhancer, useShortcuts } from '~/lib/hooks';
 import { description, useChatHistory } from '~/lib/persistence';
 import { chatStore } from '~/lib/stores/chat';
@@ -101,7 +102,7 @@ const processSampledMessages = createSampler(
     parseMessages(messages, isLoading);
 
     if (messages.length > initialMessages.length) {
-      storeMessageHistory(messages).catch((error) => toast.error(error.message));
+      storeMessageHistory(messages).catch((error) => showErrorToast(error.message));
     }
   },
   50,
@@ -187,7 +188,7 @@ export const ChatImpl = memo(
           action: 'request',
           error: e.message,
         });
-        toast.error(
+        showErrorToast(
           'There was an error processing your request: ' + (e.message ? e.message : 'No details were returned'),
         );
       },
@@ -336,9 +337,9 @@ export const ChatImpl = memo(
           if (template !== 'blank') {
             const temResp = await getTemplates(template, title).catch((e) => {
               if (e.message.includes('rate limit')) {
-                toast.warning('Rate limit exceeded. Skipping starter template\n Continuing with blank template');
+                showWarningToast('Rate limit exceeded. Skipping starter template\n Continuing with blank template');
               } else {
-                toast.warning('Failed to import starter template\n Continuing with blank template');
+                showWarningToast('Failed to import starter template\n Continuing with blank template');
               }
 
               return null;

@@ -10,12 +10,18 @@ export function Header() {
 
   return (
     <header
-      className={classNames('flex items-center px-4 border-b h-[var(--header-height)]', {
-        'border-transparent': !chat.started,
-        'border-bolt-elements-borderColor': chat.started,
-      })}
+      className={classNames(
+        'flex items-center px-4 border-b', // Retained existing flex, padding, border
+        'fixed top-0 left-0 right-0 z-50 h-14', // Added fixed positioning, z-index, and specific height
+        'bg-white dark:bg-slate-900', // Added specific background colors
+        {
+          'border-transparent': !chat.started,
+          'border-bolt-elements-borderColor': chat.started,
+        },
+      )}
     >
-      <div className="flex items-center gap-2 z-logo text-bolt-elements-textPrimary cursor-pointer">
+      <div className="flex items-center gap-2 text-bolt-elements-textPrimary cursor-pointer">
+        {/* z-logo might not be needed if header is z-50, but keeping for now */}
         <div className="i-ph:sidebar-simple-duotone text-xl" />
         <a href="/" className="text-2xl font-semibold text-accent flex items-center">
           {/* <span className="i-bolt:logo-text?mask w-[46px] inline-block" /> */}
