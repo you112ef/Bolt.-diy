@@ -278,20 +278,20 @@ export function PushToGitHubDialog({ isOpen, onClose, onPush }: PushToGitHubDial
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="w-[90vw] md:w-[600px] max-h-[85vh] overflow-y-auto"
+              className="w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto"
             >
               <Dialog.Content
                 className="bg-white dark:bg-bolt-elements-background-depth-1 rounded-lg border border-bolt-elements-borderColor dark:border-bolt-elements-borderColor-dark shadow-xl"
                 aria-describedby="success-dialog-description"
               >
-                <div className="p-6 space-y-4">
+                <div className="p-4 space-y-3"> {/* p-6 to p-4, space-y-4 to space-y-3 */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500">
-                        <div className="i-ph:check-circle w-5 h-5" />
+                      <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500"> {/* w-10 h-10 to w-8 h-8, rounded-xl to rounded-lg */}
+                        <div className="i-ph:check-circle w-4 h-4" /> {/* w-5 h-5 to w-4 h-4 */}
                       </div>
                       <div>
-                        <h3 className="text-lg font-medium text-bolt-elements-textPrimary dark:text-bolt-elements-textPrimary-dark">
+                        <h3 className="text-base font-medium text-bolt-elements-textPrimary dark:text-bolt-elements-textPrimary-dark"> {/* text-lg to text-base */}
                           Successfully pushed to GitHub
                         </h3>
                         <p
@@ -409,19 +409,19 @@ export function PushToGitHubDialog({ isOpen, onClose, onPush }: PushToGitHubDial
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="w-[90vw] md:w-[500px]"
+              className="w-[90%] md:w-[500px] max-h-[90vh] overflow-auto"
             >
               <Dialog.Content
-                className="bg-white dark:bg-bolt-elements-background-depth-1 rounded-lg p-6 border border-bolt-elements-borderColor dark:border-bolt-elements-borderColor-dark shadow-xl"
+                className="bg-white dark:bg-bolt-elements-background-depth-1 rounded-lg p-4 border border-bolt-elements-borderColor dark:border-bolt-elements-borderColor-dark shadow-xl" /* p-6 to p-4 */
                 aria-describedby="connection-required-description"
               >
-                <div className="relative text-center space-y-4">
+                <div className="relative text-center space-y-3"> {/* space-y-4 to space-y-3 */}
                   <Dialog.Close asChild>
                     <button
                       onClick={handleClose}
-                      className="absolute right-0 top-0 p-2 rounded-lg transition-all duration-200 ease-in-out bg-transparent text-bolt-elements-textTertiary hover:text-bolt-elements-textPrimary dark:text-bolt-elements-textTertiary-dark dark:hover:text-bolt-elements-textPrimary-dark hover:bg-bolt-elements-background-depth-2 dark:hover:bg-bolt-elements-background-depth-3 focus:outline-none focus:ring-2 focus:ring-bolt-elements-borderColor dark:focus:ring-bolt-elements-borderColor-dark"
+                      className="absolute right-0 top-0 p-1.5 rounded-lg transition-all duration-200 ease-in-out bg-transparent text-bolt-elements-textTertiary hover:text-bolt-elements-textPrimary dark:text-bolt-elements-textTertiary-dark dark:hover:text-bolt-elements-textPrimary-dark hover:bg-bolt-elements-background-depth-2 dark:hover:bg-bolt-elements-background-depth-3 focus:outline-none focus:ring-2 focus:ring-bolt-elements-borderColor dark:focus:ring-bolt-elements-borderColor-dark" /* p-2 to p-1.5 */
                     >
-                      <span className="i-ph:x block w-5 h-5" aria-hidden="true" />
+                      <span className="i-ph:x block w-4 h-4" aria-hidden="true" /> {/* w-5 h-5 to w-4 h-4 */}
                       <span className="sr-only">Close dialog</span>
                     </button>
                   </Dialog.Close>
@@ -429,11 +429,11 @@ export function PushToGitHubDialog({ isOpen, onClose, onPush }: PushToGitHubDial
                     initial={{ scale: 0.8 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.1 }}
-                    className="mx-auto w-16 h-16 rounded-xl bg-bolt-elements-background-depth-3 flex items-center justify-center text-purple-500"
+                    className="mx-auto w-12 h-12 rounded-lg bg-bolt-elements-background-depth-3 flex items-center justify-center text-purple-500" /* w-16 h-16 to w-12 h-12, rounded-xl to rounded-lg */
                   >
-                    <div className="i-ph:github-logo w-8 h-8" />
+                    <div className="i-ph:github-logo w-6 h-6" /> {/* w-8 h-8 to w-6 h-6 */}
                   </motion.div>
-                  <h3 className="text-lg font-medium text-bolt-elements-textPrimary dark:text-bolt-elements-textPrimary-dark">
+                  <h3 className="text-base font-medium text-bolt-elements-textPrimary dark:text-bolt-elements-textPrimary-dark"> {/* text-lg to text-base */}
                     GitHub Connection Required
                   </h3>
                   <p
@@ -481,24 +481,24 @@ export function PushToGitHubDialog({ isOpen, onClose, onPush }: PushToGitHubDial
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="w-[90vw] md:w-[500px]"
+              className="w-[90%] md:w-[500px] max-h-[90vh] overflow-auto"
           >
             <Dialog.Content
               className="bg-white dark:bg-bolt-elements-background-depth-1 rounded-lg border border-bolt-elements-borderColor dark:border-bolt-elements-borderColor-dark shadow-xl"
               aria-describedby="push-dialog-description"
             >
-              <div className="p-6">
-                <div className="flex items-center gap-4 mb-6">
+                <div className="p-4"> {/* p-6 to p-4 */}
+                  <div className="flex items-center gap-3 mb-4"> {/* gap-4 to gap-3, mb-6 to mb-4 */}
                   <motion.div
                     initial={{ scale: 0.8 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.1 }}
-                    className="w-10 h-10 rounded-xl bg-bolt-elements-background-depth-3 flex items-center justify-center text-purple-500"
+                      className="w-8 h-8 rounded-lg bg-bolt-elements-background-depth-3 flex items-center justify-center text-purple-500" /* w-10 h-10 to w-8 h-8, rounded-xl to rounded-lg */
                   >
-                    <div className="i-ph:github-logo w-5 h-5" />
+                      <div className="i-ph:github-logo w-4 h-4" /> {/* w-5 h-5 to w-4 h-4 */}
                   </motion.div>
                   <div>
-                    <Dialog.Title className="text-lg font-medium text-bolt-elements-textPrimary dark:text-bolt-elements-textPrimary-dark">
+                      <Dialog.Title className="text-base font-medium text-bolt-elements-textPrimary dark:text-bolt-elements-textPrimary-dark"> {/* text-lg to text-base */}
                       Push to GitHub
                     </Dialog.Title>
                     <p
@@ -511,19 +511,19 @@ export function PushToGitHubDialog({ isOpen, onClose, onPush }: PushToGitHubDial
                   <Dialog.Close asChild>
                     <button
                       onClick={handleClose}
-                      className="ml-auto p-2 rounded-lg transition-all duration-200 ease-in-out bg-transparent text-bolt-elements-textTertiary hover:text-bolt-elements-textPrimary dark:text-bolt-elements-textTertiary-dark dark:hover:text-bolt-elements-textPrimary-dark hover:bg-bolt-elements-background-depth-2 dark:hover:bg-bolt-elements-background-depth-3 focus:outline-none focus:ring-2 focus:ring-bolt-elements-borderColor dark:focus:ring-bolt-elements-borderColor-dark"
+                        className="ml-auto p-1.5 rounded-lg transition-all duration-200 ease-in-out bg-transparent text-bolt-elements-textTertiary hover:text-bolt-elements-textPrimary dark:text-bolt-elements-textTertiary-dark dark:hover:text-bolt-elements-textPrimary-dark hover:bg-bolt-elements-background-depth-2 dark:hover:bg-bolt-elements-background-depth-3 focus:outline-none focus:ring-2 focus:ring-bolt-elements-borderColor dark:focus:ring-bolt-elements-borderColor-dark" /* p-2 to p-1.5 */
                     >
-                      <span className="i-ph:x block w-5 h-5" aria-hidden="true" />
+                        <span className="i-ph:x block w-4 h-4" aria-hidden="true" /> {/* w-5 h-5 to w-4 h-4 */}
                       <span className="sr-only">Close dialog</span>
                     </button>
                   </Dialog.Close>
                 </div>
 
-                <div className="flex items-center gap-3 mb-6 p-4 bg-bolt-elements-background-depth-2 dark:bg-bolt-elements-background-depth-3 rounded-lg border border-bolt-elements-borderColor dark:border-bolt-elements-borderColor-dark">
+                  <div className="flex items-center gap-3 mb-4 p-3 bg-bolt-elements-background-depth-2 dark:bg-bolt-elements-background-depth-3 rounded-lg border border-bolt-elements-borderColor dark:border-bolt-elements-borderColor-dark"> {/* mb-6 to mb-4, p-4 to p-3 */}
                   <div className="relative">
-                    <img src={user.avatar_url} alt={user.login} className="w-10 h-10 rounded-full" />
-                    <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center text-white">
-                      <div className="i-ph:github-logo w-3 h-3" />
+                      <img src={user.avatar_url} alt={user.login} className="w-8 h-8 rounded-full" /> {/* w-10 h-10 to w-8 h-8 */}
+                      <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-purple-500 flex items-center justify-center text-white"> {/* w-5 h-5 to w-4 h-4 */}
+                        <div className="i-ph:github-logo w-2.5 h-2.5" /> {/* w-3 h-3 to w-2.5 h-2.5 */}
                     </div>
                   </div>
                   <div>
@@ -536,7 +536,7 @@ export function PushToGitHubDialog({ isOpen, onClose, onPush }: PushToGitHubDial
                   </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-2">
                   <div className="space-y-2">
                     <label
                       htmlFor="repoName"

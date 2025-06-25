@@ -58,7 +58,8 @@ const inlineThemeCode = stripIndents`
 export const Head = createHead(() => (
   <>
     <meta charSet="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
     <Meta />
     <Links />
     <script dangerouslySetInnerHTML={{ __html: inlineThemeCode }} />
@@ -73,11 +74,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
   }, [theme]);
 
   return (
-    <>
-      <ClientOnly>{() => <DndProvider backend={HTML5Backend}>{children}</DndProvider>}</ClientOnly>
-      <ScrollRestoration />
-      <Scripts />
-    </>
+    <html
+      lang="en"
+      className="h-full"
+      style={{
+        WebkitFontSmoothing: 'antialiased',
+        textRendering: 'optimizeLegibility',
+      }}
+    >
+      <body className="h-full w-full max-w-[360px] mx-auto px-2 sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg overflow-x-hidden bg-bolt-elements-bg-depth-1 text-bolt-elements-textPrimary">
+        <ClientOnly>{() => <DndProvider backend={HTML5Backend}>{children}</DndProvider>}</ClientOnly>
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
   );
 }
 

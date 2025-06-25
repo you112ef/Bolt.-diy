@@ -35,19 +35,19 @@ export function CreateBranchDialog({ isOpen, onClose, onConfirm, repository, bra
         <Dialog.Content
           className={classNames(
             'fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]',
-            'w-full max-w-md p-6 rounded-xl shadow-lg',
+            'w-full max-w-[90%] md:max-w-md p-4 rounded-xl shadow-lg max-h-[90vh] overflow-auto',
             'bg-white dark:bg-[#0A0A0A]',
             'border border-[#E5E5E5] dark:border-[#1A1A1A]',
           )}
         >
-          <Dialog.Title className="text-lg font-medium text-bolt-elements-textPrimary mb-4">
+          <Dialog.Title className="text-base font-medium text-bolt-elements-textPrimary mb-3"> {/* Adjusted text size and margin */}
             Create New Branch
           </Dialog.Title>
 
           <form onSubmit={handleSubmit}>
-            <div className="space-y-4">
+            <div className="flex flex-col gap-2">
               <div>
-                <label htmlFor="branchName" className="block text-sm font-medium text-bolt-elements-textSecondary mb-2">
+                <label htmlFor="branchName" className="block text-sm font-medium text-bolt-elements-textSecondary mb-1">
                   Branch Name
                 </label>
                 <input
@@ -70,7 +70,7 @@ export function CreateBranchDialog({ isOpen, onClose, onConfirm, repository, bra
               <div>
                 <label
                   htmlFor="sourceBranch"
-                  className="block text-sm font-medium text-bolt-elements-textSecondary mb-2"
+                  className="block text-sm font-medium text-bolt-elements-textSecondary mb-1"
                 >
                   Source Branch
                 </label>

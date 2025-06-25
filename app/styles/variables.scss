@@ -30,11 +30,11 @@
 
   --bolt-elements-item-contentDefault: theme('colors.alpha.gray.50');
   --bolt-elements-item-contentActive: theme('colors.gray.950');
-  --bolt-elements-item-contentAccent: theme('colors.accent.700');
+  --bolt-elements-item-contentAccent: theme('colors.white'); /* Was accent.700 */
   --bolt-elements-item-contentDanger: theme('colors.red.500');
   --bolt-elements-item-backgroundDefault: rgba(0, 0, 0, 0);
   --bolt-elements-item-backgroundActive: theme('colors.alpha.gray.5');
-  --bolt-elements-item-backgroundAccent: theme('colors.alpha.accent.10');
+  --bolt-elements-item-backgroundAccent: theme('colors.accent.700'); /* Was alpha.accent.10 */
   --bolt-elements-item-backgroundDanger: theme('colors.alpha.red.10');
 
   --bolt-elements-loader-background: theme('colors.alpha.gray.10');
@@ -50,7 +50,7 @@
   --bolt-elements-actions-code-background: theme('colors.gray.800');
 
   --bolt-elements-messages-background: theme('colors.gray.100');
-  --bolt-elements-messages-linkColor: theme('colors.accent.500');
+  --bolt-elements-messages-linkColor: theme('colors.accent.800'); /* Was accent.500 */
   --bolt-elements-messages-code-background: theme('colors.gray.800');
   --bolt-elements-messages-inlineCode-background: theme('colors.gray.200');
   --bolt-elements-messages-inlineCode-text: theme('colors.gray.800');

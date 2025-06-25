@@ -51,9 +51,9 @@ export function ConnectionForm({ authState, setAuthState, onSave, onDisconnect }
           </div>
         </div>
 
-        <form onSubmit={onSave} className="space-y-4">
+        <form onSubmit={onSave} className="flex flex-col gap-2">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-bolt-elements-textSecondary mb-2">
+            <label htmlFor="username" className="block text-sm font-medium text-bolt-elements-textSecondary mb-1">
               GitHub Username
             </label>
             <input
@@ -73,7 +73,7 @@ export function ConnectionForm({ authState, setAuthState, onSave, onDisconnect }
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-1">
               <label htmlFor="token" className="block text-sm font-medium text-bolt-elements-textSecondary">
                 Personal Access Token
               </label>

@@ -19,9 +19,9 @@ export const ExpoQrModal: React.FC<ExpoQrModalProps> = ({ open, onClose }) => {
         showCloseButton={true}
         onClose={onClose}
       >
-        <div className="border !border-bolt-elements-borderColor flex flex-col gap-5 justify-center items-center p-6 bg-bolt-elements-background-depth-2 rounded-md">
-          <div className="i-bolt:expo-brand h-10 w-full invert dark:invert-none"></div>
-          <DialogTitle className="text-bolt-elements-textTertiary text-lg font-semibold leading-6">
+        <div className="border !border-bolt-elements-borderColor flex flex-col gap-4 justify-center items-center p-4 bg-bolt-elements-background-depth-2 rounded-md"> {/* p-6 to p-4, gap-5 to gap-4 */}
+          <div className="i-bolt:expo-brand h-8 w-full invert dark:invert-none"></div> {/* h-10 to h-8 */}
+          <DialogTitle className="text-bolt-elements-textTertiary text-base font-semibold leading-6"> {/* text-lg to text-base */}
             Preview on your own mobile device
           </DialogTitle>
           <DialogDescription className="bg-bolt-elements-background-depth-3 max-w-sm rounded-md p-1 border border-bolt-elements-borderColor">
@@ -37,12 +37,12 @@ export const ExpoQrModal: React.FC<ExpoQrModalProps> = ({ open, onClose }) => {
                 logoWidth={50}
                 logoPaddingStyle="square"
                 style={{
-                  borderRadius: 16,
+                  borderRadius: 12, // 16 to 12
                   padding: 2,
                   backgroundColor: '#8a5fff',
                 }}
                 value={expoUrl}
-                size={200}
+                size={180} // 200 to 180
               />
             ) : (
               <div className="text-gray-500 text-center">No Expo URL detected.</div>
