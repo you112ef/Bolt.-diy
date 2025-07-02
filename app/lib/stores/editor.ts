@@ -1,7 +1,7 @@
 import { atom, computed, map, type MapStore, type WritableAtom } from 'nanostores';
 import type { editor } from 'monaco-editor';
 // import type { EditorDocument, ScrollPosition } from '~/components/editor/codemirror/CodeMirrorEditor'; // Old types
-import type { FileMap, FilesStore, File Dirent } from './files'; // Assuming FileDirent is exported or use FileMap value type
+import type { FileMap, FilesStore, Dirent } from './files'; // Corrected import: FileDirent -> Dirent
 import { createScopedLogger } from '~/utils/logger';
 import { activeSessionIdStore, sessionsStore, updateSession, type AppSession, type SessionEditorState as AppSessionEditorState } from '~/lib/stores/sessionManager';
 
