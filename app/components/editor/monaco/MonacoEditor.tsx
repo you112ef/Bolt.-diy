@@ -1,10 +1,11 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import MonacoEditor, { type Monaco } from 'react-monaco-editor';
 import type { editor } from 'monaco-editor';
-import { openDatabase, getEditorContent, setEditorContent } from '~/lib/persistence/db'; // IndexedDB functions
-import { debounce } from '~/utils/debounce'; // Utility for debouncing
+import { openDatabase, getEditorContent, setEditorContent } from '~/lib/persistence/db';
+import { debounce } from '~/utils/debounce';
+import { setActiveMonacoInstance } from '~/lib/editor/editorUtils'; // Import the new utility
 
-const logger = console; // Or use a proper logger if available globally
+const logger = console;
 
 export interface MonacoEditorProps {
   value?: string;
@@ -148,9 +149,44 @@ const DefaultMonacoEditor = React.forwardRef<MonacoEditorRef, MonacoEditorProps>
     // If there was a view state trying to be restored before editor mounted
     if(lastSavedViewState.current) {
       mountedEditor.restoreViewState(lastSavedViewState.current);
-      lastSavedViewState.current = null; // Clear after restoring
+      lastSavedViewState.current = null;
     }
+
+    // Register this instance as active
+    setActiveMonacoInstance(mountedEditor);
   };
+
+  useEffect(() => {
+    // Cleanup function to deregister the editor instance when the component unmounts
+    // or when the filePath changes causing a re-render that might replace the editor instance.
+    return () => {
+      // Check if the current global active instance is this one before clearing.
+      // This is important if multiple editor instances could exist (e.g. diff view, future features)
+      // For now, simpler: if this instance (editorRef.current) is being disposed, clear it.
+      // However, editorRef.current might be from a *previous* render here.
+      // A more robust way: on unmount, if editorRef.current was the one set, clear it.
+      // The handleEditorDidMount will set the new one if a new editor mounts.
+      // For simplicity, we assume one primary editor instance managed this way.
+      // If this specific editor instance is being unmounted, nullify it.
+      // This will be called when the component unmounts.
+      if (editorRef.current) {
+         // Check if the globally active instance is the one we are about to unmount.
+         // This requires importing getActiveMonacoInstance.
+         // For now, let's assume that if this component unmounts, its editor is no longer active.
+         // More robust: setActiveMonacoInstance(null) only if getActiveMonacoInstance() === editorRef.current
+         // This specific instance is unmounting, so it's no longer the active one.
+         // But if another instance became active just before this unmounted, we don't want to nullify that.
+         // The simplest approach for now: The new active instance will call setActiveMonacoInstance in its own mount.
+         // So, we don't strictly need to nullify here if a new one immediately takes over.
+         // However, if NO editor is active after this, it should be null.
+         // Let's do a conditional nullification based on whether this instance was the active one.
+         const currentActiveInstance = require('~/lib/editor/editorUtils').getActiveMonacoInstance();
+         if (currentActiveInstance === editorRef.current) {
+            setActiveMonacoInstance(null);
+         }
+      }
+    };
+  }, [filePath]); // Re-run if filePath changes, implying a new editor might mount. Or just on unmount via []
 
   useImperativeHandle(ref, () => ({
     getViewState: () => {
