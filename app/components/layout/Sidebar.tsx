@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { IconButton } from '~/components/ui/IconButton'; // Assuming IconButton
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/Tooltip'; // Assuming Tooltip
+import React from 'react'; // Removed useState as it's not used
+import { IconButton } from '~/components/ui/IconButton';
+import { Tooltip } from '~/components/ui/Tooltip'; // Use the new Tooltip component
 
 export type MainTool = 'chat' | 'workbench' | 'search' | 'settings';
 
@@ -19,27 +19,22 @@ const tools: Array<{ id: MainTool; label: string; icon: string }> = [
 export const Sidebar: React.FC<SidebarProps> = ({ activeTool, onToolSelect }) => {
   return (
     <aside className="flex flex-col items-center w-16 bg-bolt-elements-background-depth-2 p-2 space-y-3 border-r border-bolt-elements-borderColor">
-      <TooltipProvider delayDuration={100}>
-        {tools.map((tool) => (
-          <Tooltip key={tool.id}>
-            <TooltipTrigger asChild>
-              <IconButton
-                variant={activeTool === tool.id ? 'solid' : 'ghost'}
-                color={activeTool === tool.id ? 'primary' : 'default'}
-                onClick={() => onToolSelect(tool.id)}
-                aria-label={tool.label}
-                aria-pressed={activeTool === tool.id}
-                className="p-2.5 rounded-lg"
-              >
-                <div className={`${tool.icon} text-2xl`} />
-              </IconButton>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>{tool.label}</p>
-            </TooltipContent>
-          </Tooltip>
-        ))}
-      </TooltipProvider>
+      {/* TooltipProvider is now part of each Tooltip instance from ~/components/ui/Tooltip */}
+      {tools.map((tool) => (
+        <Tooltip key={tool.id} content={<p>{tool.label}</p>} side="right" delayDuration={100}>
+          {/* The IconButton is the child that TooltipPrimitive.Trigger will use */}
+          <IconButton
+            variant={activeTool === tool.id ? 'solid' : 'ghost'}
+            color={activeTool === tool.id ? 'primary' : 'default'}
+            onClick={() => onToolSelect(tool.id)}
+            aria-label={tool.label}
+            aria-pressed={activeTool === tool.id}
+            className="p-2.5 rounded-lg"
+          >
+            <div className={`${tool.icon} text-2xl`} />
+          </IconButton>
+        </Tooltip>
+      ))}
 
       {/* Spacer to push settings to the bottom, if added */}
       {/* <div className="flex-grow" /> */}
