@@ -8,7 +8,8 @@ import { Chat } from '~/components/chat/Chat.client';
 import { Sidebar, activeToolStore, type MainTool } from '~/components/layout/Sidebar';
 import { Workbench } from '~/components/workbench/Workbench.client';
 import SearchResultsDisplay from '~/components/search/SearchResults';
-import { searchUiStore, clearSearchResults, fetchSearchResults as triggerSearch } from '~/lib/stores/search';
+import { searchUiStore, clearSearchResults } from '~/lib/stores/search'; // Corrected: fetchSearchResults removed
+import { fetchSearchResults as triggerSearch } from '~/lib/services/searchService'; // Corrected: fetchSearchResults imported from searchService
 import { Input } from '~/components/ui/Input';
 import { Button } from '~/components/ui/Button';
 import { useState } from 'react';
