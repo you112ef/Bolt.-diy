@@ -69,21 +69,7 @@ export const Head = createHead(() => (
   </>
 ));
 
-export function Layout({ children }: { children: React.ReactNode }) {
-  const theme = useStore(themeStore);
-
-  useEffect(() => {
-    document.querySelector('html')?.setAttribute('data-theme', theme);
-  }, [theme]);
-
-  return (
-    <>
-      <ClientOnly>{() => <DndProvider backend={HTML5Backend}>{children}</DndProvider>}</ClientOnly>
-      <ScrollRestoration />
-      <Scripts />
-    </>
-  );
-}
+// Removed the first Layout definition here as it was redefined later.
 
 import { logStore } from './lib/stores/logs';
 
