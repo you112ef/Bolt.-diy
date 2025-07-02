@@ -74,7 +74,7 @@ export class EditorStore {
 
   #subscribeToActiveSession() {
     this.#unsubscribeActiveSessionListener = activeSessionIdStore.subscribe(newActiveSessionId => {
-      logger.log(`Active session changed. Prev: ${this.#previousActiveSessionId}, New: ${newActiveSessionId}`);
+      logger.debug(`Active session changed. Prev: ${this.#previousActiveSessionId}, New: ${newActiveSessionId}`); // Changed to logger.debug
       if (this.#previousActiveSessionId && this.#previousActiveSessionId !== newActiveSessionId) {
         this.#saveEditorStateForSession(this.#previousActiveSessionId);
       }
@@ -92,7 +92,7 @@ export class EditorStore {
 
   #saveEditorStateForSession(sessionId: string) {
     if (!sessionId) return;
-    logger.log(`Saving editor state for session ${sessionId}`);
+    logger.debug(`Saving editor state for session ${sessionId}`); // Changed to logger.debug
 
     let currentActiveFileViewState: editor.ICodeEditorViewState | null = null;
     const activePath = this.activeFilePath.get();
@@ -122,7 +122,7 @@ export class EditorStore {
   }
 
   #loadEditorStateForSession(sessionId: string) {
-    logger.log(`Loading editor state for session ${sessionId}`);
+    logger.debug(`Loading editor state for session ${sessionId}`); // Changed to logger.debug
     const allSessions = sessionsStore.get(); // Get from sessionManager
     const session = allSessions.find(s => s.id === sessionId);
 
@@ -147,7 +147,7 @@ export class EditorStore {
       this.openFilePaths.set([]);
       this.activeFilePath.set(undefined);
       this.fileStates.set({});
-      logger.log(`No saved editor state for session ${sessionId}, initialized to default.`);
+      logger.debug(`No saved editor state for session ${sessionId}, initialized to default.`); // Changed to logger.debug
     }
   }
 
