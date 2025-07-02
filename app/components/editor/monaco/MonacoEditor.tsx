@@ -226,6 +226,6 @@ const DefaultMonacoEditor = React.forwardRef<MonacoEditorRef, MonacoEditorProps>
       editorDidMount={handleEditorDidMount}
     />
   );
-};
+}); // Removed semicolon here
 
 export default DefaultMonacoEditor;
