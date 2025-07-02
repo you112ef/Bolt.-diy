@@ -980,3 +980,7 @@ function isBinaryFile(buffer: Uint8Array | undefined) {
 function convertToBuffer(view: Uint8Array): Buffer {
   return Buffer.from(view.buffer, view.byteOffset, view.byteLength);
 }
+
+// Instantiate and export filesStore
+import { webcontainer } from '~/lib/webcontainer'; // Ensure webcontainer is imported
+export const filesStore = new FilesStore(webcontainer);

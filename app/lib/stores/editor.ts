@@ -256,3 +256,7 @@ export class EditorStore {
     }
   }
 }
+
+// Instantiate and export editorStore
+import { filesStore } from './files'; // Import the filesStore instance
+export const editorStore = new EditorStore(filesStore);
