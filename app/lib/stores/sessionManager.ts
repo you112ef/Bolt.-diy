@@ -2,11 +2,17 @@ import { atom, map, type WritableAtom, type MapStore } from 'nanostores';
 import type { editor } from 'monaco-editor'; // For editor view state
 
 // Define the structure of the editor state for a session
+export interface SessionEditorFileState { // Mirroring EditorFileState from editor.ts
+  filePath: string; // Redundant if key is filePath, but explicit.
+  content: string;
+  viewState?: editor.ICodeEditorViewState | null;
+  isBinary?: boolean;
+}
+
 export interface SessionEditorState {
   openFilePaths: string[];
   activeFilePath?: string;
-  // Store Monaco Editor view states (includes scroll, cursor, folding) per file
-  viewStates: Record<string, editor.ICodeEditorViewState | null>;
+  fileStates: Record<string, SessionEditorFileState>; // filePath maps to its state
 }
 
 // Define the structure of a single terminal's state for a session
@@ -108,10 +114,10 @@ export function createNewSession(makeActive: boolean = false, name?: string): Ap
     id: newSessionId,
     name: sessionName,
     chatId: newChatId,
-    editorState: {
+    editorState: { // Initialize with the new structure
       openFilePaths: [],
       activeFilePath: undefined,
-      viewStates: {},
+      fileStates: {}, // Empty map initially
     },
     terminalState: {
       terminals: [

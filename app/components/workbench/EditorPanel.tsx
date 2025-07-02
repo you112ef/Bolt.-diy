@@ -1,14 +1,16 @@
 import { useStore } from '@nanostores/react';
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useRef, useEffect } from 'react'; // Added useRef, useEffect
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import * as Tabs from '@radix-ui/react-tabs';
-import MonacoEditor from '~/components/editor/monaco/MonacoEditor';
+import MonacoEditor, { type MonacoEditorRef } from '~/components/editor/monaco/MonacoEditor'; // Import MonacoEditorRef
 import type { editor } from 'monaco-editor';
 import { PanelHeader } from '~/components/ui/PanelHeader';
-import type { EditorDocument, OnSaveCallback as OnEditorSave, OnScrollCallback as OnEditorScroll, EditorSettings } from '~/components/editor/codemirror/CodeMirrorEditor'; // Keep for types if needed temporarily
-import { getCurrentChatId, isFileLocked } from '~/utils/fileLocks'; // Import file lock utilities
+// Types from CodeMirrorEditor are less relevant now, focus on EditorFileState from new editorStore
+// import type { EditorDocument, OnSaveCallback as OnEditorSave, OnScrollCallback as OnEditorScroll, EditorSettings } from '~/components/editor/codemirror/CodeMirrorEditor';
+import type { OnSaveCallback as OnEditorSave } from '~/components/editor/codemirror/CodeMirrorEditor'; // Keep if OnEditorSave signature is reused
+import { getCurrentChatId, isFileLocked } from '~/utils/fileLocks';
 import { PanelHeaderButton } from '~/components/ui/PanelHeaderButton';
-import type { FileMap } from '~/lib/stores/files';
+import type { FileMap } from '~/lib/stores/files'; // Keep for FileTree
 import type { FileHistory } from '~/types/actions';
 import { themeStore } from '~/lib/stores/theme';
 import { WORK_DIR } from '~/utils/constants';
@@ -17,56 +19,81 @@ import { isMobile } from '~/utils/mobile';
 import { FileBreadcrumb } from './FileBreadcrumb';
 import { FileTree } from './FileTree';
 import { DEFAULT_TERMINAL_SIZE, TerminalTabs } from './terminal/TerminalTabs';
+import { editorStore, type EditorFileState } from '~/lib/stores/editor'; // Import new editorStore and its types
 import { workbenchStore } from '~/lib/stores/workbench';
-import { Search } from './Search'; // <-- Ensure Search is imported
-import { classNames } from '~/utils/classNames'; // <-- Import classNames if not already present
-import { LockManager } from './LockManager'; // <-- Import LockManager
+import { Search } from './Search';
+import { classNames } from '~/utils/classNames';
+import { LockManager } from './LockManager';
 
+// Props might change based on how workbenchStore exposes editor states
 interface EditorPanelProps {
-  files?: FileMap;
-  unsavedFiles?: Set<string>;
-  editorDocument?: EditorDocument;
-  selectedFile?: string | undefined;
-  isStreaming?: boolean;
-  fileHistory?: Record<string, FileHistory>;
-  onEditorChange?: (value: string) => void; // Simplified for now
-  onEditorScroll?: OnEditorScroll; // Will address later
-  onFileSelect?: (value?: string) => void;
-  onFileSave?: OnEditorSave;
-  onFileReset?: () => void;
+  // files, unsavedFiles, selectedFile will now come from editorStore via workbenchStore
+  isStreaming?: boolean; // Still relevant for read-only state
+  // fileHistory may also become part of session/editorStore
+  // Callbacks might be simplified if editorStore handles more logic internally
+  // onFileSelect?: (value?: string) => void; // Likely editorStore.openFile
+  // onFileSave?: OnEditorSave; // Likely editorStore.saveActiveFile (if such a method is added)
+  // onFileReset?: () => void; // Likely editorStore.resetActiveFile
 }
 
 const DEFAULT_EDITOR_SIZE = 100 - DEFAULT_TERMINAL_SIZE;
 
-// editorSettings might be used by Monaco options if needed, e.g., tabSize
-const editorSettings: EditorSettings = { tabSize: 2 };
+// const editorSettings: EditorSettings = { tabSize: 2 }; // Monaco options set in MonacoEditor.tsx
 
 export const EditorPanel = memo(
-  ({
-    files,
-    unsavedFiles,
-    editorDocument,
-    selectedFile,
-    isStreaming,
-    fileHistory,
-    onFileSelect,
-    onEditorChange, // Simplified
-    onEditorScroll, // To be handled
-    onFileSave,
-    onFileReset,
-  }: EditorPanelProps) => {
+  (props: EditorPanelProps) => { // Removed destructured props for now, will get from store
     renderLogger.trace('EditorPanel');
+
+    const { isStreaming } = props; // Only isStreaming might be direct prop
+
+    // Get state from the new session-aware editorStore (via workbenchStore)
+    const activeFilePath = useStore(editorStore.activeFilePath);
+    const allFileStates = useStore(editorStore.fileStates);
+    const currentFileState = activeFilePath ? allFileStates[activeFilePath] : undefined;
+
+    // Get these from workbenchStore which should hold instances of other stores
+    const filesForFileTree = useStore(workbenchStore.files); // For FileTree
+    const unsavedFiles = useStore(workbenchStore.unsavedFiles); // For FileTree and Save/Reset buttons
+    // onFileSelect, onFileSave, onFileReset will now call methods on editorStore or workbenchStore
+    const onFileSelect = (filePath?: string) => {
+      if (filePath) editorStore.openFile(filePath);
+      else editorStore.activeFilePath.set(undefined); // Or handle no selection
+    };
+    const onFileSave = () => {
+      if (activeFilePath) workbenchStore.saveFile(activeFilePath); // workbenchStore should have saveFile
+    };
+    const onFileReset = () => {
+      if (activeFilePath && currentFileState) {
+        // This needs careful implementation in editorStore to revert to last saved state from FilesStore
+        // For now, conceptual:
+        // editorStore.resetFileContent(activeFilePath);
+        const originalFile = workbenchStore.files.get()[activeFilePath];
+        if (originalFile && originalFile.type === 'file') {
+            editorStore.updateFileContent(activeFilePath, originalFile.content);
+        }
+      }
+    };
+
 
     const currentTheme = useStore(themeStore);
     const showTerminal = useStore(workbenchStore.showTerminal);
+    const monacoEditorRef = useRef<MonacoEditorRef>(null);
+
+    useEffect(() => {
+      // Provide the active editor ref to the store
+      editorStore.setActiveMonacoEditorRef(monacoEditorRef);
+      return () => {
+        editorStore.setActiveMonacoEditorRef(null); // Clean up
+      };
+    }, []); // Runs once
 
     const monacoTheme = currentTheme === 'dark' ? 'vs-dark' : 'light';
 
-    // More robust language detection, can be expanded
     const getLanguageFromPath = (filePath?: string): string => {
       if (!filePath) return 'plaintext';
       const extension = filePath.split('.').pop()?.toLowerCase();
-      switch (extension) {
+      // ... (language switch case remains the same)
+       switch (extension) {
         case 'js': case 'jsx': case 'cjs': case 'mjs': return 'javascript';
         case 'ts': case 'tsx': return 'typescript';
         case 'html': case 'htm': return 'html';
@@ -95,53 +122,42 @@ export const EditorPanel = memo(
     };
 
     const handleEditorChange = (value: string, event: editor.IModelContentChangedEvent) => {
-      if (onEditorChange && editorDocument) {
-        onEditorChange(value); // Pass only the value for now
+      if (activeFilePath) {
+        editorStore.updateFileContent(activeFilePath, value);
+        // Notify workbenchStore about unsaved change
+        workbenchStore.unsavedFiles.set(
+            new Set(workbenchStore.unsavedFiles.get()).add(activeFilePath)
+        );
       }
     };
 
-    // Determine if the editor should be read-only
+    const handleViewStateChange = (viewState: editor.ICodeEditorViewState | null) => {
+      if (activeFilePath && viewState) {
+        editorStore.updateFileViewState(activeFilePath, viewState);
+      }
+    };
+
     const isEditorReadOnly = useMemo(() => {
-      if (isStreaming || !editorDocument || editorDocument.isBinary) {
+      if (isStreaming || !currentFileState || currentFileState.isBinary) {
         return true;
       }
-      // TODO: Re-evaluate how currentChatId is obtained if it's reactive.
-      // For now, assuming it's relatively stable or obtained from a store if needed.
-      // const currentChatIdValue = getCurrentChatId(); // This might need to be from a store if it changes reactively
-      // For simplicity in this step, we'll assume a static or globally available chat ID if needed by isFileLocked.
-      // If isFileLocked doesn't rely on a frequently changing chatId prop, this is fine.
-      // Otherwise, this logic might need to be inside a component that can react to chat ID changes.
-      const currentChatIdValue = getCurrentChatId(); // Assuming this utility provides the correct current chat context
-      return isFileLocked(editorDocument.filePath, currentChatIdValue).locked;
-    }, [isStreaming, editorDocument]);
+      const currentChatIdValue = getCurrentChatId();
+      return isFileLocked(currentFileState.filePath, currentChatIdValue).locked;
+    }, [isStreaming, currentFileState]);
 
-    const handleScroll = (scrollTop: number, scrollLeft: number) => {
-      if (onEditorScroll && editorDocument) {
-        // The original onEditorScroll might expect a more complex object.
-        // For now, we adapt to what Monaco provides easily.
-        // Original: onEditorScroll({ top: scrollTop, left: scrollLeft, line?: number, column?: number });
-        // This might need adjustment based on how scroll positions are stored and restored.
-        // For instance, Monaco's view state is better for full restoration.
-        onEditorScroll({ top: scrollTop, left: scrollLeft });
-      }
-    };
 
     const activeFileSegments = useMemo(() => {
-      if (!editorDocument) {
-        return undefined;
-      }
-
-      return editorDocument.filePath.split('/');
-    }, [editorDocument]);
+      if (!activeFilePath) return undefined;
+      return activeFilePath.split('/');
+    }, [activeFilePath]);
 
     const activeFileUnsaved = useMemo(() => {
-      if (!editorDocument || !unsavedFiles) {
-        return false;
-      }
-
-      // Make sure unsavedFiles is a Set before calling has()
-      return unsavedFiles instanceof Set && unsavedFiles.has(editorDocument.filePath);
-    }, [editorDocument, unsavedFiles]);
+      if (!activeFilePath || !currentFileState) return false;
+      // Determine unsaved status by comparing currentFileState.content with FilesStore version
+      // This requires FilesStore to be accessible or for editorStore to track original content.
+      // For now, using the global unsavedFiles set, which should be updated by handleEditorChange.
+      return unsavedFiles.get().has(activeFilePath);
+    }, [activeFilePath, currentFileState, unsavedFiles]);
 
     return (
       <PanelGroup direction="vertical">
@@ -184,13 +200,13 @@ export const EditorPanel = memo(
                   <Tabs.Content value="files" className="flex-grow overflow-auto focus-visible:outline-none">
                     <FileTree
                       className="h-full"
-                      files={files}
+                      files={filesForFileTree} // Use filesForFileTree from workbenchStore
                       hideRoot
-                      unsavedFiles={unsavedFiles}
-                      fileHistory={fileHistory}
+                      unsavedFiles={unsavedFiles.get()} // Get current value of unsavedFiles
+                      // fileHistory={fileHistory} // fileHistory might come from editorStore/session
                       rootFolder={WORK_DIR}
-                      selectedFile={selectedFile}
-                      onFileSelect={onFileSelect}
+                      selectedFile={activeFilePath} // Use activeFilePath from editorStore
+                      onFileSelect={onFileSelect} // Use new onFileSelect
                     />
                   </Tabs.Content>
 

@@ -15,7 +15,9 @@ export interface MonacoEditorProps {
   onSave?: () => void; // For Ctrl+S or Cmd+S
   editorDidMount?: (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => void;
   filePath?: string;
-  onScroll?: (scrollTop: number, scrollLeft: number) => void;
+  onScroll?: (scrollTop: number, scrollLeft: number) => void; // Keep for now, but onViewStateChange is more comprehensive
+  onViewStateChange?: (viewState: editor.ICodeEditorViewState | null) => void;
+  initialViewState?: editor.ICodeEditorViewState | null; // To set initial view state
   // Expose methods for view state saving/restoring if using a ref
   // This is more for parent components to call, so might be better handled
   // by passing a callback that receives the editor instance, or by directly
@@ -39,10 +41,12 @@ const DefaultMonacoEditor = React.forwardRef<MonacoEditorRef, MonacoEditorProps>
   onSave,
   editorDidMount,
   filePath,
-  onScroll,
+  onScroll, // Keep prop for now
+  onViewStateChange,
+  initialViewState,
 }, ref) => {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const monacoRef = useRef<Monaco | null>(null);
+  const monacoInstanceRef = useRef<Monaco | null>(null); // Renamed for clarity
   const dbRef = useRef<IDBDatabase | undefined>(undefined);
   const lastSavedViewState = useRef<editor.ICodeEditorViewState | null>(null);
   const [internalValue, setInternalValue] = useState(initialValueFromProps);
@@ -66,12 +70,12 @@ const DefaultMonacoEditor = React.forwardRef<MonacoEditorRef, MonacoEditorProps>
 
   const handleEditorDidMount = async (
     mountedEditor: editor.IStandaloneCodeEditor,
-    monacoInstance: Monaco
+    monaco: Monaco
   ) => {
     editorRef.current = mountedEditor;
-    monacoRef.current = monacoInstance;
+    monacoInstanceRef.current = monaco;
 
-    // Open DB
+    // Open DB (existing logic)
     if (!dbRef.current) {
       dbRef.current = await openDatabase();
     }
@@ -106,21 +110,39 @@ const DefaultMonacoEditor = React.forwardRef<MonacoEditorRef, MonacoEditorProps>
     mountedEditor.updateOptions({ readOnly });
 
     if (onSave) {
-      mountedEditor.addCommand(monacoInstance.KeyMod.CtrlCmd | monacoInstance.KeyCode.KeyS, () => {
+      mountedEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
         onSave();
       });
     }
 
+    // Setup listeners for view state changes
+    const disposables: editor.IDisposable[] = [];
+    if (onViewStateChange) {
+      disposables.push(mountedEditor.onDidScrollChange(() => {
+        onViewStateChange(mountedEditor.saveViewState());
+      }));
+      disposables.push(mountedEditor.onDidChangeCursorPosition(() => {
+        onViewStateChange(mountedEditor.saveViewState());
+      }));
+      // Add more listeners if needed (e.g., folding, model content changes that affect view)
+    }
+
+    // Also call onScroll if provided, for simpler scroll tracking if still used
     if (onScroll) {
-        mountedEditor.onDidScrollChange((e) => {
-            if (e.scrollTopChanged || e.scrollLeftChanged) {
-                onScroll(mountedEditor.getScrollTop(), mountedEditor.getScrollLeft());
-            }
-        });
+      disposables.push(mountedEditor.onDidScrollChange((e) => {
+        if (e.scrollTopChanged || e.scrollLeftChanged) {
+          onScroll(mountedEditor.getScrollTop(), mountedEditor.getScrollLeft());
+        }
+      }));
+    }
+
+    // Restore initial view state if provided
+    if (initialViewState) {
+      mountedEditor.restoreViewState(initialViewState);
     }
 
     if (editorDidMount) {
-      editorDidMount(mountedEditor, monacoInstance);
+      editorDidMount(mountedEditor, monaco);
     }
 
     // If there was a view state trying to be restored before editor mounted
