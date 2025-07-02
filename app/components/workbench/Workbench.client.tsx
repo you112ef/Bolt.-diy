@@ -307,12 +307,25 @@ export const Workbench = memo(
       }
     }, [hasPreview]);
 
-    useEffect(() => {
-      workbenchStore.setDocuments(files);
-    }, [files]);
+    // Removed useEffect that called workbenchStore.setDocuments(files);
+    // editorStore now manages its documents based on active session state.
 
     const onEditorChange = useCallback<OnEditorChange>((update) => {
-      workbenchStore.setCurrentDocumentContent(update.content);
+      // This is the old OnEditorChange from CodeMirror.
+      // The new EditorPanel's handleEditorChange calls editorStore.updateFileContent(activeFilePath, value);
+      // So, this specific onEditorChange in Workbench.client.tsx might be redundant if EditorPanel
+      // directly updates the new editorStore.
+      // For now, assuming EditorPanel handles its own changes with the new store.
+      // If this callback is still somehow wired up, it needs to be updated or removed.
+      // Let's assume it's effectively replaced by EditorPanel's direct store interaction.
+      if (typeof update === 'string') { // Check if it's the new simplified signature
+         const activeFile = workbenchStore.selectedFile.get(); // old selectedFile getter
+         if (activeFile) {
+            workbenchStore.setCurrentDocumentContent(update); // Uses new editorStore.updateFileContent
+         }
+      } else if (update && 'content' in update) { // Old structure
+        workbenchStore.setCurrentDocumentContent(update.content);
+      }
     }, []);
 
     const onEditorScroll = useCallback<OnEditorScroll>((position) => {
@@ -468,17 +481,9 @@ export const Workbench = memo(
                 <div className="relative flex-1 overflow-hidden">
                   <View initial={{ x: '0%' }} animate={{ x: selectedView === 'code' ? '0%' : '-100%' }}>
                     <EditorPanel
-                      editorDocument={currentDocument}
+                      // Props for EditorPanel are now minimal as it gets most state from editorStore
                       isStreaming={isStreaming}
-                      selectedFile={selectedFile}
-                      files={files}
-                      unsavedFiles={unsavedFiles}
-                      fileHistory={fileHistory}
-                      onFileSelect={onFileSelect}
-                      onEditorScroll={onEditorScroll}
-                      onEditorChange={onEditorChange}
-                      onFileSave={onFileSave}
-                      onFileReset={onFileReset}
+                      // fileHistory={fileHistory} // This should also be part of session state if needed
                     />
                   </View>
                   <View
