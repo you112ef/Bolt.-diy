@@ -2,15 +2,11 @@ import { useStore } from '@nanostores/react';
 import { memo, useMemo } from 'react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import * as Tabs from '@radix-ui/react-tabs';
-import {
-  CodeMirrorEditor,
-  type EditorDocument,
-  type EditorSettings,
-  type OnChangeCallback as OnEditorChange,
-  type OnSaveCallback as OnEditorSave,
-  type OnScrollCallback as OnEditorScroll,
-} from '~/components/editor/codemirror/CodeMirrorEditor';
+import MonacoEditor from '~/components/editor/monaco/MonacoEditor';
+import type { editor } from 'monaco-editor';
 import { PanelHeader } from '~/components/ui/PanelHeader';
+import type { EditorDocument, OnSaveCallback as OnEditorSave, OnScrollCallback as OnEditorScroll, EditorSettings } from '~/components/editor/codemirror/CodeMirrorEditor'; // Keep for types if needed temporarily
+import { getCurrentChatId, isFileLocked } from '~/utils/fileLocks'; // Import file lock utilities
 import { PanelHeaderButton } from '~/components/ui/PanelHeaderButton';
 import type { FileMap } from '~/lib/stores/files';
 import type { FileHistory } from '~/types/actions';
@@ -33,8 +29,8 @@ interface EditorPanelProps {
   selectedFile?: string | undefined;
   isStreaming?: boolean;
   fileHistory?: Record<string, FileHistory>;
-  onEditorChange?: OnEditorChange;
-  onEditorScroll?: OnEditorScroll;
+  onEditorChange?: (value: string) => void; // Simplified for now
+  onEditorScroll?: OnEditorScroll; // Will address later
   onFileSelect?: (value?: string) => void;
   onFileSave?: OnEditorSave;
   onFileReset?: () => void;
@@ -42,6 +38,7 @@ interface EditorPanelProps {
 
 const DEFAULT_EDITOR_SIZE = 100 - DEFAULT_TERMINAL_SIZE;
 
+// editorSettings might be used by Monaco options if needed, e.g., tabSize
 const editorSettings: EditorSettings = { tabSize: 2 };
 
 export const EditorPanel = memo(
@@ -53,15 +50,81 @@ export const EditorPanel = memo(
     isStreaming,
     fileHistory,
     onFileSelect,
-    onEditorChange,
-    onEditorScroll,
+    onEditorChange, // Simplified
+    onEditorScroll, // To be handled
     onFileSave,
     onFileReset,
   }: EditorPanelProps) => {
     renderLogger.trace('EditorPanel');
 
-    const theme = useStore(themeStore);
+    const currentTheme = useStore(themeStore);
     const showTerminal = useStore(workbenchStore.showTerminal);
+
+    const monacoTheme = currentTheme === 'dark' ? 'vs-dark' : 'light';
+
+    // More robust language detection, can be expanded
+    const getLanguageFromPath = (filePath?: string): string => {
+      if (!filePath) return 'plaintext';
+      const extension = filePath.split('.').pop()?.toLowerCase();
+      switch (extension) {
+        case 'js': case 'jsx': case 'cjs': case 'mjs': return 'javascript';
+        case 'ts': case 'tsx': return 'typescript';
+        case 'html': case 'htm': return 'html';
+        case 'css': return 'css';
+        case 'json': return 'json';
+        case 'py': return 'python';
+        case 'md': case 'markdown': return 'markdown';
+        case 'java': return 'java';
+        case 'c': case 'h': return 'c';
+        case 'cpp': case 'hpp': case 'cxx': return 'cpp';
+        case 'cs': return 'csharp';
+        case 'go': return 'go';
+        case 'php': return 'php';
+        case 'rb': return 'ruby';
+        case 'rs': return 'rust';
+        case 'swift': return 'swift';
+        case 'kt': return 'kotlin';
+        case 'sh': return 'shell';
+        case 'yaml': case 'yml': return 'yaml';
+        case 'xml': return 'xml';
+        case 'sql': return 'sql';
+        case 'graphql': case 'gql': return 'graphql';
+        case 'dockerfile': return 'dockerfile';
+        default: return 'plaintext';
+      }
+    };
+
+    const handleEditorChange = (value: string, event: editor.IModelContentChangedEvent) => {
+      if (onEditorChange && editorDocument) {
+        onEditorChange(value); // Pass only the value for now
+      }
+    };
+
+    // Determine if the editor should be read-only
+    const isEditorReadOnly = useMemo(() => {
+      if (isStreaming || !editorDocument || editorDocument.isBinary) {
+        return true;
+      }
+      // TODO: Re-evaluate how currentChatId is obtained if it's reactive.
+      // For now, assuming it's relatively stable or obtained from a store if needed.
+      // const currentChatIdValue = getCurrentChatId(); // This might need to be from a store if it changes reactively
+      // For simplicity in this step, we'll assume a static or globally available chat ID if needed by isFileLocked.
+      // If isFileLocked doesn't rely on a frequently changing chatId prop, this is fine.
+      // Otherwise, this logic might need to be inside a component that can react to chat ID changes.
+      const currentChatIdValue = getCurrentChatId(); // Assuming this utility provides the correct current chat context
+      return isFileLocked(editorDocument.filePath, currentChatIdValue).locked;
+    }, [isStreaming, editorDocument]);
+
+    const handleScroll = (scrollTop: number, scrollLeft: number) => {
+      if (onEditorScroll && editorDocument) {
+        // The original onEditorScroll might expect a more complex object.
+        // For now, we adapt to what Monaco provides easily.
+        // Original: onEditorScroll({ top: scrollTop, left: scrollLeft, line?: number, column?: number });
+        // This might need adjustment based on how scroll positions are stored and restored.
+        // For instance, Monaco's view state is better for full restoration.
+        onEditorScroll({ top: scrollTop, left: scrollLeft });
+      }
+    };
 
     const activeFileSegments = useMemo(() => {
       if (!editorDocument) {
@@ -164,16 +227,38 @@ export const EditorPanel = memo(
                 )}
               </PanelHeader>
               <div className="h-full flex-1 overflow-hidden modern-scrollbar">
-                <CodeMirrorEditor
-                  theme={theme}
-                  editable={!isStreaming && editorDocument !== undefined}
-                  settings={editorSettings}
-                  doc={editorDocument}
-                  autoFocusOnDocumentChange={!isMobile()}
-                  onScroll={onEditorScroll}
-                  onChange={onEditorChange}
-                  onSave={onFileSave}
-                />
+                {editorDocument && !editorDocument.isBinary ? (
+                  <MonacoEditor
+                    key={editorDocument.filePath}
+                    value={editorDocument.value}
+                    language={getLanguageFromPath(editorDocument.filePath)}
+                    theme={monacoTheme}
+                    readOnly={isEditorReadOnly}
+                    onChange={handleEditorChange}
+                    onSave={onFileSave}
+                    filePath={editorDocument.filePath}
+                    onScroll={handleScroll}
+                    editorDidMount={(editor, monaco) => {
+                      // Attempt to restore scroll position using Monaco's view state if possible,
+                      // or the simpler scrollTop if that's what's stored.
+                      // This part needs to align with how scroll state is saved.
+                      // For now, using the simple scrollTop passed from CodeMirror's structure.
+                      if (editorDocument?.scroll?.top && editor) {
+                        editor.setScrollTop(editorDocument.scroll.top);
+                      }
+                       if (editorDocument?.scroll?.left && editor) {
+                        editor.setScrollLeft(editorDocument.scroll.left);
+                      }
+                      if (!isMobile() && !isEditorReadOnly) { // Only focus if not read-only
+                        editor.focus();
+                      }
+                    }}
+                  />
+                ) : editorDocument?.isBinary ? (
+                  <div className="p-4">Binary file preview not implemented yet.</div>
+                ) : (
+                  <div className="p-4 text-center text-gray-500">Select a file to view its content.</div>
+                )}
               </div>
             </Panel>
           </PanelGroup>

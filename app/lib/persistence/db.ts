@@ -12,14 +12,20 @@ export interface IChatMetadata {
 const logger = createScopedLogger('ChatHistory');
 
 // this is used at the top level and never rejects
+export interface EditorContentRecord {
+  filePath: string;
+  content: string;
+  timestamp: string;
+}
+
 export async function openDatabase(): Promise<IDBDatabase | undefined> {
   if (typeof indexedDB === 'undefined') {
-    console.error('indexedDB is not available in this environment.');
+    logger.error('indexedDB is not available in this environment.');
     return undefined;
   }
 
   return new Promise((resolve) => {
-    const request = indexedDB.open('boltHistory', 2);
+    const request = indexedDB.open('boltHistory', 3); // Incremented version to 3
 
     request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
       const db = (event.target as IDBOpenDBRequest).result;
@@ -38,6 +44,14 @@ export async function openDatabase(): Promise<IDBDatabase | undefined> {
           db.createObjectStore('snapshots', { keyPath: 'chatId' });
         }
       }
+
+      if (oldVersion < 3) {
+        if (!db.objectStoreNames.contains('editorContent')) {
+          const store = db.createObjectStore('editorContent', { keyPath: 'filePath' });
+          store.createIndex('filePath', 'filePath', { unique: true });
+          // store.createIndex('timestamp', 'timestamp'); // Optional: if querying by timestamp
+        }
+      }
     };
 
     request.onsuccess = (event: Event) => {
@@ -50,6 +64,82 @@ export async function openDatabase(): Promise<IDBDatabase | undefined> {
     };
   });
 }
+
+// --- Editor Content Functions ---
+
+export async function getEditorContent(db: IDBDatabase, filePath: string): Promise<string | undefined> {
+  return new Promise((resolve, reject) => {
+    if (!db.objectStoreNames.contains('editorContent')) {
+      logger.warn('editorContent object store not found.');
+      resolve(undefined); // Or reject(new Error('Object store not found'))
+      return;
+    }
+    const transaction = db.transaction('editorContent', 'readonly');
+    const store = transaction.objectStore('editorContent');
+    const request = store.get(filePath);
+
+    request.onsuccess = () => {
+      if (request.result) {
+        resolve((request.result as EditorContentRecord).content);
+      } else {
+        resolve(undefined);
+      }
+    };
+    request.onerror = () => {
+      logger.error('Error getting editor content:', request.error);
+      reject(request.error);
+    };
+  });
+}
+
+export async function setEditorContent(db: IDBDatabase, filePath: string, content: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (!db.objectStoreNames.contains('editorContent')) {
+      logger.error('editorContent object store not found. Cannot save content.');
+      reject(new Error('editorContent object store not found.'));
+      return;
+    }
+    const transaction = db.transaction('editorContent', 'readwrite');
+    const store = transaction.objectStore('editorContent');
+    const record: EditorContentRecord = {
+      filePath,
+      content,
+      timestamp: new Date().toISOString(),
+    };
+    const request = store.put(record);
+
+    request.onsuccess = () => resolve();
+    request.onerror = () => {
+      logger.error('Error setting editor content:', request.error);
+      reject(request.error);
+    };
+  });
+}
+
+export async function deleteEditorContent(db: IDBDatabase, filePath: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (!db.objectStoreNames.contains('editorContent')) {
+      // If the store doesn't exist, there's nothing to delete.
+      resolve();
+      return;
+    }
+    const transaction = db.transaction('editorContent', 'readwrite');
+    const store = transaction.objectStore('editorContent');
+    const request = store.delete(filePath);
+
+    request.onsuccess = () => resolve();
+    request.onerror = (event) => {
+      if ((event.target as IDBRequest).error?.name === 'NotFoundError') {
+        resolve(); // Not found is not an error for delete
+      } else {
+        logger.error('Error deleting editor content:', request.error);
+        reject(request.error);
+      }
+    };
+  });
+}
+
+// --- End Editor Content Functions ---
 
 export async function getAll(db: IDBDatabase): Promise<ChatHistoryItem[]> {
   return new Promise((resolve, reject) => {

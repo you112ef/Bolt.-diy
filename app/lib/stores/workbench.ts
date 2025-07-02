@@ -501,6 +501,18 @@ export class WorkbenchStore {
 
           this.deployAlert.set(alert);
         },
+        // Provide the onOpenFileRequest callback
+        (filePath: string) => {
+          this.setSelectedFile(filePath);
+          // Optionally, ensure the view is set to 'code'
+          if (this.currentView.get() !== 'code') {
+            this.currentView.set('code');
+          }
+          // Optionally, ensure workbench is visible
+          if (!this.showWorkbench.get()) {
+            this.showWorkbench.set(true);
+          }
+        },
       ),
     });
   }

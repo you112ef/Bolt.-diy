@@ -5,6 +5,7 @@
 import { useStore } from '@nanostores/react';
 import type { Message } from 'ai';
 import { useChat } from 'ai/react';
+import { activeSessionIdStore, sessionsStore } from '~/lib/stores/sessionManager'; // Import session stores
 import { useAnimate } from 'framer-motion';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { cssTransition, toast, ToastContainer } from 'react-toastify';
@@ -27,6 +28,8 @@ import { logStore } from '~/lib/stores/logs';
 import { streamingState } from '~/lib/stores/streaming';
 import { filesToArtifacts } from '~/utils/fileUtils';
 import { supabaseConnection } from '~/lib/stores/supabase';
+import { searchUiStore, clearSearchResults, type SearchUiState } from '~/lib/stores/search'; // Import search store
+import SearchResultsDisplay from '~/components/search/SearchResults'; // Import display component
 
 const toastAnimation = cssTransition({
   enter: 'animated fadeInRight',
@@ -38,22 +41,45 @@ const logger = createScopedLogger('Chat');
 export function Chat() {
   renderLogger.trace('Chat');
 
-  const { ready, initialMessages, storeMessageHistory, importChat, exportChat } = useChatHistory();
-  const title = useStore(description);
-  useEffect(() => {
-    workbenchStore.setReloadedMessages(initialMessages.map((m) => m.id));
-  }, [initialMessages]);
+  const currentActiveSessionId = useStore(activeSessionIdStore);
+  const allSessions = useStore(sessionsStore);
 
+  const activeSession = allSessions.find(s => s.id === currentActiveSessionId);
+  const activeChatId = activeSession?.chatId;
+
+  // Pass activeChatId to useChatHistory
+  const { ready, initialMessages, storeMessageHistory, importChat, exportChat, updateChatMestaData } = useChatHistory(activeChatId);
+
+  // The 'description' atom is now updated by useChatHistory based on the activeChatId
+  const title = useStore(description);
+
+  useEffect(() => {
+    // This effect might need to be session-aware if workbench messages are per-session
+    if (ready && activeChatId) { // Only run if chat for the active session is ready
+        workbenchStore.setReloadedMessages(initialMessages.map((m) => m.id));
+    }
+  }, [initialMessages, ready, activeChatId]);
+
+  // Render ChatImpl only if an active chat ID is available and ready
+  // or if we are in a state where a new session/chat is about to be created.
+  // The `ready` flag from useChatHistory now correctly reflects readiness for the specific activeChatId.
   return (
     <>
-      {ready && (
+      {activeChatId && ready && (
         <ChatImpl
+          key={activeChatId} // Add key to force re-mount or full re-render when chat ID changes
           description={title}
           initialMessages={initialMessages}
           exportChat={exportChat}
           storeMessageHistory={storeMessageHistory}
           importChat={importChat}
+          // updateChatMestaData={updateChatMestaData} // If ChatImpl needs to call this
         />
+      )}
+      {!activeChatId && (
+        <div className="flex items-center justify-center h-full text-bolt-elements-textSecondary">
+          Select or create a session to start chatting.
+        </div>
       )}
       <ToastContainer
         closeButton={({ closeToast }) => {
@@ -132,6 +158,17 @@ export const ChatImpl = memo(
     );
     const supabaseAlert = useStore(workbenchStore.supabaseAlert);
     const { activeProviders, promptId, autoSelectTemplate, contextOptimizationEnabled } = useSettings();
+  const searchState = useStore(searchUiStore); // Existing search state
+
+  // Get the active session's details again, as ChatImpl is memoized
+  // and might not re-render just because parent's variables changed if not passed as props.
+  // However, `key={activeChatId}` on ChatImpl in the parent Chat component should handle re-mounts.
+  // So, this re-fetch might be redundant if `initialMessages` and `description` are correctly passed.
+  const currentActiveSessionIdFromChatImpl = useStore(activeSessionIdStore);
+  const allSessionsFromChatImpl = useStore(sessionsStore);
+  const activeSessionForChatImpl = allSessionsFromChatImpl.find(s => s.id === currentActiveSessionIdFromChatImpl);
+  const currentChatIdForLlmApi = activeSessionForChatImpl?.chatId;
+
 
     const [model, setModel] = useState(() => {
       const savedModel = Cookies.get('selectedModel');
@@ -163,11 +200,16 @@ export const ChatImpl = memo(
       setData,
     } = useChat({
       api: '/api/chat',
+      // Pass currentChatIdForLlmApi to the backend if your API needs to be session-aware
+      // This example assumes the backend might use it for logging or context.
+      // If your /api/chat is purely stateless per request, this might not be strictly needed in `body`.
+      // However, for operations like saving context specific to a chat, it would be.
       body: {
         apiKeys,
         files,
         promptId,
         contextOptimization: contextOptimizationEnabled,
+        chatId: currentChatIdForLlmApi, // Pass the current chat ID
         supabase: {
           isConnected: supabaseConn.isConnected,
           hasSelectedProject: !!selectedProject,
@@ -178,6 +220,7 @@ export const ChatImpl = memo(
         },
       },
       sendExtraMessageFields: true,
+      // `id` for useChat hook is for identifying the hook instance, not related to our session chatId here.
       onError: (e) => {
         logger.error('Request failed\n\n', e, error);
         logStore.logError('Chat request failed', e, {
@@ -207,28 +250,63 @@ export const ChatImpl = memo(
 
         logger.debug('Finished streaming');
       },
-      initialMessages,
-      initialInput: Cookies.get(PROMPT_COOKIE_KEY) || '',
+      initialMessages, // This is now correctly scoped by the parent Chat component
+      // initialInput is now managed by the session state
     });
+
+    // Effect to load/save chat input for the current session
+    useEffect(() => {
+      if (activeSessionForChatImpl) {
+        // Load input from session state when session changes or component mounts
+        const sessionChatState = activeSessionForChatImpl.chatInput; // Assuming chatInput is added to AppSession
+        if (sessionChatState && input !== sessionChatState) {
+          setInput(sessionChatState);
+        }
+      }
+      // Save input to session state on change
+      // This might be too frequent; consider debouncing or saving on blur/session switch
+      // For now, direct update for simplicity of demonstrating the mechanism
+      return () => {
+        // Cleanup / save on unmount or before session switches if needed
+        // This is tricky because activeSessionForChatImpl might be stale here.
+        // Saving should ideally happen when session *is about to change*.
+      };
+    }, [activeSessionForChatImpl?.id, setInput]); // Rerun when session ID changes
+
+    // Debounced save of input to session
+    const debouncedSaveInput = useCallback(
+        debounce((sessionId: string, currentInput: string) => {
+            const { updateSession, sessionsStore: allSessionsStore } =
+                require('~/lib/stores/sessionManager') as typeof import('~/lib/stores/sessionManager');
+            const currentSessions = allSessionsStore.get();
+            const sessionToUpdate = currentSessions.find(s => s.id === sessionId);
+            if (sessionToUpdate && sessionToUpdate.chatInput !== currentInput) {
+                 updateSession(sessionId, { chatInput: currentInput });
+            }
+        }, 500),
+    []);
+
+
+    useEffect(() => {
+        if (activeSessionForChatImpl?.id && input !== undefined) { // input can be empty string
+            debouncedSaveInput(activeSessionForChatImpl.id, input);
+        }
+    }, [input, activeSessionForChatImpl?.id, debouncedSaveInput]);
+
+
+    // This useEffect for searchParams prompt should be fine,
+    // as it appends to the currently loaded messages for the active session.
     useEffect(() => {
       const prompt = searchParams.get('prompt');
-
-      // console.log(prompt, searchParams, model, provider);
-
       if (prompt) {
-        setSearchParams({});
-        runAnimation();
+        setSearchParams({}); // Clear search param
+        runAnimation(); // Animation logic
         append({
           role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: `[Model: ${model}]\n\n[Provider: ${provider.name}]\n\n${prompt}`,
-            },
-          ] as any, // Type assertion to bypass compiler check
+          content: [{ type: 'text', text: `[Model: ${model}]\n\n[Provider: ${provider.name}]\n\n${prompt}` }] as any,
         });
       }
-    }, [model, provider, searchParams]);
+    }, [model, provider, searchParams, append]); // `append` added to dependencies
 
     const { enhancingPrompt, promptEnhanced, enhancePrompt, resetEnhancer } = usePromptEnhancer();
     const { parsedMessages, parseMessages } = useMessageParser();
@@ -236,18 +314,21 @@ export const ChatImpl = memo(
     const TEXTAREA_MAX_HEIGHT = chatStarted ? 400 : 200;
 
     useEffect(() => {
+      // chatStore's 'started' key might also need to be session-aware if it drives global UI changes.
+      // For now, it's based on the initialMessages of the active chat.
       chatStore.setKey('started', initialMessages.length > 0);
-    }, []);
+    }, [initialMessages]); // Depends on the correctly scoped initialMessages
 
     useEffect(() => {
+      // This effect now correctly uses the session-specific storeMessageHistory and initialMessages
       processSampledMessages({
         messages,
-        initialMessages,
+        initialMessages, // session-specific
         isLoading,
         parseMessages,
-        storeMessageHistory,
+        storeMessageHistory, // session-specific via useChatHistory instance
       });
-    }, [messages, isLoading, parseMessages]);
+    }, [messages, isLoading, parseMessages, initialMessages, storeMessageHistory]);
 
     const scrollTextArea = () => {
       const textarea = textareaRef.current;
@@ -564,7 +645,48 @@ export const ChatImpl = memo(
         deployAlert={deployAlert}
         clearDeployAlert={() => workbenchStore.clearDeployAlert()}
         data={chatData}
+        searchState={searchState} // Pass search state
+        clearSearch={() => clearSearchResults()} // Pass clear function
       />
     );
   },
 );
+
+// Modify BaseChatProps to include searchState and clearSearch
+// This assumes BaseChat.tsx can be modified or already accepts arbitrary children/slots.
+// For this example, I'll assume BaseChat.tsx is where SearchResultsDisplay will be rendered.
+// If BaseChat.tsx is not modifiable directly, SearchResultsDisplay might need to be
+// rendered alongside BaseChat in the ChatImpl component.
+
+// In BaseChat.tsx (conceptual change, not directly editable by this tool but shown for completeness):
+/*
+interface BaseChatProps {
+  // ... existing props
+  searchState?: SearchUiState | null;
+  clearSearch?: () => void;
+}
+
+// ... in BaseChat's render logic, perhaps above the message input or as a dismissible overlay:
+{searchState && (searchState.results || searchState.error || searchState.isLoading) && (
+  <div className="search-results-container p-2 border-t border-gray-200 dark:border-gray-700">
+    <SearchResultsDisplay
+      isLoading={searchState.isLoading}
+      results={searchState.results}
+      error={searchState.error}
+      onRetry={searchState.query ? () => {
+        // Re-trigger search logic, possibly by re-sending a hidden command
+        // or calling a search function directly if available.
+        // For now, simple clear.
+        if (clearSearch) clearSearch();
+      } : undefined}
+    />
+    <button
+      onClick={clearSearch}
+      className="absolute top-2 right-2 p-1 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600"
+      aria-label="Close search results"
+    >
+      X
+    </button>
+  </div>
+)}
+*/

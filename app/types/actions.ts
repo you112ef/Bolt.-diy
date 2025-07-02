@@ -1,9 +1,9 @@
 import type { Change } from 'diff';
 
-export type ActionType = 'file' | 'shell' | 'supabase';
+export type ActionType = 'file' | 'shell' | 'supabase' | 'web_search' | 'open_file';
 
 export interface BaseAction {
-  content: string;
+  content: string; // May not be applicable for all new actions like open_file
 }
 
 export interface FileAction extends BaseAction {
@@ -30,9 +30,19 @@ export interface SupabaseAction extends BaseAction {
   projectId?: string;
 }
 
-export type BoltAction = FileAction | ShellAction | StartAction | BuildAction | SupabaseAction;
+export interface WebSearchAction extends Omit<BaseAction, 'content'> { // content might not be directly applicable
+  type: 'web_search';
+  query: string;
+}
 
-export type BoltActionData = BoltAction | BaseAction;
+export interface OpenFileAction extends Omit<BaseAction, 'content'> { // content is not applicable
+  type: 'open_file';
+  filePath: string;
+}
+
+export type BoltAction = FileAction | ShellAction | StartAction | BuildAction | SupabaseAction | WebSearchAction | OpenFileAction;
+
+export type BoltActionData = BoltAction | BaseAction; // BaseAction might need re-evaluation if some actions don't have content
 
 export interface ActionAlert {
   type: string;

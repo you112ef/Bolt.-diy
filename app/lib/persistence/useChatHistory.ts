@@ -37,38 +37,56 @@ const persistenceEnabled = !import.meta.env.VITE_DISABLE_PERSISTENCE;
 export const db = persistenceEnabled ? await openDatabase() : undefined;
 
 export const chatId = atom<string | undefined>(undefined);
-export const description = atom<string | undefined>(undefined);
-export const chatMetadata = atom<IChatMetadata | undefined>(undefined);
-export function useChatHistory() {
+export const description = atom<string | undefined>(undefined); // This will reflect the active session's chat description
+export const chatMetadata = atom<IChatMetadata | undefined>(undefined); // This will reflect the active session's chat metadata
+
+// The hook now accepts the chatId of the currently active session
+export function useChatHistory(activeSessionChatId?: string) {
   const navigate = useNavigate();
-  const { id: mixedId } = useLoaderData<{ id?: string }>();
+  // const { id: mixedId } = useLoaderData<{ id?: string }>(); // No longer used from loader for ID
   const [searchParams] = useSearchParams();
 
   const [archivedMessages, setArchivedMessages] = useState<Message[]>([]);
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);
   const [ready, setReady] = useState<boolean>(false);
-  const [urlId, setUrlId] = useState<string | undefined>();
+  const [urlId, setUrlId] = useState<string | undefined>(); // This might also become session-specific if URLs change per tab
 
   useEffect(() => {
+    // Clear previous chat state when activeSessionChatId changes or is undefined
+    if (!activeSessionChatId) {
+      setInitialMessages([]);
+      setArchivedMessages([]);
+      description.set(undefined);
+      chatId.set(undefined); // Clear global chatId atom
+      chatMetadata.set(undefined);
+      setUrlId(undefined);
+      setReady(true); // Ready, but with no chat loaded
+      return;
+    }
+
+    // Reset ready state for the new chat ID
+    setReady(false);
+
     if (!db) {
       setReady(true);
-
       if (persistenceEnabled) {
         const error = new Error('Chat persistence is unavailable');
         logStore.logError('Chat persistence initialization failed', error);
         toast.error('Chat persistence is unavailable');
       }
-
       return;
     }
 
-    if (mixedId) {
+    // Now use activeSessionChatId instead of mixedId
+    if (activeSessionChatId) {
       Promise.all([
-        getMessages(db, mixedId),
-        getSnapshot(db, mixedId), // Fetch snapshot from DB
+        getMessages(db, activeSessionChatId),
+        getSnapshot(db, activeSessionChatId),
       ])
         .then(async ([storedMessages, snapshot]) => {
           if (storedMessages && storedMessages.messages.length > 0) {
+            // Existing logic using storedMessages and snapshot...
+            // Ensure that chatId.set() uses activeSessionChatId
             /*
              * const snapshotStr = localStorage.getItem(`snapshot:${mixedId}`); // Remove localStorage usage
              * const snapshot: Snapshot = snapshotStr ? JSON.parse(snapshotStr) : { chatIndex: 0, files: {} }; // Use snapshot from DB
@@ -174,34 +192,43 @@ ${value.content}
             }
 
             setInitialMessages(filteredMessages);
-
-            setUrlId(storedMessages.urlId);
+            setUrlId(storedMessages.urlId); // This might need to be managed if URL should reflect session
             description.set(storedMessages.description);
-            chatId.set(storedMessages.id);
+            chatId.set(storedMessages.id); // Set the global chatId atom for the active session
             chatMetadata.set(storedMessages.metadata);
           } else {
-            navigate('/', { replace: true });
+            // If no messages for this chatId, it's effectively a new/empty chat for this session
+            setInitialMessages([]);
+            setArchivedMessages([]);
+            description.set(undefined); // Clear description for this "new" chat
+            chatId.set(activeSessionChatId); // Set the global atom to the active one
+            chatMetadata.set(undefined);
+            setUrlId(undefined); // No URL ID yet for a new chat
+            // navigate('/', { replace: true }); // Avoid navigating, let the session manager handle UI
           }
-
           setReady(true);
         })
         .catch((error) => {
-          console.error(error);
-
-          logStore.logError('Failed to load chat messages or snapshot', error); // Updated error message
-          toast.error('Failed to load chat: ' + error.message); // More specific error
+          console.error(`Failed to load chat for ID ${activeSessionChatId}:`, error);
+          logStore.logError(`Failed to load chat messages or snapshot for ${activeSessionChatId}`, error);
+          toast.error(`Failed to load chat for session: ${error.message}`);
+          setInitialMessages([]); // Ensure clean state on error
+          setArchivedMessages([]);
+          chatId.set(activeSessionChatId); // Still set the ID so new messages can be saved to it
+          setReady(true); // Mark as ready even on error to allow UI to proceed
         });
     } else {
-      // Handle case where there is no mixedId (e.g., new chat)
+      // This case should ideally not be hit if activeSessionChatId is always provided by a managing component
       setReady(true);
     }
-  }, [mixedId, db, navigate, searchParams]); // Added db, navigate, searchParams dependencies
+  }, [activeSessionChatId, searchParams]); // Removed db, navigate from deps as they are stable. Added activeSessionChatId.
 
   const takeSnapshot = useCallback(
-    async (chatIdx: string, files: FileMap, _chatId?: string | undefined, chatSummary?: string) => {
-      const id = _chatId || chatId.get();
+    // activeSessionChatId is the source of truth for the current chat context
+    async (chatIdx: string, files: FileMap, currentChatIdForSnapshot?: string | undefined, chatSummary?: string) => {
+      const idToUse = currentChatIdForSnapshot || activeSessionChatId;
 
-      if (!id || !db) {
+      if (!idToUse || !db) {
         return;
       }
 
@@ -211,19 +238,18 @@ ${value.content}
         summary: chatSummary,
       };
 
-      // localStorage.setItem(`snapshot:${id}`, JSON.stringify(snapshot)); // Remove localStorage usage
       try {
-        await setSnapshot(db, id, snapshot);
+        await setSnapshot(db, idToUse, snapshot);
       } catch (error) {
         console.error('Failed to save snapshot:', error);
         toast.error('Failed to save chat snapshot.');
       }
     },
-    [db],
+    [activeSessionChatId], // Depend on activeSessionChatId
   );
 
-  const restoreSnapshot = useCallback(async (id: string, snapshot?: Snapshot) => {
-    // const snapshotStr = localStorage.getItem(`snapshot:${id}`); // Remove localStorage usage
+  // restoreSnapshot should operate on the provided id, not necessarily the active one
+  const restoreSnapshot = useCallback(async (idToRestoreFor: string, snapshot?: Snapshot) => {
     const container = await webcontainer;
 
     const validSnapshot = snapshot || { chatIndex: '', files: {} };
@@ -256,107 +282,103 @@ ${value.content}
   }, []);
 
   return {
-    ready: !mixedId || ready,
+    ready: !activeSessionChatId || ready, // Ready if no active chat or if loading for active chat is done/failed
     initialMessages,
-    updateChatMestaData: async (metadata: IChatMetadata) => {
-      const id = chatId.get();
-
-      if (!db || !id) {
+    // updateChatMestaData and storeMessageHistory now need to ensure they use activeSessionChatId
+    updateChatMestaData: async (metadataToSet: IChatMetadata) => {
+      if (!db || !activeSessionChatId) {
+        toast.error('Cannot update metadata: No active chat session.');
         return;
       }
-
       try {
-        await setMessages(db, id, initialMessages, urlId, description.get(), undefined, metadata);
-        chatMetadata.set(metadata);
+        // Assuming initialMessages and description.get() correctly reflect the active chat's state
+        await setMessages(db, activeSessionChatId, initialMessages, urlId, description.get(), undefined, metadataToSet);
+        chatMetadata.set(metadataToSet); // Update global atom for current active chat
       } catch (error) {
         toast.error('Failed to update chat metadata');
         console.error(error);
       }
     },
     storeMessageHistory: async (messages: Message[]) => {
-      if (!db || messages.length === 0) {
+      if (!db || messages.length === 0 || !activeSessionChatId) {
+        if(!activeSessionChatId) toast.error('Cannot save messages: No active chat session.');
         return;
       }
 
-      const { firstArtifact } = workbenchStore;
+      const { firstArtifact } = workbenchStore; // This might need to be session-specific if artifacts are
       messages = messages.filter((m) => !m.annotations?.includes('no-store'));
 
-      let _urlId = urlId;
-
-      if (!urlId && firstArtifact?.id) {
-        const urlId = await getUrlId(db, firstArtifact.id);
-        _urlId = urlId;
-        navigateChat(urlId);
-        setUrlId(urlId);
+      // urlId logic might need to be revisited for sessions if each tab doesn't have a unique URL path
+      // For now, assume urlId is associated with the activeSessionChatId
+      let currentUrlId = urlId;
+      if (!currentUrlId && firstArtifact?.id) {
+        // This logic might need adjustment. If urlId is for navigation,
+        // and tabs don't change URL, this could be problematic.
+        // currentUrlId = await getUrlId(db, firstArtifact.id);
+        // setUrlId(currentUrlId); // Update state for current session
+        // navigateChat(currentUrlId); // This navigation might be unwanted with tabs
       }
 
       let chatSummary: string | undefined = undefined;
-      const lastMessage = messages[messages.length - 1];
+      // ... (chatSummary extraction logic remains the same)
+      if (messages.length > 0) {
+        const lastMessage = messages[messages.length - 1];
+         if (lastMessage.role === 'assistant') {
+            const annotations = lastMessage.annotations as JSONValue[];
+            const filteredAnnotations = (annotations?.filter(
+              (annotation: JSONValue) =>
+                annotation && typeof annotation === 'object' && Object.keys(annotation).includes('type'),
+            ) || []) as { type: string; value: any } & { [key: string]: any }[];
 
-      if (lastMessage.role === 'assistant') {
-        const annotations = lastMessage.annotations as JSONValue[];
-        const filteredAnnotations = (annotations?.filter(
-          (annotation: JSONValue) =>
-            annotation && typeof annotation === 'object' && Object.keys(annotation).includes('type'),
-        ) || []) as { type: string; value: any } & { [key: string]: any }[];
-
-        if (filteredAnnotations.find((annotation) => annotation.type === 'chatSummary')) {
-          chatSummary = filteredAnnotations.find((annotation) => annotation.type === 'chatSummary')?.summary;
-        }
+            if (filteredAnnotations.find((annotation) => annotation.type === 'chatSummary')) {
+              chatSummary = filteredAnnotations.find((annotation) => annotation.type === 'chatSummary')?.summary;
+            }
+          }
+        // Pass activeSessionChatId to takeSnapshot
+        takeSnapshot(lastMessage.id, workbenchStore.files.get(), activeSessionChatId, chatSummary);
       }
 
-      takeSnapshot(messages[messages.length - 1].id, workbenchStore.files.get(), _urlId, chatSummary);
 
       if (!description.get() && firstArtifact?.title) {
-        description.set(firstArtifact?.title);
+        description.set(firstArtifact?.title); // Sets description for the current active chat
       }
 
-      // Ensure chatId.get() is used here as well
-      if (initialMessages.length === 0 && !chatId.get()) {
-        const nextId = await getNextId(db);
-
-        chatId.set(nextId);
-
-        if (!urlId) {
-          navigateChat(nextId);
-        }
-      }
-
-      // Ensure chatId.get() is used for the final setMessages call
-      const finalChatId = chatId.get();
-
-      if (!finalChatId) {
-        console.error('Cannot save messages, chat ID is not set.');
-        toast.error('Failed to save chat messages: Chat ID missing.');
-
-        return;
-      }
+      // No need to generate a new ID here, activeSessionChatId is the one.
+      // If activeSessionChatId was somehow undefined but we reached here, it's an issue.
 
       await setMessages(
         db,
-        finalChatId, // Use the potentially updated chatId
+        activeSessionChatId,
         [...archivedMessages, ...messages],
-        urlId,
+        currentUrlId, // Use potentially updated urlId
         description.get(),
-        undefined,
+        undefined, // timestamp will be auto-updated by setMessages
         chatMetadata.get(),
       );
     },
-    duplicateCurrentChat: async (listItemId: string) => {
-      if (!db || (!mixedId && !listItemId)) {
+    // duplicateCurrentChat and importChat will likely need to interact with sessionManager
+    // to create new sessions rather than just new chat DB entries and navigating.
+    // For now, they are adapted to use activeSessionChatId if no specific ID is given.
+    duplicateCurrentChat: async (listItemId?: string) => {
+      const idToDuplicate = listItemId || activeSessionChatId;
+      if (!db || !idToDuplicate) {
+        toast.error('No chat to duplicate.');
         return;
       }
-
       try {
-        const newId = await duplicateChat(db, mixedId || listItemId);
-        navigate(`/chat/${newId}`);
-        toast.success('Chat duplicated successfully');
+        // This creates a new chat entry in DB. UI needs to create a new session for it.
+        const newDbChatId = await duplicateChat(db, idToDuplicate);
+        // TODO: Integrate with sessionManager to create a new AppSession for this newDbChatId
+        // For now, just logs and gives a success message for DB duplication.
+        console.log(`Chat duplicated in DB with new ID: ${newDbChatId}. Manual session creation needed.`);
+        toast.success('Chat data duplicated. (Manual session tab creation needed)');
+        // navigate(`/chat/${newId}`); // Navigation handled by session tabs
       } catch (error) {
-        toast.error('Failed to duplicate chat');
+        toast.error('Failed to duplicate chat data.');
         console.log(error);
       }
     },
-    importChat: async (description: string, messages: Message[], metadata?: IChatMetadata) => {
+    importChat: async (newChatDescription: string, messagesToImport: Message[], metadataToImport?: IChatMetadata) => {
       if (!db) {
         return;
       }

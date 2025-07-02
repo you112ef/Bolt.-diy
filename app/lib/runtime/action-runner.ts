@@ -72,6 +72,7 @@ export class ActionRunner {
   onAlert?: (alert: ActionAlert) => void;
   onSupabaseAlert?: (alert: SupabaseAlert) => void;
   onDeployAlert?: (alert: DeployAlert) => void;
+  onOpenFileRequest?: (filePath: string) => void; // New callback for opening files
   buildOutput?: { path: string; exitCode: number; output: string };
 
   constructor(
@@ -80,12 +81,14 @@ export class ActionRunner {
     onAlert?: (alert: ActionAlert) => void,
     onSupabaseAlert?: (alert: SupabaseAlert) => void,
     onDeployAlert?: (alert: DeployAlert) => void,
+    onOpenFileRequest?: (filePath: string) => void, // New parameter
   ) {
     this.#webcontainer = webcontainerPromise;
     this.#shellTerminal = getShellTerminal;
     this.onAlert = onAlert;
     this.onSupabaseAlert = onSupabaseAlert;
     this.onDeployAlert = onDeployAlert;
+    this.onOpenFileRequest = onOpenFileRequest; // Store the callback
   }
 
   addAction(data: ActionCallbackData) {
@@ -167,15 +170,51 @@ export class ActionRunner {
           try {
             await this.handleSupabaseAction(action as SupabaseAction);
           } catch (error: any) {
-            // Update action status
             this.#updateAction(actionId, {
               status: 'failed',
               error: error instanceof Error ? error.message : 'Supabase action failed',
             });
-
-            // Return early without re-throwing
             return;
           }
+          break;
+        }
+        case 'web_search': {
+          const webSearchAction = action as import('~/types/actions').WebSearchAction;
+          const query = webSearchAction.query;
+          logger.info(`[web_search]: Executing search for: ${query}`);
+
+          // Import store and service - ensure correct paths
+          const { setSearchLoading, setSearchResults, setSearchError } = await import('~/lib/stores/search');
+          const { fetchSearchResults } = await import('~/lib/services/searchService');
+
+          setSearchLoading(query);
+          try {
+            const results = await fetchSearchResults(query);
+            if ('error' in results) {
+              setSearchError(query, results);
+              // Optionally, update action status to 'failed' if search itself fails critically
+              // this.#updateAction(actionId, { status: 'failed', error: results.error });
+            } else {
+              setSearchResults(query, results);
+            }
+          } catch (e: any) {
+            setSearchError(query, { error: 'Unhandled exception during web search', details: e.message });
+            // Optionally, update action status to 'failed'
+            // this.#updateAction(actionId, { status: 'failed', error: e.message });
+          }
+          // The action is considered "handled" once the search is dispatched.
+          // The UI will react to the searchUiStore changes.
+          break;
+        }
+        case 'open_file': {
+          const filePathToOpen = (action as import('~/types/actions').OpenFileAction).filePath;
+          logger.info(`[open_file]: Request to open file: ${filePathToOpen}`);
+          if (this.onOpenFileRequest) {
+            this.onOpenFileRequest(filePathToOpen);
+          } else {
+            logger.warn('[open_file]: onOpenFileRequest callback is not provided to ActionRunner.');
+          }
+          // This action is considered complete once the request is made.
           break;
         }
         case 'build': {

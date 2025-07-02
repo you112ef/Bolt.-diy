@@ -285,47 +285,70 @@ export class StreamingMessageParser {
 
   #parseActionTag(input: string, actionOpenIndex: number, actionEndIndex: number) {
     const actionTag = input.slice(actionOpenIndex, actionEndIndex + 1);
-
     const actionType = this.#extractAttribute(actionTag, 'type') as ActionType;
 
-    const actionAttributes = {
+    let actionAttributes: Partial<BoltActionData> = { // Use Partial as content might not exist for all
       type: actionType,
-      content: '',
     };
+
+    if (actionType === 'file' || actionType === 'shell' || actionType === 'start' || actionType === 'build') {
+      actionAttributes.content = ''; // Initialize content for types that use it
+    }
 
     if (actionType === 'supabase') {
       const operation = this.#extractAttribute(actionTag, 'operation');
-
       if (!operation || !['migration', 'query'].includes(operation)) {
         logger.warn(`Invalid or missing operation for Supabase action: ${operation}`);
         throw new Error(`Invalid Supabase operation: ${operation}`);
       }
-
       (actionAttributes as SupabaseAction).operation = operation as 'migration' | 'query';
+      actionAttributes.content = ''; // Supabase actions also have content
 
       if (operation === 'migration') {
         const filePath = this.#extractAttribute(actionTag, 'filePath');
-
         if (!filePath) {
           logger.warn('Migration requires a filePath');
           throw new Error('Migration requires a filePath');
         }
-
         (actionAttributes as SupabaseAction).filePath = filePath;
       }
     } else if (actionType === 'file') {
       const filePath = this.#extractAttribute(actionTag, 'filePath') as string;
-
       if (!filePath) {
-        logger.debug('File path not specified');
+        // File path can be optional for some scenarios if content is primary, but usually required.
+        // For now, let's assume it's usually present.
+        logger.debug('File path not specified for file action, but this might be an issue.');
       }
-
       (actionAttributes as FileAction).filePath = filePath;
-    } else if (!['shell', 'start'].includes(actionType)) {
-      logger.warn(`Unknown action type '${actionType}'`);
+    } else if (actionType === 'web_search') {
+      const query = this.#extractAttribute(actionTag, 'query') as string;
+      if (!query) {
+        logger.warn('Web search action requires a query');
+        throw new Error('Web search action requires a query');
+      }
+      (actionAttributes as import('~/types/actions').WebSearchAction).query = query;
+      // No 'content' field for web_search in the same way as shell/file
+      delete actionAttributes.content;
+    } else if (actionType === 'open_file') {
+      const filePath = this.#extractAttribute(actionTag, 'filePath') as string;
+      if (!filePath) {
+        logger.warn('Open file action requires a filePath');
+        throw new Error('Open file action requires a filePath');
+      }
+      (actionAttributes as import('~/types/actions').OpenFileAction).filePath = filePath;
+      // No 'content' field for open_file
+      delete actionAttributes.content;
+    } else if (!['shell', 'start', 'build'].includes(actionType)) {
+      logger.warn(`Unknown or unhandled action type '${actionType}' in #parseActionTag`);
     }
 
-    return actionAttributes as FileAction | ShellAction;
+    // Ensure content is initialized for actions that expect it, if not already handled
+    if (['shell', 'start', 'build'].includes(actionType) && actionAttributes.content === undefined) {
+        actionAttributes.content = '';
+    }
+
+
+    return actionAttributes as BoltAction; // Cast to BoltAction; ensure all paths correctly initialize necessary fields
   }
 
   #extractAttribute(tag: string, attributeName: string): string | undefined {
