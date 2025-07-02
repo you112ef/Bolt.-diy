@@ -1,10 +1,9 @@
 import type * as monaco from 'monaco-editor';
 import { getActiveMonacoInstance } from '~/lib/editor/editorUtils';
-import { editorStore } from '~/lib/stores/editor'; // To get activeFilePath
-// Import AgentEngine when it's created
-// import { AgentEngine, AgentResponse } from '../engine/AgentEngine';
+import { editorStore } from '~/lib/stores/editor';
+import { AgentEngine } from '../engine/AgentEngine'; // Import AgentEngine
 
-const logger = console; // Or use a proper logger
+const logger = console;
 
 export interface EditorContext {
   filePath: string | undefined;
@@ -34,10 +33,10 @@ export interface AgentResponse {
 }
 
 export class EditorAgentBridge {
-  // private agentEngine: AgentEngine; // Will be initialized once AgentEngine is ready
+  private agentEngine: AgentEngine;
 
-  constructor(/* agentEngine: AgentEngine */) {
-    // this.agentEngine = agentEngine;
+  constructor(agentEngine?: AgentEngine) { // AgentEngine can be optional for mock/default
+    this.agentEngine = agentEngine || new AgentEngine(); // Use provided or default
     logger.info('EditorAgentBridge initialized.');
   }
 
@@ -160,43 +159,33 @@ export class EditorAgentBridge {
 
     logger.info(`EditorAgentBridge: Requesting action - Type: ${promptType}, Prompt (start): ${fullPrompt.substring(0, 100)}...`);
 
-    // --- Placeholder for AgentEngine call ---
-    // if (!this.agentEngine) {
-    //   logger.error("AgentEngine not initialized in EditorAgentBridge.");
-    //   return { error: "AgentEngine not available.", message: "" };
-    // }
-    // const agentResponse: AgentResponse = await this.agentEngine.execute(fullPrompt, context);
+    // Call the actual AgentEngine
+    if (!this.agentEngine) {
+      logger.error("AgentEngine not initialized in EditorAgentBridge.");
+      return { error: "AgentEngine not available.", message: "" };
+    }
 
-    // Mock/Simulated Agent Response for now:
-    let mockResponse: AgentResponse;
-    if (promptType === 'fix' || promptType === 'refactor' || promptType === 'generate' && promptType !== 'add-tests') {
-      const prefix = promptType === 'fix' ? 'FIXED:\n' : promptType === 'refactor' ? 'REFACTORED:\n' : 'GENERATED:\n';
-      const codeToEdit = context.selectedText || context.fullFileContent || '';
-      mockResponse = {
-        message: `${prefix}${codeToEdit}`,
-        edit: { newCode: `${prefix}${codeToEdit}` }
-      };
-    } else if (promptType === 'add-tests') {
-        mockResponse = {
-            message: `// Test suite for ${context.filePath || 'the code'}\ndescribe('tests', () => { it('should pass', () => expect(true).toBe(true)); });`,
-            // Typically, tests are new files or appended, not replacing current content unless specified.
-            // For now, let's assume it might suggest placing it in a new file or a specific spot.
-        };
-    }
-    else {
-      mockResponse = { message: `Agent explained: ${context.selectedText || 'the current code context.'}` };
-    }
-    // --- End of Placeholder ---
+    // The agentEngine's execute method now takes promptType, context, and customPromptText
+    const agentResponse: AgentResponse = await this.agentEngine.execute(
+      promptType,
+      context,
+      customPromptText
+    );
 
     // Process response
-    if (mockResponse.edit && mockResponse.edit.newCode) {
-      this.applyEdit(mockResponse.edit.newCode);
+    if (agentResponse.edit && agentResponse.edit.newCode) {
+      const success = this.applyEdit(agentResponse.edit.newCode);
+      if (!success) {
+        // Append to message if edit application failed
+        agentResponse.message += "\n(Note: Applying edit to the editor failed.)";
+      }
     }
 
-    return mockResponse;
+    return agentResponse;
   }
 }
 
-// Export an instance if it's to be used as a singleton, or allow instantiation
-// For now, let's make it instantiable, to be managed by a higher-level agent service.
-// export const editorAgentBridge = new EditorAgentBridge(/* pass agentEngine when ready */);
+// Export an instance if it's to be used as a singleton.
+// This makes it easier to access from UI elements or other services.
+// If multiple agent configurations are needed, this might change.
+export const editorAgentBridge = new EditorAgentBridge();
