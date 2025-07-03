@@ -26,6 +26,8 @@ import useViewport from '~/lib/hooks';
 import { PushToGitHubDialog } from '~/components/@settings/tabs/connections/components/PushToGitHubDialog';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { usePreviewStore } from '~/lib/stores/previews';
+import { searchService } from '~/semantic/SearchService'; // Import searchService
+import { filesStore } from '~/lib/stores/files'; // To check if files are loaded
 
 interface WorkspaceProps {
   chatStarted?: boolean;
@@ -306,6 +308,38 @@ export const Workbench = memo(
         setSelectedView('preview');
       }
     }, [hasPreview]);
+
+    // Initial and on-load file indexing
+    useEffect(() => {
+      const initAndIndexFiles = async () => {
+        // Ensure files are loaded into filesStore before indexing
+        // This might need a more robust check or an event from filesStore
+        if (Object.keys(files.get()).length > 0) {
+          logger.info('Workbench: Files available, starting initial semantic indexing.');
+          await searchService.startIndexingAllFiles();
+        } else {
+          // Poll or subscribe to filesStore if it loads asynchronously after Workbench mount
+          logger.info('Workbench: Files not yet available for indexing, will retry or wait for event.');
+          // This could be a subscription to filesStore if it emits an 'initialized' or 'loaded' event
+          const unsubscribe = filesStore.subscribe(currentFiles => {
+            if (Object.keys(currentFiles).length > 0) {
+              logger.info('Workbench: Files now available, starting initial semantic indexing via subscription.');
+              searchService.startIndexingAllFiles();
+              unsubscribe(); // Unsubscribe after indexing starts
+            }
+          });
+          // As a fallback, try after a delay if no event system is in place
+          setTimeout(() => {
+            if (Object.keys(filesStore.get()).length > 0 && !searchService.isIndexingInProgress()) { // Check isIndexingInProgress if available
+                 logger.info('Workbench: Files available on timeout, starting initial semantic indexing.');
+                 searchService.startIndexingAllFiles();
+            }
+            unsubscribe(); // Ensure unsubscription
+          }, 5000); // Adjust delay as needed
+        }
+      };
+      initAndIndexFiles();
+    }, []); // Run once on mount
 
     // Removed useEffect that called workbenchStore.setDocuments(files);
     // editorStore now manages its documents based on active session state.

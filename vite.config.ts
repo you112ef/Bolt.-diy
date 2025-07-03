@@ -112,6 +112,10 @@ export default defineConfig((config) => {
     resolve: {
       alias: {
         buffer: 'vite-plugin-node-polyfills/polyfills/buffer',
+        ...(config.mode === 'test' && {
+          '@xenova/transformers': join(process.cwd(), '__mocks__', '@xenova', 'transformers.ts'),
+          // Removed direct alias for Artifact.tsx as it's now conditionally imported in Markdown.tsx
+        }),
       },
     },
     plugins: [
@@ -165,6 +169,12 @@ export default defineConfig((config) => {
           api: 'modern-compiler',
         },
       },
+    },
+    // Vitest specific configuration
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      // setupFiles: [], // vitest.setup.ts was removed
     },
   };
 });

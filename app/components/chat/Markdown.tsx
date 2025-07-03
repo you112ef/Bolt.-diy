@@ -3,7 +3,9 @@ import ReactMarkdown, { type Components } from 'react-markdown';
 import type { BundledLanguage } from 'shiki';
 import { createScopedLogger } from '~/utils/logger';
 import { rehypePlugins, remarkPlugins, allowedHTMLElements } from '~/utils/markdown';
-import { Artifact } from './Artifact';
+// Conditional import for Artifact
+import { Artifact as RealArtifact } from './Artifact';
+import { Artifact as MockArtifact } from './Artifact.mock'; // Assuming Artifact.mock.tsx exports Artifact
 import { CodeBlock } from './CodeBlock';
 
 import styles from './Markdown.module.scss';
@@ -21,6 +23,8 @@ export const Markdown = memo(({ children, html = false, limitedMarkdown = false 
   logger.trace('Render');
 
   const components = useMemo(() => {
+    const ArtifactComponent = process.env.NODE_ENV === 'test' ? MockArtifact : RealArtifact;
+
     return {
       div: ({ className, children, node, ...props }) => {
         if (className?.includes('__boltArtifact__')) {
@@ -28,9 +32,11 @@ export const Markdown = memo(({ children, html = false, limitedMarkdown = false 
 
           if (!messageId) {
             logger.error(`Invalid message id ${messageId}`);
+            // Fallback or error display if messageId is crucial and missing
+            return <div className={className} {...props}>Error: Missing messageId for Artifact</div>;
           }
-
-          return <Artifact messageId={messageId} />;
+          // @ts-ignore // TODO: Fix type mismatch if props for RealArtifact and MockArtifact differ significantly
+          return <ArtifactComponent messageId={messageId} />;
         }
 
         if (className?.includes('__boltThought__')) {

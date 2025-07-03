@@ -21,6 +21,9 @@ import type { ActionAlert, DeployAlert, SupabaseAlert } from '~/types/actions';
 
 const { saveAs } = fileSaver;
 
+// Provide a fallback for import.meta.hot in test environments
+const hotData = typeof import.meta.hot?.data === 'object' ? import.meta.hot.data : {};
+
 export interface ArtifactState {
   id: string;
   title: string;
@@ -44,22 +47,22 @@ export class WorkbenchStore {
 
   #reloadedMessages = new Set<string>();
 
-  artifacts: Artifacts = import.meta.hot?.data.artifacts ?? map({});
+  artifacts: Artifacts = hotData.artifacts ?? map({});
 
-  showWorkbench: WritableAtom<boolean> = import.meta.hot?.data.showWorkbench ?? atom(false);
-  currentView: WritableAtom<WorkbenchViewType> = import.meta.hot?.data.currentView ?? atom('code');
-  unsavedFiles: WritableAtom<Set<string>> = import.meta.hot?.data.unsavedFiles ?? atom(new Set<string>());
+  showWorkbench: WritableAtom<boolean> = hotData.showWorkbench ?? atom(false);
+  currentView: WritableAtom<WorkbenchViewType> = hotData.currentView ?? atom('code');
+  unsavedFiles: WritableAtom<Set<string>> = hotData.unsavedFiles ?? atom(new Set<string>());
   actionAlert: WritableAtom<ActionAlert | undefined> =
-    import.meta.hot?.data.actionAlert ?? atom<ActionAlert | undefined>(undefined);
+    hotData.actionAlert ?? atom<ActionAlert | undefined>(undefined);
   supabaseAlert: WritableAtom<SupabaseAlert | undefined> =
-    import.meta.hot?.data.supabaseAlert ?? atom<SupabaseAlert | undefined>(undefined);
+    hotData.supabaseAlert ?? atom<SupabaseAlert | undefined>(undefined);
   deployAlert: WritableAtom<DeployAlert | undefined> =
-    import.meta.hot?.data.deployAlert ?? atom<DeployAlert | undefined>(undefined);
+    hotData.deployAlert ?? atom<DeployAlert | undefined>(undefined);
   modifiedFiles = new Set<string>();
   artifactIdList: string[] = [];
   #globalExecutionQueue = Promise.resolve();
   constructor() {
-    if (import.meta.hot) {
+    if (typeof import.meta.hot?.data === 'object') { // Check before assigning
       import.meta.hot.data.artifacts = this.artifacts;
       import.meta.hot.data.unsavedFiles = this.unsavedFiles;
       import.meta.hot.data.showWorkbench = this.showWorkbench;

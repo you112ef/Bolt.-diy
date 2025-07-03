@@ -21,8 +21,12 @@ import {
   clearCache,
 } from '~/lib/persistence/lockedFiles';
 import { getCurrentChatId } from '~/utils/fileLocks';
+import { searchService } from '~/semantic/SearchService'; // Import searchService
 
 const logger = createScopedLogger('FilesStore');
+
+// Provide a fallback for import.meta.hot in test environments
+const hotData = typeof import.meta.hot?.data === 'object' ? import.meta.hot.data : {};
 
 const utf8TextDecoder = new TextDecoder('utf8', { fatal: true });
 
@@ -57,17 +61,17 @@ export class FilesStore {
    * Needs to be reset when the user sends another message and all changes have to be submitted
    * for the model to be aware of the changes.
    */
-  #modifiedFiles: Map<string, string> = import.meta.hot?.data.modifiedFiles ?? new Map();
+  #modifiedFiles: Map<string, string> = hotData.modifiedFiles ?? new Map();
 
   /**
    * Keeps track of deleted files and folders to prevent them from reappearing on reload
    */
-  #deletedPaths: Set<string> = import.meta.hot?.data.deletedPaths ?? new Set();
+  #deletedPaths: Set<string> = hotData.deletedPaths ?? new Set();
 
   /**
    * Map of files that matches the state of WebContainer.
    */
-  files: MapStore<FileMap> = import.meta.hot?.data.files ?? map({});
+  files: MapStore<FileMap> = hotData.files ?? map({});
 
   get filesCount() {
     return this.#size;
@@ -96,7 +100,7 @@ export class FilesStore {
     // Load locked files from localStorage
     this.#loadLockedFiles();
 
-    if (import.meta.hot) {
+    if (typeof import.meta.hot?.data === 'object') { // Check before assigning
       // Persist our state across hot reloads
       import.meta.hot.data.files = this.files;
       import.meta.hot.data.modifiedFiles = this.#modifiedFiles;
@@ -770,11 +774,19 @@ export class FilesStore {
             isBinary,
             isLocked,
           });
+          // Index file on add/change
+          if (!isBinary && content) { // Only index non-binary files with content
+            searchService.indexFile(sanitizedPath, content).catch(err =>
+                logger.error(`Error auto-indexing ${sanitizedPath} on change:`, err)
+            );
+          }
           break;
         }
         case 'remove_file': {
           this.#size--;
           this.files.setKey(sanitizedPath, undefined);
+          // Clear index for removed file
+          searchService.clearFileIndex(sanitizedPath);
           break;
         }
         case 'update_directory': {
@@ -896,6 +908,7 @@ export class FilesStore {
       }
 
       this.#persistDeletedPaths();
+      searchService.clearFileIndex(filePath); // Clear index
 
       logger.info(`File deleted: ${filePath}`);
 
@@ -941,6 +954,15 @@ export class FilesStore {
       }
 
       this.#persistDeletedPaths();
+      // Iterate and clear index for all files within the deleted folder
+      // Note: this might be redundant if remove_file events are also triggered for each file by the watcher
+      const folderPrefix = folderPath.endsWith('/') ? folderPath : `${folderPath}/`;
+      Object.keys(allFiles).forEach(path => {
+        if (path.startsWith(folderPrefix)) {
+          searchService.clearFileIndex(path);
+        }
+      });
+
 
       logger.info(`Folder deleted: ${folderPath}`);
 

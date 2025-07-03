@@ -6,11 +6,14 @@ interface WebContainerContext {
   loaded: boolean;
 }
 
-export const webcontainerContext: WebContainerContext = import.meta.hot?.data.webcontainerContext ?? {
+// Provide a fallback for import.meta.hot in test environments
+const hotData = typeof import.meta.hot?.data === 'object' ? import.meta.hot.data : {};
+
+export const webcontainerContext: WebContainerContext = hotData.webcontainerContext ?? {
   loaded: false,
 };
 
-if (import.meta.hot) {
+if (typeof import.meta.hot?.data === 'object') {
   import.meta.hot.data.webcontainerContext = webcontainerContext;
 }
 
@@ -20,7 +23,7 @@ export let webcontainer: Promise<WebContainer> = new Promise(() => {
 
 if (!import.meta.env.SSR) {
   webcontainer =
-    import.meta.hot?.data.webcontainer ??
+    hotData.webcontainer ?? // Use the checked hotData
     Promise.resolve()
       .then(() => {
         return WebContainer.boot({
@@ -29,13 +32,13 @@ if (!import.meta.env.SSR) {
           forwardPreviewErrors: true, // Enable error forwarding from iframes
         });
       })
-      .then(async (webcontainer) => {
+      .then(async (webcontainerInstance) => { // Renamed to avoid conflict with outer webcontainer
         webcontainerContext.loaded = true;
 
         const { workbenchStore } = await import('~/lib/stores/workbench');
 
         // Listen for preview errors
-        webcontainer.on('preview-message', (message) => {
+        webcontainerInstance.on('preview-message', (message) => {
           console.log('WebContainer preview message:', message);
 
           // Handle both uncaught exceptions and unhandled promise rejections
@@ -52,10 +55,11 @@ if (!import.meta.env.SSR) {
           }
         });
 
-        return webcontainer;
+        return webcontainerInstance;
       });
 
-  if (import.meta.hot) {
+  // Ensure import.meta.hot and import.meta.hot.data exist before assigning to it
+  if (typeof import.meta.hot?.data === 'object') {
     import.meta.hot.data.webcontainer = webcontainer;
   }
 }

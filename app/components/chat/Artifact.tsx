@@ -14,12 +14,26 @@ const highlighterOptions = {
   themes: ['light-plus', 'dark-plus'],
 };
 
-const shellHighlighter: HighlighterGeneric<BundledLanguage, BundledTheme> =
-  import.meta.hot?.data.shellHighlighter ?? (await createHighlighter(highlighterOptions));
+// Lazy load highlighter
+let shellHighlighterPromise: Promise<HighlighterGeneric<BundledLanguage, BundledTheme>> | null = null;
+const getShellHighlighter = () => {
+  if (!shellHighlighterPromise) {
+    // Check for HMR-stored highlighter first (using safer hotData access)
+    const hotData = (typeof import.meta.hot?.data === 'object' && import.meta.hot.data !== null) ? import.meta.hot.data : {};
+    if (hotData.shellHighlighter) {
+      shellHighlighterPromise = Promise.resolve(hotData.shellHighlighter);
+    } else {
+      shellHighlighterPromise = createHighlighter(highlighterOptions).then(hl => {
+        if (typeof import.meta.hot?.data === 'object' && import.meta.hot.data !== null) {
+          import.meta.hot.data.shellHighlighter = hl;
+        }
+        return hl;
+      });
+    }
+  }
+  return shellHighlighterPromise;
+};
 
-if (import.meta.hot) {
-  import.meta.hot.data.shellHighlighter = shellHighlighter;
-}
 
 interface ArtifactProps {
   messageId: string;
@@ -162,16 +176,45 @@ interface ShellCodeBlockProps {
 }
 
 function ShellCodeBlock({ classsName, code }: ShellCodeBlockProps) {
+  const [highlightedCode, setHighlightedCode] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    getShellHighlighter().then(highlighter => {
+      if (isMounted && highlighter) {
+        try {
+          const html = highlighter.codeToHtml(code, {
+            lang: 'shell',
+            // Determine theme dynamically or pass as prop if needed
+            // For now, defaulting to dark-plus as in original
+            theme: 'dark-plus',
+          });
+          setHighlightedCode(html);
+        } catch (error) {
+          console.error("Error highlighting code with Shiki:", error);
+          setHighlightedCode(`<pre><code>${code}</code></pre>`); // Fallback to plain code
+        }
+      }
+    }).catch(error => {
+        console.error("Error loading Shiki highlighter:", error);
+        if(isMounted) setHighlightedCode(`<pre><code>${code}</code></pre>`); // Fallback
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [code]);
+
+  if (highlightedCode === null) {
+    // Optional: show a loading state or plain code while highlighter loads
+    return <pre className={classNames('text-xs shiki-fallback', classsName)}><code>{code}</code></pre>;
+  }
+
   return (
     <div
-      className={classNames('text-xs', classsName)}
-      dangerouslySetInnerHTML={{
-        __html: shellHighlighter.codeToHtml(code, {
-          lang: 'shell',
-          theme: 'dark-plus',
-        }),
-      }}
-    ></div>
+      className={classNames('text-xs shiki-highlighted', classsName)}
+      dangerouslySetInnerHTML={{ __html: highlightedCode }}
+    />
   );
 }
 

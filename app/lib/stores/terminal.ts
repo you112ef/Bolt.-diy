@@ -2,6 +2,8 @@ import type { WebContainer, WebContainerProcess } from '@webcontainer/api';
 import { atom, type WritableAtom } from 'nanostores';
 import type { ITerminal } from '~/types/terminal';
 import { newBoltShellProcess, newShellProcess } from '~/utils/shell';
+// Provide a fallback for import.meta.hot in test environments
+const hotData = typeof import.meta.hot?.data === 'object' ? import.meta.hot.data : {};
 import { coloredText } from '~/utils/terminal';
 
 export class TerminalStore {
@@ -9,12 +11,12 @@ export class TerminalStore {
   #terminals: Array<{ terminal: ITerminal; process: WebContainerProcess }> = [];
   #boltTerminal = newBoltShellProcess();
 
-  showTerminal: WritableAtom<boolean> = import.meta.hot?.data.showTerminal ?? atom(true);
+  showTerminal: WritableAtom<boolean> = hotData.showTerminal ?? atom(true);
 
   constructor(webcontainerPromise: Promise<WebContainer>) {
     this.#webcontainer = webcontainerPromise;
 
-    if (import.meta.hot) {
+    if (typeof import.meta.hot?.data === 'object') { // Check before assigning
       import.meta.hot.data.showTerminal = this.showTerminal;
     }
   }
