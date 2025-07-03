@@ -94,6 +94,7 @@ export default defineConfig((config) => {
     build: {
       target: 'esnext',
       rollupOptions: {
+        external: ['openai'],
         output: {
           format: 'esm',
         },
@@ -112,10 +113,8 @@ export default defineConfig((config) => {
     resolve: {
       alias: {
         buffer: 'vite-plugin-node-polyfills/polyfills/buffer',
-        ...(config.mode === 'test' && {
-          '@xenova/transformers': join(process.cwd(), '__mocks__', '@xenova', 'transformers.ts'),
-          // Removed direct alias for Artifact.tsx as it's now conditionally imported in Markdown.tsx
-        }),
+        '@xenova/transformers': join(process.cwd(), '__mocks__', '@xenova', 'transformers.ts'),
+        // Removed direct alias for Artifact.tsx as it's now conditionally imported in Markdown.tsx
       },
     },
     plugins: [
